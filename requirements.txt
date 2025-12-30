@@ -1,0 +1,11 @@
+python-telegram-bot
+flask
+supabase
+python-dotenv
+fpdf
+img2pdf
+aiohttp
+qrcode
+Pillow
+pytz
+certifi
