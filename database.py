@@ -196,7 +196,6 @@ def get_recent_users(limit=10):
     except Exception as e:
         logger.error(f"Son kullanıcılar hatası: {e}")
         return []
-        return []
 
 # --- AKTİVİTE LOGLAMA (YENİ) ---
 def log_qr_usage(user_id, content):
