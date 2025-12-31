@@ -389,3 +389,138 @@ async def handle_social_media_callbacks(update: Update, context: ContextTypes.DE
     await query.answer()
     if query.data == "back_to_main_menu":
         await query.message.delete()
+
+# --- VIDEO DOWNLOADER ---
+from texts import VIDEO_DOWNLOADER_BUTTONS
+
+def get_video_downloader_keyboard_markup(lang):
+    buttons = VIDEO_DOWNLOADER_BUTTONS.get(lang, VIDEO_DOWNLOADER_BUTTONS["en"])
+    return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
+
+@rate_limit("heavy")
+async def video_downloader_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Video indirme platform seçim menüsü"""
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    state.clear_user_states(user_id)
+    
+    await update.message.reply_text(
+        TEXTS["video_downloader_menu_prompt"][lang],
+        reply_markup=get_video_downloader_keyboard_markup(lang)
+    )
+
+async def set_video_platform(update: Update, context: ContextTypes.DEFAULT_TYPE, platform: str):
+    """Platform seçildi, link iste"""
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    state.clear_user_states(user_id)
+    state.waiting_for_video_link[user_id] = platform
+    
+    platform_names = {
+        "tiktok": "TikTok",
+        "twitter": "Twitter/X", 
+        "instagram": "Instagram"
+    }
+    platform_display = platform_names.get(platform, platform)
+    
+    await update.message.reply_text(
+        TEXTS["video_downloader_prompt_link"][lang].format(platform=platform_display),
+        reply_markup=get_input_back_keyboard_markup(lang)
+    )
+
+async def download_and_send_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Video linkini al, indir ve gönder"""
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    platform = state.waiting_for_video_link.get(user_id)
+    if not platform:
+        return False
+    
+    url = update.message.text.strip()
+    
+    # Geri butonu kontrolü
+    url_lower = url.lower()
+    if url_lower in BUTTON_MAPPINGS["menu"] or "geri" in url_lower or "back" in url_lower or "назад" in url_lower:
+        from handlers.general import tools_menu_command
+        state.waiting_for_video_link.pop(user_id, None)
+        await tools_menu_command(update, context)
+        return True
+    
+    # Platform-specific URL validation
+    valid_domains = {
+        "tiktok": ["tiktok.com", "vm.tiktok.com"],
+        "twitter": ["twitter.com", "x.com", "t.co"],
+        "instagram": ["instagram.com", "instagr.am"]
+    }
+    
+    is_valid = any(domain in url.lower() for domain in valid_domains.get(platform, []))
+    if not is_valid:
+        platform_names = {"tiktok": "TikTok", "twitter": "Twitter/X", "instagram": "Instagram"}
+        await update.message.reply_text(
+            TEXTS["video_invalid_link"][lang].format(platform=platform_names.get(platform, platform))
+        )
+        return True
+    
+    # İndirme başladı mesajı
+    status_msg = await update.message.reply_text(TEXTS["video_downloading"][lang])
+    
+    output_path = f"video_{user_id}"
+    downloaded_file = None
+    
+    try:
+        import yt_dlp
+        
+        ydl_opts = {
+            'outtmpl': output_path + '.%(ext)s',
+            'format': 'best[filesize<50M]/best',
+            'noplaylist': True,
+            'quiet': True,
+            'no_warnings': True,
+            'socket_timeout': 30,
+        }
+        
+        # yt-dlp ile indir (blocking, thread içinde çalıştır)
+        def download_video():
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=True)
+                return ydl.prepare_filename(info)
+        
+        downloaded_file = await asyncio.to_thread(download_video)
+        
+        # Dosya boyutu kontrolü
+        file_size = os.path.getsize(downloaded_file)
+        if file_size > 50 * 1024 * 1024:  # 50MB
+            await status_msg.edit_text(TEXTS["video_file_too_large"][lang])
+            return True
+        
+        # Video gönder
+        with open(downloaded_file, 'rb') as video_file:
+            await update.message.reply_video(
+                video_file,
+                caption=TEXTS["video_download_success"][lang],
+                reply_markup=get_main_keyboard_markup(lang)
+            )
+        
+        await status_msg.delete()
+        
+    except Exception as e:
+        error_msg = str(e)
+        if len(error_msg) > 100:
+            error_msg = error_msg[:100] + "..."
+        await status_msg.edit_text(TEXTS["video_download_error"][lang].format(error=error_msg))
+        logging.getLogger(__name__).error(f"Video download error: {e}")
+        
+    finally:
+        state.waiting_for_video_link.pop(user_id, None)
+        # Geçici dosyaları temizle
+        if downloaded_file and os.path.exists(downloaded_file):
+            os.remove(downloaded_file)
+        # Olası diğer uzantılar
+        for ext in ['.mp4', '.webm', '.mkv', '.mp4.part']:
+            temp_file = output_path + ext
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
+    
+    return True

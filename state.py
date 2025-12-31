@@ -19,6 +19,9 @@ waiting_for_edit_note_input = {} # Kullanıcı şu an hangi notu düzenliyor? {u
 games_menu_active = set()        # Oyunlar menüsünde mi?
 playing_xox = {}                 # XOX durumu (İlerisi için hazırlık)
 
+# --- VIDEO DOWNLOADER DURUMLARI ---
+waiting_for_video_link = {}      # Link bekliyor {user_id: platform}
+
 def clear_user_states(user_id):
     """Kullanıcının tüm aktif durumlarını temizler."""
     playing_tkm.discard(user_id)
@@ -38,3 +41,6 @@ def clear_user_states(user_id):
     waiting_for_edit_note_input.pop(user_id, None)
     games_menu_active.discard(user_id)
     playing_xox.pop(user_id, None)
+    
+    # Video downloader
+    waiting_for_video_link.pop(user_id, None)

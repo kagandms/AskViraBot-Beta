@@ -8,3 +8,4 @@ Pillow
 requests
 pytz
 certifi
+yt-dlp

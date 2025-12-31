@@ -362,6 +362,43 @@ TEXTS = {
         "tr": "Bu kutu dolu veya oyun bitti.",
         "en": "This box is taken or game is over.",
         "ru": "Эта клетка занята или игра окончена."
+    },
+    
+    # --- VIDEO DOWNLOADER ---
+    "video_downloader_menu_prompt": {
+        "tr": "📥 Video İndirici\n\nHangi platformdan indirmek istiyorsunuz?",
+        "en": "📥 Video Downloader\n\nWhich platform do you want to download from?",
+        "ru": "📥 Загрузчик Видео\n\nС какой платформы вы хотите скачать?"
+    },
+    "video_downloader_prompt_link": {
+        "tr": "🔗 Lütfen {platform} video/fotoğraf linkini gönderin:",
+        "en": "🔗 Please send the {platform} video/photo link:",
+        "ru": "🔗 Пожалуйста, отправьте ссылку на видео/фото {platform}:"
+    },
+    "video_downloading": {
+        "tr": "⏳ Video indiriliyor, lütfen bekleyin...",
+        "en": "⏳ Downloading video, please wait...",
+        "ru": "⏳ Загрузка видео, пожалуйста подождите..."
+    },
+    "video_download_success": {
+        "tr": "✅ Video başarıyla indirildi!",
+        "en": "✅ Video downloaded successfully!",
+        "ru": "✅ Видео успешно загружено!"
+    },
+    "video_download_error": {
+        "tr": "❌ Video indirilemedi. Link geçersiz olabilir veya içerik private olabilir.\nHata: {error}",
+        "en": "❌ Could not download video. The link may be invalid or the content may be private.\nError: {error}",
+        "ru": "❌ Не удалось загрузить видео. Ссылка может быть недействительной или контент приватный.\nОшибка: {error}"
+    },
+    "video_file_too_large": {
+        "tr": "⚠️ Video dosyası çok büyük (50MB üzeri). Telegram limiti aşıyor.",
+        "en": "⚠️ Video file is too large (over 50MB). Exceeds Telegram limit.",
+        "ru": "⚠️ Видеофайл слишком большой (более 50МБ). Превышен лимит Telegram."
+    },
+    "video_invalid_link": {
+        "tr": "⚠️ Geçersiz link. Lütfen geçerli bir {platform} linki gönderin.",
+        "en": "⚠️ Invalid link. Please send a valid {platform} link.",
+        "ru": "⚠️ Недействительная ссылка. Отправьте действительную ссылку {platform}."
     }
 }
 
@@ -374,9 +411,16 @@ MAIN_BUTTONS = {
 }
 
 TOOLS_BUTTONS = {
-    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu"], ["🔙 Geri"]],
-    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather"], ["🔙 Back"]],
-    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода"], ["🔙 Назад"]]
+    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu", "📥 Video İndir"], ["🔙 Geri"]],
+    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather", "📥 Video Download"], ["🔙 Back"]],
+    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода", "📥 Скачать Видео"], ["🔙 Назад"]]
+}
+
+# --- VIDEO DOWNLOADER MENÜSÜ ---
+VIDEO_DOWNLOADER_BUTTONS = {
+    "tr": [["📱 TikTok", "🐦 Twitter/X"], ["📸 Instagram"], ["🔙 Araçlar Menüsü"]],
+    "en": [["📱 TikTok", "🐦 Twitter/X"], ["📸 Instagram"], ["🔙 Tools Menu"]],
+    "ru": [["📱 TikTok", "🐦 Twitter/X"], ["📸 Instagram"], ["🔙 Меню Инструментов"]]
 }
 
 # --- YENİ OYUN MENÜSÜ ---
@@ -484,4 +528,10 @@ BUTTON_MAPPINGS = {
     "add_reminder_button": {"➕ hatırlatıcı ekle", "➕ add reminder", "➕ добавить напоминание"},
     "show_reminders_button": {"📋 hatırlatıcıları göster", "📋 show reminders", "📋 показать напоминания"},
     "delete_reminder_button": {"🗑️ hatırlatıcı sil", "🗑️ delete reminder", "🗑️ удалить напоминание"},
+    
+    # VIDEO DOWNLOADER
+    "video_downloader_main_button": {"📥 video indir", "📥 video download", "📥 скачать видео"},
+    "video_platform_tiktok": {"📱 tiktok"},
+    "video_platform_twitter": {"🐦 twitter/x"},
+    "video_platform_instagram": {"📸 instagram"},
 }
