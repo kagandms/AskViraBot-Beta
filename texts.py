@@ -371,9 +371,9 @@ TEXTS = {
         "ru": "📥 Загрузчик Видео\n\nС какой платформы вы хотите скачать?"
     },
     "video_downloader_prompt_link": {
-        "tr": "🔗 Lütfen {platform} video/fotoğraf linkini gönderin:",
-        "en": "🔗 Please send the {platform} video/photo link:",
-        "ru": "🔗 Пожалуйста, отправьте ссылку на видео/фото {platform}:"
+        "tr": "🔗 Lütfen {platform} video linkini gönderin:",
+        "en": "🔗 Please send the {platform} video link:",
+        "ru": "🔗 Пожалуйста, отправьте ссылку на видео {platform}:"
     },
     "video_downloading": {
         "tr": "⏳ Video indiriliyor, lütfen bekleyin...",

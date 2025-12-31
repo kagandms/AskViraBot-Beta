@@ -495,25 +495,13 @@ async def download_and_send_video(update: Update, context: ContextTypes.DEFAULT_
             await status_msg.edit_text(TEXTS["video_file_too_large"][lang])
             return True
         
-        # Dosya türüne göre gönder (video veya fotoğraf)
-        file_ext = os.path.splitext(downloaded_file)[1].lower()
-        image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
-        
-        with open(downloaded_file, 'rb') as media_file:
-            if file_ext in image_extensions:
-                # Fotoğraf gönder
-                await update.message.reply_photo(
-                    media_file,
-                    caption=TEXTS["video_download_success"][lang],
-                    reply_markup=get_main_keyboard_markup(lang)
-                )
-            else:
-                # Video gönder
-                await update.message.reply_video(
-                    media_file,
-                    caption=TEXTS["video_download_success"][lang],
-                    reply_markup=get_main_keyboard_markup(lang)
-                )
+        # Video gönder
+        with open(downloaded_file, 'rb') as video_file:
+            await update.message.reply_video(
+                video_file,
+                caption=TEXTS["video_download_success"][lang],
+                reply_markup=get_main_keyboard_markup(lang)
+            )
         
         await status_msg.delete()
         
@@ -530,7 +518,7 @@ async def download_and_send_video(update: Update, context: ContextTypes.DEFAULT_
         if downloaded_file and os.path.exists(downloaded_file):
             os.remove(downloaded_file)
         # Olası diğer uzantılar
-        for ext in ['.mp4', '.webm', '.mkv', '.mp4.part', '.jpg', '.jpeg', '.png', '.webp']:
+        for ext in ['.mp4', '.webm', '.mkv', '.mp4.part']:
             temp_file = output_path + ext
             if os.path.exists(temp_file):
                 os.remove(temp_file)
