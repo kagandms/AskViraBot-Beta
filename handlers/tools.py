@@ -12,7 +12,7 @@ import database as db
 import state
 from texts import TEXTS, PDF_CONVERTER_BUTTONS, BUTTON_MAPPINGS, CITY_NAMES_TRANSLATED, SOCIAL_MEDIA_LINKS
 from config import OPENWEATHERMAP_API_KEY, FONT_PATH
-from utils import get_input_back_keyboard_markup, get_main_keyboard_markup
+from utils import get_input_back_keyboard_markup, get_main_keyboard_markup, get_tools_keyboard_markup
 from rate_limiter import rate_limit
 
 # --- YARDIMCI FONKSİYONLAR ---
@@ -337,8 +337,8 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
                 humidity=humidity,
                 wind_speed=wind_speed
             )
-            # BAŞARILI SONUÇ: Ana menü klavyesini geri getir
-            await target_message.reply_text(msg, reply_markup=get_main_keyboard_markup(lang))
+            # BAŞARILI SONUÇ: Araçlar menüsü klavyesini geri getir
+            await target_message.reply_text(msg, reply_markup=get_tools_keyboard_markup(lang))
         else:
             await target_message.reply_text(TEXTS["weather_city_not_found"][lang].format(city=city_name))
 
@@ -362,6 +362,13 @@ async def weather_callback_query(update: Update, context: ContextTypes.DEFAULT_T
     
     if query.data.startswith("weather_"):
         city_key = query.data.split("_")[1]
+        
+        # Inline butonları sil
+        try:
+            await query.message.delete()
+        except Exception:
+            pass
+        
         # Şehir adını (Key olarak İngilizcesini) kullanarak hava durumunu çek
         await get_weather_data(update, context, city_key)
 
