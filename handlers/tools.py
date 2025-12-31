@@ -398,10 +398,14 @@ async def handle_social_media_callbacks(update: Update, context: ContextTypes.DE
         await query.message.delete()
 
 # --- VIDEO DOWNLOADER ---
-from texts import VIDEO_DOWNLOADER_BUTTONS
+from texts import VIDEO_DOWNLOADER_BUTTONS, FORMAT_SELECTION_BUTTONS
 
 def get_video_downloader_keyboard_markup(lang):
     buttons = VIDEO_DOWNLOADER_BUTTONS.get(lang, VIDEO_DOWNLOADER_BUTTONS["en"])
+    return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
+
+def get_format_selection_keyboard_markup(lang):
+    buttons = FORMAT_SELECTION_BUTTONS.get(lang, FORMAT_SELECTION_BUTTONS["en"])
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
 @rate_limit("heavy")
@@ -417,12 +421,31 @@ async def video_downloader_menu(update: Update, context: ContextTypes.DEFAULT_TY
     )
 
 async def set_video_platform(update: Update, context: ContextTypes.DEFAULT_TYPE, platform: str):
-    """Platform seçildi, link iste"""
+    """Platform seçildi, format sorulsun"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
     state.clear_user_states(user_id)
-    state.waiting_for_video_link[user_id] = platform
+    state.waiting_for_format_selection[user_id] = platform
+    
+    await update.message.reply_text(
+        TEXTS["format_selection_prompt"][lang],
+        reply_markup=get_format_selection_keyboard_markup(lang)
+    )
+
+async def set_download_format(update: Update, context: ContextTypes.DEFAULT_TYPE, download_format: str):
+    """Format seçildi, link iste"""
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    platform = state.waiting_for_format_selection.get(user_id)
+    if not platform:
+        # Format seçimi beklenmiyor, menüye yönlendir
+        await video_downloader_menu(update, context)
+        return
+    
+    state.waiting_for_format_selection.pop(user_id, None)
+    state.waiting_for_video_link[user_id] = {"platform": platform, "format": download_format}
     
     platform_names = {
         "tiktok": "TikTok",
@@ -436,15 +459,17 @@ async def set_video_platform(update: Update, context: ContextTypes.DEFAULT_TYPE,
         reply_markup=get_input_back_keyboard_markup(lang)
     )
 
-async def download_and_send_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Video linkini al, indir ve gönder"""
+async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Video/Ses linkini al, indir ve gönder"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
-    platform = state.waiting_for_video_link.get(user_id)
-    if not platform:
+    download_info = state.waiting_for_video_link.get(user_id)
+    if not download_info:
         return False
     
+    platform = download_info.get("platform")
+    download_format = download_info.get("format", "video")
     url = update.message.text.strip()
     
     # Geri butonu kontrolü
@@ -471,30 +496,66 @@ async def download_and_send_video(update: Update, context: ContextTypes.DEFAULT_
         return True
     
     # İndirme başladı mesajı
-    status_msg = await update.message.reply_text(TEXTS["video_downloading"][lang])
+    if download_format == "audio":
+        status_msg = await update.message.reply_text(TEXTS["audio_downloading"][lang])
+    else:
+        status_msg = await update.message.reply_text(TEXTS["video_downloading"][lang])
     
-    output_path = f"video_{user_id}"
+    output_path = f"media_{user_id}"
     downloaded_file = None
     
     try:
         import yt_dlp
         
-        ydl_opts = {
-            'outtmpl': output_path + '.%(ext)s',
-            'format': 'best[filesize<50M]/best',
-            'noplaylist': True,
-            'quiet': True,
-            'no_warnings': True,
-            'socket_timeout': 30,
-        }
+        if download_format == "audio":
+            # Ses indirme ayarları (MP3)
+            ydl_opts = {
+                'outtmpl': output_path + '.%(ext)s',
+                'format': 'bestaudio/best',
+                'noplaylist': True,
+                'quiet': True,
+                'no_warnings': True,
+                'socket_timeout': 30,
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '192',
+                }],
+            }
+        else:
+            # Video indirme ayarları (MP4)
+            ydl_opts = {
+                'outtmpl': output_path + '.%(ext)s',
+                'format': 'best[filesize<50M]/best',
+                'noplaylist': True,
+                'quiet': True,
+                'no_warnings': True,
+                'socket_timeout': 30,
+            }
         
         # yt-dlp ile indir (blocking, thread içinde çalıştır)
-        def download_video():
+        def download_media():
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=True)
+                if download_format == "audio":
+                    # MP3 dosyasının yolunu döndür
+                    return output_path + '.mp3'
                 return ydl.prepare_filename(info)
         
-        downloaded_file = await asyncio.to_thread(download_video)
+        downloaded_file = await asyncio.to_thread(download_media)
+        
+        # Dosya var mı kontrol et
+        if not os.path.exists(downloaded_file):
+            # Alternatif uzantıları dene
+            for ext in ['.mp3', '.mp4', '.webm', '.m4a']:
+                alt_file = output_path + ext
+                if os.path.exists(alt_file):
+                    downloaded_file = alt_file
+                    break
+        
+        if not os.path.exists(downloaded_file):
+            await status_msg.edit_text(TEXTS["video_download_error"][lang].format(error="Dosya bulunamadı"))
+            return True
         
         # Dosya boyutu kontrolü
         file_size = os.path.getsize(downloaded_file)
@@ -502,13 +563,20 @@ async def download_and_send_video(update: Update, context: ContextTypes.DEFAULT_
             await status_msg.edit_text(TEXTS["video_file_too_large"][lang])
             return True
         
-        # Video gönder
-        with open(downloaded_file, 'rb') as video_file:
-            await update.message.reply_video(
-                video_file,
-                caption=TEXTS["video_download_success"][lang],
-                reply_markup=get_main_keyboard_markup(lang)
-            )
+        # Formatına göre gönder
+        with open(downloaded_file, 'rb') as media_file:
+            if download_format == "audio":
+                await update.message.reply_audio(
+                    media_file,
+                    caption=TEXTS["audio_download_success"][lang],
+                    reply_markup=get_tools_keyboard_markup(lang)
+                )
+            else:
+                await update.message.reply_video(
+                    media_file,
+                    caption=TEXTS["video_download_success"][lang],
+                    reply_markup=get_tools_keyboard_markup(lang)
+                )
         
         await status_msg.delete()
         
@@ -517,7 +585,7 @@ async def download_and_send_video(update: Update, context: ContextTypes.DEFAULT_
         if len(error_msg) > 100:
             error_msg = error_msg[:100] + "..."
         await status_msg.edit_text(TEXTS["video_download_error"][lang].format(error=error_msg))
-        logging.getLogger(__name__).error(f"Video download error: {e}")
+        logging.getLogger(__name__).error(f"Media download error: {e}")
         
     finally:
         state.waiting_for_video_link.pop(user_id, None)
@@ -525,7 +593,7 @@ async def download_and_send_video(update: Update, context: ContextTypes.DEFAULT_
         if downloaded_file and os.path.exists(downloaded_file):
             os.remove(downloaded_file)
         # Olası diğer uzantılar
-        for ext in ['.mp4', '.webm', '.mkv', '.mp4.part']:
+        for ext in ['.mp4', '.webm', '.mkv', '.mp4.part', '.mp3', '.m4a', '.opus']:
             temp_file = output_path + ext
             if os.path.exists(temp_file):
                 os.remove(temp_file)

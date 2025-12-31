@@ -83,7 +83,7 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await tools.get_weather_data(update, context, text_raw)
         return
     if user_id in state.waiting_for_video_link:
-        await tools.download_and_send_video(update, context)
+        await tools.download_and_send_media(update, context)
         return
 
     # EĞER HİÇBİR STATE'E GİRMEDİYSE VE METİN YOKSA (Beklenmeyen Dosya)
@@ -170,6 +170,12 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await tools.set_video_platform(update, context, "twitter")
     elif text in BUTTON_MAPPINGS.get("video_platform_instagram", set()):
         await tools.set_video_platform(update, context, "instagram")
+    elif text in BUTTON_MAPPINGS.get("format_video", set()):
+        await tools.set_download_format(update, context, "video")
+    elif text in BUTTON_MAPPINGS.get("format_audio", set()):
+        await tools.set_download_format(update, context, "audio")
+    elif text in BUTTON_MAPPINGS.get("back_to_platform", set()):
+        await tools.video_downloader_menu(update, context)
 
     # HATIRLATICI MENÜSÜ
     elif text in BUTTON_MAPPINGS.get("add_reminder_button", set()):

@@ -399,6 +399,21 @@ TEXTS = {
         "tr": "⚠️ Geçersiz link. Lütfen geçerli bir {platform} linki gönderin.",
         "en": "⚠️ Invalid link. Please send a valid {platform} link.",
         "ru": "⚠️ Недействительная ссылка. Отправьте действительную ссылку {platform}."
+    },
+    "format_selection_prompt": {
+        "tr": "🎥 Hangi formatı indirmek istiyorsunuz?",
+        "en": "🎥 Which format do you want to download?",
+        "ru": "🎥 В каком формате вы хотите скачать?"
+    },
+    "audio_downloading": {
+        "tr": "⏳ Ses dosyası indiriliyor, lütfen bekleyin...",
+        "en": "⏳ Downloading audio, please wait...",
+        "ru": "⏳ Загрузка аудио, пожалуйста подождите..."
+    },
+    "audio_download_success": {
+        "tr": "✅ Ses dosyası başarıyla indirildi!",
+        "en": "✅ Audio downloaded successfully!",
+        "ru": "✅ Аудио успешно загружено!"
     }
 }
 
@@ -421,6 +436,13 @@ VIDEO_DOWNLOADER_BUTTONS = {
     "tr": [["📱 TikTok", "🐦 Twitter/X"], ["📸 Instagram"], ["🔙 Araçlar Menüsü"]],
     "en": [["📱 TikTok", "🐦 Twitter/X"], ["📸 Instagram"], ["🔙 Tools Menu"]],
     "ru": [["📱 TikTok", "🐦 Twitter/X"], ["📸 Instagram"], ["🔙 Меню Инструментов"]]
+}
+
+# --- FORMAT SEÇİM MENÜSÜ ---
+FORMAT_SELECTION_BUTTONS = {
+    "tr": [["🎥 Video (MP4)", "🎵 Ses (MP3)"], ["🔙 Platform Seçimi"]],
+    "en": [["🎥 Video (MP4)", "🎵 Audio (MP3)"], ["🔙 Platform Selection"]],
+    "ru": [["🎥 Видео (MP4)", "🎵 Аудио (MP3)"], ["🔙 Выбор Платформы"]]
 }
 
 # --- YENİ OYUN MENÜSÜ ---
@@ -534,4 +556,9 @@ BUTTON_MAPPINGS = {
     "video_platform_tiktok": {"📱 tiktok"},
     "video_platform_twitter": {"🐦 twitter/x"},
     "video_platform_instagram": {"📸 instagram"},
+    
+    # FORMAT SELECTION
+    "format_video": {"🎥 video (mp4)"},
+    "format_audio": {"🎵 ses (mp3)", "🎵 audio (mp3)", "🎵 аудио (mp3)"},
+    "back_to_platform": {"🔙 platform seçimi", "🔙 platform selection", "🔙 выбор платформы"},
 }

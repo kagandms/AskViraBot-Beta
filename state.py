@@ -20,7 +20,8 @@ games_menu_active = set()        # Oyunlar menüsünde mi?
 playing_xox = {}                 # XOX durumu (İlerisi için hazırlık)
 
 # --- VIDEO DOWNLOADER DURUMLARI ---
-waiting_for_video_link = {}      # Link bekliyor {user_id: platform}
+waiting_for_video_link = {}      # Link bekliyor {user_id: {"platform": str, "format": str}}
+waiting_for_format_selection = {}  # Format seçimi bekliyor {user_id: platform}
 
 def clear_user_states(user_id):
     """Kullanıcının tüm aktif durumlarını temizler."""
@@ -44,3 +45,4 @@ def clear_user_states(user_id):
     
     # Video downloader
     waiting_for_video_link.pop(user_id, None)
+    waiting_for_format_selection.pop(user_id, None)
