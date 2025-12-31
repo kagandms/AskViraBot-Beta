@@ -1,160 +1,297 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+import asyncio
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes
 import database as db
 import state
 from texts import TEXTS, BUTTON_MAPPINGS
-from config import NOTES_PER_PAGE
-from utils import get_notes_keyboard_markup, get_delete_notes_keyboard_markup, get_input_back_keyboard_markup, get_main_keyboard_markup
+from utils import get_notes_keyboard_markup, get_input_back_keyboard_markup
 
+# --- NOTLAR MENÜSÜ ---
 async def notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    lang = db.get_user_lang(user_id)
+    # DB İŞLEMİ: Asenkron
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
     state.clear_user_states(user_id)
-    state.notes_in_menu.add(user_id)
-    await update.message.reply_text(
-        TEXTS["notes_menu_prompt"][lang],
-        reply_markup=get_notes_keyboard_markup(lang)
-    )
+    
+    if update.callback_query:
+        await update.callback_query.message.reply_text(
+            TEXTS["notes_menu_prompt"][lang],
+            reply_markup=get_notes_keyboard_markup(lang)
+        )
+    else:
+        await update.message.reply_text(
+            TEXTS["notes_menu_prompt"][lang],
+            reply_markup=get_notes_keyboard_markup(lang)
+        )
 
-async def deletenotes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def addnote_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    lang = db.get_user_lang(user_id)
-    state.clear_user_states(user_id)
-    state.deleting_notes.add(user_id)
-    await update.message.reply_text(
-        TEXTS["delete_notes_menu_prompt"][lang],
-        reply_markup=get_delete_notes_keyboard_markup(lang)
-    )
+    # DB İŞLEMİ: Asenkron
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    note_content = ' '.join(context.args)
+    if note_content:
+        # DB İŞLEMİ: Asenkron
+        await asyncio.to_thread(db.add_note, user_id, note_content)
+        await update.message.reply_text(TEXTS["note_saved"][lang] + note_content)
+    else:
+        await prompt_new_note(update, context)
 
 async def prompt_new_note(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    lang = db.get_user_lang(user_id)
+    # DB İŞLEMİ: Asenkron
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
     state.clear_user_states(user_id)
-    state.notes_in_menu.add(user_id) 
     state.waiting_for_new_note_input.add(user_id)
     await update.message.reply_text(TEXTS["prompt_new_note"][lang], reply_markup=get_input_back_keyboard_markup(lang))
 
 async def handle_new_note_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    lang = db.get_user_lang(user_id)
+    # DB İŞLEMİ: Asenkron
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
     text = update.message.text
+    text_lower = text.lower().strip()
 
-    if text.lower() in BUTTON_MAPPINGS["menu"]:
-        state.clear_user_states(user_id)
+    is_cancel_command = (
+        text_lower in BUTTON_MAPPINGS["menu"] or 
+        text_lower in ["geri", "back", "назад"]
+    )
+
+    if is_cancel_command:
+        state.waiting_for_new_note_input.discard(user_id) 
         await notes_menu(update, context)
         return
 
-    db.add_user_note(user_id, text)
-    state.clear_user_states(user_id) 
-    state.notes_in_menu.add(user_id) 
+    # DB İŞLEMİ: Asenkron (Not Ekleme)
+    await asyncio.to_thread(db.add_note, user_id, text)
+    
+    state.waiting_for_new_note_input.discard(user_id)
     await update.message.reply_text(TEXTS["note_saved"][lang] + text, reply_markup=get_notes_keyboard_markup(lang))
 
 async def shownotes_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = str(update.effective_user.id)
-    lang = db.get_user_lang(user_id)
-    notes_data = db.get_user_notes(user_id)
-    if not notes_data:
-        await update.message.reply_text(TEXTS["no_notes"][lang], reply_markup=get_notes_keyboard_markup(lang))
-        return
-    message = TEXTS["notes_header"][lang] + "\n".join(f"{i}. {note['content']}" for i, note in enumerate(notes_data, 1))
-    await update.message.reply_text(message, reply_markup=get_notes_keyboard_markup(lang))
+    user_id = update.effective_user.id
+    # DB İŞLEMİ: Asenkron (Dil ve Notlar)
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    notes = await asyncio.to_thread(db.get_notes, user_id)
+    
+    if not notes:
+        await update.message.reply_text(TEXTS["no_notes"][lang])
+    else:
+        message = TEXTS["notes_header"][lang]
+        for i, note in enumerate(notes, 1):
+            message += f"{i}. {note}\n"
+        await update.message.reply_text(message)
 
-async def addnote_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = str(update.effective_user.id)
-    lang = db.get_user_lang(user_id)
-    note_content = ' '.join(context.args) if context.args else ""
-    if not note_content:
-        await update.message.reply_text(TEXTS["addnote_no_content"][lang])
+# --- NOT SİLME ---
+async def deletenotes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    # DB İŞLEMİ: Asenkron
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    notes = await asyncio.to_thread(db.get_notes, user_id)
+    
+    if not notes:
+        await update.message.reply_text(TEXTS["no_notes"][lang]) 
         return
-    db.add_user_note(user_id, note_content)
-    await update.message.reply_text(TEXTS["note_saved"][lang] + note_content, reply_markup=get_main_keyboard_markup(lang))
+
+    page = context.user_data.get('delete_notes_page', 0)
+    notes_per_page = 5
+    start_index = page * notes_per_page
+    end_index = start_index + notes_per_page
+    current_notes = notes[start_index:end_index]
+    
+    keyboard = []
+    for i, note in enumerate(current_notes):
+        note_index = start_index + i
+        safe_note = note[:20] + "..." if len(note) > 20 else note
+        button_text = f"{TEXTS['note_button_prefix'][lang]}{note_index + 1}: {safe_note}"
+        keyboard.append([InlineKeyboardButton(button_text, callback_data=f"delete_note_{note_index}")])
+    
+    nav_row = []
+    if page > 0:
+        nav_row.append(InlineKeyboardButton(TEXTS["previous_page"][lang], callback_data="notes_prev_page"))
+    if end_index < len(notes):
+        nav_row.append(InlineKeyboardButton(TEXTS["next_page"][lang], callback_data="notes_next_page"))
+    if nav_row:
+        keyboard.append(nav_row)
+        
+    keyboard.append([InlineKeyboardButton(TEXTS["back_button_inline"][lang], callback_data="delete_notes_back_inline")])
+    
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    if update.callback_query:
+        await update.callback_query.edit_message_text(TEXTS["prompt_select_note_to_delete"][lang], reply_markup=reply_markup)
+    else:
+        await update.message.reply_text(TEXTS["prompt_select_note_to_delete"][lang], reply_markup=reply_markup)
 
 async def select_note_to_delete_prompt(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    lang = db.get_user_lang(user_id)
-    notes_data = db.get_user_notes(user_id)
-    if not notes_data:
-        msg = TEXTS["no_notes"][lang]
-        markup = get_delete_notes_keyboard_markup(lang)
-        if update.callback_query: await update.callback_query.edit_message_text(msg, reply_markup=markup)
-        else: await update.message.reply_text(msg, reply_markup=markup)
-        state.deleting_notes.discard(user_id)
-        return
-    state.deleting_notes.add(user_id)
-    state.user_notes_page_index[user_id] = 0
-    await send_notes_for_deletion(update, context)
-
-async def send_notes_for_deletion(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    lang = db.get_user_lang(user_id)
-    notes_data = db.get_user_notes(user_id)
-    current_page = state.user_notes_page_index.get(user_id, 0)
-
-    if not notes_data:
-        state.clear_user_states(user_id)
-        msg = TEXTS["no_notes"][lang]
-        markup = get_delete_notes_keyboard_markup(lang)
-        if update.callback_query: await update.callback_query.edit_message_text(msg, reply_markup=markup)
-        else: await update.message.reply_text(msg, reply_markup=markup)
-        return
-
-    start_index = current_page * NOTES_PER_PAGE
-    end_index = start_index + NOTES_PER_PAGE
-    display_notes = notes_data[start_index:end_index]
-
-    keyboard = []
-    for i, note_obj in enumerate(display_notes):
-        note_id = note_obj['id']
-        note_content = note_obj['content']
-        button_text = f"{TEXTS['note_button_prefix'][lang]}{start_index + i + 1}: {note_content}"
-        if len(button_text) > 50: button_text = button_text[:47] + "..."
-        keyboard.append([InlineKeyboardButton(button_text, callback_data=f"delete_note_{note_id}")])
-
-    pagination_buttons = []
-    if current_page > 0: pagination_buttons.append(InlineKeyboardButton(TEXTS["previous_page"][lang], callback_data="notes_prev_page"))
-    if end_index < len(notes_data): pagination_buttons.append(InlineKeyboardButton(TEXTS["next_page"][lang], callback_data="notes_next_page"))
-    if pagination_buttons: keyboard.append(pagination_buttons)
-    keyboard.append([InlineKeyboardButton(TEXTS["back_button_inline"][lang], callback_data="delete_notes_back_inline")])
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    message = TEXTS["prompt_select_note_to_delete"][lang] + "\n\n" + "\n".join(f"{start_index + i + 1}. {n['content']}" for i, n in enumerate(display_notes))
-
-    if update.callback_query: await update.callback_query.edit_message_text(message, reply_markup=reply_markup)
-    else: await update.message.reply_text(message, reply_markup=reply_markup)
+    await deletenotes_menu(update, context)
 
 async def delete_note_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     user_id = query.from_user.id
-    lang = db.get_user_lang(user_id)
+    # DB İŞLEMİ: Asenkron
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
     await query.answer()
+    
+    if query.data == "delete_notes_back_inline":
+        await query.message.delete()
+        await notes_menu(update, context)
+        return
 
     if query.data == "notes_next_page":
-        state.user_notes_page_index[user_id] = state.user_notes_page_index.get(user_id, 0) + 1
-        await send_notes_for_deletion(update, context)
+        context.user_data['delete_notes_page'] = context.user_data.get('delete_notes_page', 0) + 1
+        await deletenotes_menu(update, context)
         return
-    elif query.data == "notes_prev_page":
-        state.user_notes_page_index[user_id] = max(0, state.user_notes_page_index.get(user_id, 0) - 1)
-        await send_notes_for_deletion(update, context)
-        return
-    elif query.data == "delete_notes_back_inline":
-        state.clear_user_states(user_id)
-        await query.edit_message_text(TEXTS["delete_notes_menu_prompt"][lang], reply_markup=get_delete_notes_keyboard_markup(lang))
+        
+    if query.data == "notes_prev_page":
+        context.user_data['delete_notes_page'] = max(0, context.user_data.get('delete_notes_page', 0) - 1)
+        await deletenotes_menu(update, context)
         return
 
     if query.data.startswith("delete_note_"):
+        note_index = int(query.data.split("_")[2])
+        # DB İŞLEMİ: Asenkron
+        notes = await asyncio.to_thread(db.get_notes, user_id)
+        
+        if 0 <= note_index < len(notes):
+            deleted_note = notes[note_index]
+            # DB İŞLEMİ: Asenkron (Not Silme)
+            await asyncio.to_thread(db.delete_note, user_id, note_index + 1)
+            
+            await query.edit_message_text(
+                f"{TEXTS['note_deleted'][lang]}: {deleted_note}",
+                reply_markup=None
+            )
+        else:
+             await query.edit_message_text(TEXTS["invalid_note_number"][lang])
+
+# --- NOT DÜZENLEME ---
+async def edit_notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    # DB İŞLEMİ: Asenkron
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    notes = await asyncio.to_thread(db.get_notes, user_id)
+    
+    if not notes:
+        await update.message.reply_text(TEXTS["no_notes"][lang])
+        return
+
+    keyboard = []
+    for i, note in enumerate(notes):
+        safe_note = note[:20] + "..." if len(note) > 20 else note
+        button_text = f"{TEXTS['note_button_prefix'][lang]}{i + 1}: {safe_note}"
+        keyboard.append([InlineKeyboardButton(button_text, callback_data=f"edit_note_{i}")])
+    
+    keyboard.append([InlineKeyboardButton(TEXTS["back_button_inline"][lang], callback_data="notes_back_inline")])
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    if update.callback_query:
+        await update.callback_query.edit_message_text(TEXTS["edit_notes_menu_prompt"][lang], reply_markup=reply_markup)
+    else:
+        await update.message.reply_text(TEXTS["edit_notes_menu_prompt"][lang], reply_markup=reply_markup)
+
+async def handle_edit_note_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    user_id = query.from_user.id
+    # DB İŞLEMİ: Asenkron
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    await query.answer()
+
+    if query.data == "notes_back_inline":
+        await query.message.delete()
+        await notes_menu(update, context)
+        return
+        
+    if query.data.startswith("edit_note_"):
+        note_index = int(query.data.split("_")[2])
+        context.user_data['editing_note_index'] = note_index
+        
+        state.clear_user_states(user_id)
+        state.waiting_for_edit_note_input[user_id] = note_index
+        
+        # DB İŞLEMİ: Asenkron
+        notes = await asyncio.to_thread(db.get_notes, user_id)
+        current_note = notes[note_index]
+        
+        # Mevcut notu göster ve düzenleme talimatı ver
+        edit_prompt = {
+            "tr": "✏️ *Mevcut Notunuz:*\n\n`{note}`\n\n👆 Yukarıdaki notu kopyalayıp düzenleyebilir veya yeni içerik yazabilirsiniz.",
+            "en": "✏️ *Your Current Note:*\n\n`{note}`\n\n👆 You can copy and edit the note above, or write new content.",
+            "ru": "✏️ *Ваша текущая заметка:*\n\n`{note}`\n\n👆 Вы можете скопировать и отредактировать заметку выше или написать новое содержимое."
+        }
+        
+        # Markdown formatını bozmaması için backtickleri temizle
+        safe_note = current_note.replace("`", "'")
+        msg = edit_prompt.get(lang, edit_prompt["en"]).format(note=safe_note)
+        
+        # Yapıştır ve İptal butonları
+        paste_text = {"tr": "📝 Yapıştır (yazıya ekle)", "en": "📝 Paste to input", "ru": "📝 Вставить"}
+        cancel_text = {"tr": "❌ İptal", "en": "❌ Cancel", "ru": "❌ Отмена"}
+        keyboard = [
+            [InlineKeyboardButton(paste_text.get(lang, "📝 Paste"), switch_inline_query_current_chat=current_note)],
+            [InlineKeyboardButton(cancel_text.get(lang, "❌ Cancel"), callback_data="notes_back_inline")]
+        ]
+        
+        # Eski mesajı sil ve yeni mesaj gönder
         try:
-            note_id_to_delete = int(query.data.split("_")[2])
-            success = db.delete_user_note_by_id(note_id_to_delete)
-            if success:
-                notes_data = db.get_user_notes(user_id)
-                current_page_notes_count = len(notes_data) - (state.user_notes_page_index.get(user_id, 0) * NOTES_PER_PAGE)
-                if current_page_notes_count <= 0 and state.user_notes_page_index.get(user_id, 0) > 0:
-                    state.user_notes_page_index[user_id] -= 1
-                await query.edit_message_text(f"{TEXTS['note_deleted'][lang]}")
-                await send_notes_for_deletion(update, context)
-            else:
-                await query.edit_message_text(TEXTS["error_occurred"][lang])
-                await send_notes_for_deletion(update, context)
-        except (ValueError, IndexError) as e:
-            await query.edit_message_text(TEXTS["error_occurred"][lang] + str(e))
-            await send_notes_for_deletion(update, context)
+            await query.message.delete()
+        except Exception:
+            pass
+        
+        # Inline butonlu mesaj
+        sent_msg1 = await context.bot.send_message(
+            chat_id=user_id,
+            text=msg,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode="Markdown"
+        )
+        
+        # Altta Geri butonu (ReplyKeyboard)
+        back_btn = {"tr": "◀️ Geri", "en": "◀️ Back", "ru": "◀️ Назад"}
+        reply_kb = ReplyKeyboardMarkup([[back_btn.get(lang, "◀️ Back")]], resize_keyboard=True)
+        sent_msg2 = await context.bot.send_message(
+            chat_id=user_id,
+            text="👇",
+            reply_markup=reply_kb
+        )
+        
+        # Mesaj ID'lerini kaydet (geri basınca silinecek)
+        context.user_data['edit_note_msg_ids'] = [sent_msg1.message_id, sent_msg2.message_id]
+
+async def handle_edit_note_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    # DB İŞLEMİ: Asenkron
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    new_text = update.message.text
+    text_lower = new_text.lower().strip()
+    
+    is_cancel_command = (
+        text_lower in BUTTON_MAPPINGS["menu"] or 
+        text_lower in ["geri", "back", "назад", "◀️ geri", "◀️ back", "◀️ назад"]
+    )
+
+    if is_cancel_command:
+        state.waiting_for_edit_note_input.pop(user_id, None)
+        context.user_data.pop('editing_note_index', None)
+        
+        # Düzenleme mesajlarını sil
+        msg_ids = context.user_data.pop('edit_note_msg_ids', [])
+        for msg_id in msg_ids:
+            try:
+                await context.bot.delete_message(chat_id=user_id, message_id=msg_id)
+            except Exception:
+                pass
+        
+        # Düzenlenecek notlar sayfasına geri dön
+        await edit_notes_menu(update, context)
+        return
+
+    note_index = context.user_data.get('editing_note_index')
+    if note_index is not None:
+        # DB İŞLEMİ: Asenkron (Güncelleme)
+        await asyncio.to_thread(db.update_note, user_id, note_index, new_text)
+        state.waiting_for_edit_note_input.pop(user_id, None)
+        await update.message.reply_text(TEXTS["note_updated"][lang], reply_markup=get_notes_keyboard_markup(lang))
+    else:
+        await update.message.reply_text(TEXTS["error_occurred"][lang])

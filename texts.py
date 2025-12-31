@@ -13,30 +13,48 @@ CITY_NAMES_TRANSLATED = {
 }
 
 TEXTS = {
+    # --- YENİ EKLENENLER: DÜZENLEME & OYUN & MENÜ ---
+    "edit_notes_menu_prompt": {
+        "tr": "Düzenlemek istediğiniz notu seçin:",
+        "en": "Select the note you want to edit:",
+        "ru": "Выберите заметку для редактирования:"
+    },
+    "prompt_select_note_to_edit": {
+        "tr": "✏️ Lütfen içeriğini değiştirmek istediğiniz notu seçin:",
+        "en": "✏️ Please select the note you want to edit:",
+        "ru": "✏️ Пожалуйста, выберите заметку для изменения:"
+    },
+    "prompt_new_content_for_note": {
+        "tr": "Seçilen not için YENİ içeriği yazın:",
+        "en": "Type the NEW content for the selected note:",
+        "ru": "Введите НОВОЕ содержимое для выбранной заметки:"
+    },
+    "note_updated": {
+        "tr": "✅ Not başarıyla güncellendi.",
+        "en": "✅ Note successfully updated.",
+        "ru": "✅ Заметка успешно обновлена."
+    },
+    "games_menu_prompt": {
+        "tr": "🎮 Oyun Odasına Hoş Geldiniz! Bir oyun seçin:",
+        "en": "🎮 Welcome to Game Room! Choose a game:",
+        "ru": "🎮 Добро пожаловать в игровую комнату! Выберите игру:"
+    },
+    "tools_menu_prompt": {
+        "tr": "🛠 Araçlar Menüsüne Hoş Geldiniz! Bir araç seçin:",
+        "en": "🛠 Welcome to Tools Menu! Choose a tool:",
+        "ru": "🛠 Добро пожаловать в меню инструментов! Выберите инструмент:"
+    },
+    
+    # ... (Eski metinler korunuyor) ...
     "start": {
-        "tr": "Merhaba! Ben senin kişisel asistan botunum. Komutlar için /menu yazabilirsin.",
-        "en": "Hello! I am your personal assistant bot. You can type /menu for commands.",
-        "ru": "Привет, я твой личный помощник. Ты можешь ввести /menu для команд."
+        "tr": "Merhaba! Ben DruzhikBot. Seni tekrar görmek güzel.\n/menu yazarak komutlara ulaşabilirsin.",
+        "en": "Hello! I am DruzhikBot. Good to see you again.\nYou can access commands by typing /menu.",
+        "ru": "Привет! Я DruzhikBot. Рад снова видеть тебя.\nВы можете получить доступ к командам, набрав /menu."
     },
     "menu_prompt": {
-        "tr": "Menüden bir işlem seçin 👇",
-        "en": "Please choose an action from the menu 👇",
-        "ru": "Пожалуйста, выберите действие из меню 👇"
-    },
-    "notes_menu_prompt": {
-        "tr": "Notlar menüsünden bir işlem seçin:",
-        "en": "Choose an action from the notes menu:",
-        "ru": "Выберите действие из меню заметок:"
-    },
-    "delete_notes_menu_prompt": {
-        "tr": "Silmek için bir seçenek belirleyin:",
-        "en": "Choose a delete option:",
-        "ru": "Выберите вариант удаления:"
-    },
-    "prompt_select_note_to_delete": {
-        "tr": "Lütfen silmek istediğiniz notu seçin:",
-        "en": "Please select the note you want to delete:",
-        "ru": "Пожалуйста, выберите заметку, которую хотите удалить:"
+        "tr": "Ana Menüdesiniz. Ne yapmak istersiniz? 👇",
+        "en": "You are in the Main Menu. What would you like to do? 👇",
+        "ru": "Вы в Главном меню. Что бы вы хотели сделать? 👇"
     },
     "language_set": {
         "tr": "Dil Türkçe olarak ayarlandı.",
@@ -52,6 +70,21 @@ TEXTS = {
         "tr": "Kayıtlı Notlarınız:\n",
         "en": "Your saved notes:\n",
         "ru": "Ваши сохраненные заметки:\n"
+    },
+    "notes_menu_prompt": {
+        "tr": "Notlar menüsünden bir işlem seçin:",
+        "en": "Choose an action from the notes menu:",
+        "ru": "Выберите действие из меню заметок:"
+    },
+    "delete_notes_menu_prompt": {
+        "tr": "Silmek için bir seçenek belirleyin:",
+        "en": "Choose a delete option:",
+        "ru": "Выберите вариант удаления:"
+    },
+    "prompt_select_note_to_delete": {
+        "tr": "Lütfen silmek istediğiniz notu seçin:",
+        "en": "Please select the note you want to delete:",
+        "ru": "Пожалуйста, выберите заметку, которую хотите удалить:"
     },
     "invalid_note_number": {
         "tr": "Geçersiz not numarası.",
@@ -71,7 +104,7 @@ TEXTS = {
     "addnote_no_content": {
         "tr": "Lütfen not almak için /addnote komutundan sonra notunu yaz.",
         "en": "Please write your note after /addnote command.",
-        "ru": "Please write your note after /addnote command."
+        "ru": "Пожалуйста, напишите заметку после команды /addnote."
     },
     "note_saved": {
         "tr": "Notunuz kaydedildi: ",
@@ -96,7 +129,7 @@ TEXTS = {
     "remind_usage": {
         "tr": "Lütfen bir saat ve mesaj girin. Örn: `/remind 14:30 toplantı` veya `10:00 2025-12-31 yeni yıl`",
         "en": "Please enter a time and message. Ex: `/remind 14:30 meeting` or `10:00 2025-12-31 new year`",
-        "ru": "Пожалуйста, введите время ve mesaj girin. Örn: `/remind 14:30 toplantı` veya `10:00 2025-12-31 yeni yıl`"
+        "ru": "Пожалуйста, введите время и сообщение. Пример: `/remind 14:30 встреча` или `10:00 2025-12-31 новый год`"
     },
     "remind_prompt_input": {
         "tr": "Lütfen hatırlatıcı için saati ve mesajı girin. Örn: `14:30 toplantı` veya `10:00 2025-12-31 yeni yıl`",
@@ -153,15 +186,10 @@ TEXTS = {
         "en": "Bot",
         "ru": "Я"
     },
-    "decision_wheel_usage": {
-        "tr": "Lütfen en az iki seçenek girin. Örn: `/decisionwheel kahve çay su`",
-        "en": "Please enter at least two options. Example: `/decisionwheel coffee tea water`",
-        "ru": "Пожалуйста, введите как минимум два варианта. Пример: `/decisionwheel кофе чай вода`"
-    },
-    "decision_wheel_chosen": {
-        "tr": "Karar çarkı seçti: ",
-        "en": "The wheel has chosen: ",
-        "ru": "Колесо выбрало: "
+    "tkm_invalid_input": {
+        "tr": "Lütfen sadece butonları kullan: Taş, Kağıt veya Makas.",
+        "en": "Please only use buttons: Rock, Paper, or Scissors.",
+        "ru": "Пожалуйста, используйте только кнопки: Камень, Ножницы или Бумага."
     },
     "next_page": {
         "tr": "Sonraki Sayfa",
@@ -251,7 +279,7 @@ TEXTS = {
     "developer_info_prompt": { 
         "tr": "Sosyal medya hesaplarıma aşağıdaki bağlantılardan ulaşabilirsiniz:",
         "en": "You can reach my social media accounts via the links below:",
-        "ru": "You can reach my social media accounts via the links below:"
+        "ru": "Вы можете связаться со мной через социальные сети по ссылкам ниже:"
     },
     "reminder_menu_prompt": {
         "tr": "Hatırlatıcılar menüsünden bir işlem seçin:",
@@ -266,7 +294,7 @@ TEXTS = {
     "reminders_header": {
         "tr": "Kayıtlı Hatırlatıcılarınız:\n",
         "en": "Your saved reminders:\n",
-        "ru": "Ваши сохраненные reminders:\n"
+        "ru": "Ваши сохранённые напоминания:\n"
     },
     "prompt_select_reminder_to_delete": {
         "tr": "Lütfen silmek istediğiniz hatırlatıcıyı seçin:",
@@ -297,38 +325,92 @@ TEXTS = {
         "tr": "🌐 Web Sitem",
         "en": "🌐 My Website",
         "ru": "🌐 Мой Веб-сайт"
+    },
+
+    # --- XOX (TIC TAC TOE) ---
+    "xox_welcome": {
+        "tr": "XOX (Tic-Tac-Toe) oyununa hoş geldin! Hamle yapmak için bir kutuya tıkla.",
+        "en": "Welcome to Tic-Tac-Toe! Click a box to make a move.",
+        "ru": "Добро пожаловать в Крестики-нолики! Нажмите на клетку, чтобы сделать ход."
+    },
+    "xox_turn_user": {
+        "tr": "Sıra sende (X) 👇",
+        "en": "Your turn (X) 👇",
+        "ru": "Твой ход (X) 👇"
+    },
+    "xox_turn_bot": {
+        "tr": "Sıra bende (O)...",
+        "en": "My turn (O)...",
+        "ru": "Мой ход (O)..."
+    },
+    "xox_win": {
+        "tr": "🎉 Tebrikler! Sen kazandın!",
+        "en": "🎉 Congratulations! You won!",
+        "ru": "🎉 Поздравляю! Ты выиграл!"
+    },
+    "xox_lose": {
+        "tr": "🤖 Ben kazandım! Bir dahaki sefere...",
+        "en": "🤖 I won! Maybe next time...",
+        "ru": "🤖 Я выиграл! В следующий раз..."
+    },
+    "xox_draw": {
+        "tr": "🤝 Berabere!",
+        "en": "🤝 It's a draw!",
+        "ru": "🤝 Ничья!"
+    },
+    "xox_invalid_move": {
+        "tr": "Bu kutu dolu veya oyun bitti.",
+        "en": "This box is taken or game is over.",
+        "ru": "Эта клетка занята или игра окончена."
     }
 }
 
-# --- BUTTONS ---
+# --- YENİLENMİŞ ANA MENÜ (Araçlar buraya dağıtıldı, Oyunlar ayrıldı) ---
+# --- YENİLENMİŞ ANA MENÜ (Araçlar buraya dağıtıldı, Oyunlar ayrıldı) ---
 MAIN_BUTTONS = {
-    "tr": [["📝 Notlar", "🎲 Zar", "🪙 Yazı Tura"], ["🕒 Saat", "⏰ Hatırlatıcı", "T-K-M 🪨📄✂️"], ["📷 QR Kod Oluştur", "📄 PDF Dönüştürücü", "☀️ Hava Durumu"], ["🌐 Dil Değiştir", "👨‍💻 Geliştirici"]],
-    "en": [["📝 Notes", "🎲 Dice", "🪙 Coinflip"], ["🕒 Time", "⏰ Reminder", "R-P-S 🪨📄✂️"], ["📷 Create QR Code", "📄 PDF Converter", "☀️ Weather"], ["🌐 Change Language", "👨‍💻 Developer"]],
-    "ru": [["📝 Заметки", "🎲 Кубик", "🪙 Монета"], ["🕒 Время", "⏰ Напоминание", "К-Б-Н 🪨📄✂️"], ["📷 Создать QR-код", "📄 Конвертер PDF", "☀️ Погода"], ["🌐 Сменить язык", "👨‍💻 Разработчик"]],
+    "tr": [["🛠 Araçlar", "🎮 Oyun Odası"], ["🌐 Dil Değiştir", "👨‍💻 Geliştirici"]],
+    "en": [["🛠 Tools", "🎮 Game Room"], ["🌐 Change Language", "👨‍💻 Developer"]],
+    "ru": [["🛠 Инструменты", "🎮 Игровая Комната"], ["🌐 Сменить Язык", "👨‍💻 Разработчик"]]
 }
 
+TOOLS_BUTTONS = {
+    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu"], ["🔙 Geri"]],
+    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather"], ["🔙 Back"]],
+    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода"], ["🔙 Назад"]]
+}
+
+# --- YENİ OYUN MENÜSÜ ---
+# Karar çarkı kaldırıldı, düzen 2x2 yapıldı
+GAMES_BUTTONS = {
+    "tr": [["❌⭕ XOX", "🎲 Zar"], ["🪙 Yazı Tura", "🪨📄✂️ T-K-M"], ["🔙 Geri"]],
+    "en": [["❌⭕ XOX", "🎲 Dice"], ["🪙 Coinflip", "🪨📄✂️ R-P-S"], ["🔙 Back"]],
+    "ru": [["❌⭕ XOX", "🎲 Кубик"], ["🪙 Монета", "🪨📄✂️ К-Б-Н"], ["🔙 Назад"]]
+}
+
+# --- NOTLAR MENÜSÜ ---
+# --- NOTLAR MENÜSÜ ---
 NOTES_BUTTONS = {
-    "tr": [["➕ Not Ekle"], ["📋 Tüm Notları Göster"], ["🗑️ Not Sil"], ["🔙 Geri"]],
-    "en": [["➕ Add Note"], ["📋 Show All Notes"], ["🗑️ Delete Note"], ["🔙 Back"]],
-    "ru": [["➕ Добавить Заметку"], ["📋 Показать Все Заметки"], ["🗑️ Удалить Заметку"], ["🔙 Назад"]]
+    "tr": [["➕ Not Ekle", "✏️ Not Düzenle"], ["📋 Tüm Notları Göster", "🗑️ Not Sil"], ["🔙 Araçlar Menüsü"]],
+    "en": [["➕ Add Note", "✏️ Edit Note"], ["📋 Show All Notes", "🗑️ Delete Note"], ["🔙 Tools Menu"]],
+    "ru": [["➕ Добавить", "✏️ Изменить"], ["📋 Показать Все", "🗑️ Удалить"], ["🔙 Меню Инструментов"]]
 }
 
 DELETE_NOTES_BUTTONS = {
-    "tr": [["✍️ Not Seçerek Sil"], ["🔙 Geri"]],
-    "en": [["✍️ Select Note to Delete"], ["🔙 Back"]],
-    "ru": [["✍️ Удалить По Номеру"], ["🔙 Назад"]]
+    "tr": [["✍️ Not Seçerek Sil"], ["🔙 Araçlar Menüsü"]],
+    "en": [["✍️ Select Note to Delete"], ["🔙 Tools Menu"]],
+    "ru": [["✍️ Удалить По Номеру"], ["🔙 Меню Инструментов"]]
 }
 
 TKM_BUTTONS = {
-    "tr": [["🪨 Taş"], ["📄 Kağıt"], ["✂️ Makas"], ["🔙 Geri"]],
-    "en": [["🪨 Rock"], ["📄 Paper",], ["✂️ Scissors"], ["🔙 Back"]],
-    "ru": [["🪨 Камень"], ["📄 Бумага"], ["✂️ Ножницы"], ["🔙 Назад"]]
+    "tr": [["🪨 Taş"], ["📄 Kağıt"], ["✂️ Makas"], ["🔙 Oyun Odası"]],
+    "en": [["🪨 Rock"], ["📄 Paper",], ["✂️ Scissors"], ["🔙 Game Room"]],
+    "ru": [["🪨 Камень"], ["📄 Бумага"], ["✂️ Ножницы"], ["🔙 Игровая Комната"]]
 }
 
 PDF_CONVERTER_BUTTONS = {
-    "tr": [["📝 Metinden PDF'e"], ["🖼️ Resimden PDF'e"], ["📄 Belgeden PDF'e"], ["🔙 Geri"]],
-    "en": [["📝 Text to PDF"], ["🖼️ Image to PDF"], ["📄 Document to PDF"], ["🔙 Back"]],
-    "ru": [["📝 Текст в PDF"], ["🖼️ Изображение в PDF"], ["📄 Документ в PDF"], ["🔙 Назад"]]
+    "tr": [["📝 Metinden PDF'e"], ["🖼️ Resimden PDF'e"], ["📄 Belgeden PDF'e"], ["🔙 Araçlar Menüsü"]],
+    "en": [["📝 Text to PDF"], ["🖼️ Image to PDF"], ["📄 Document to PDF"], ["🔙 Tools Menu"]],
+    "ru": [["📝 Текст в PDF"], ["🖼️ Изображение в PDF"], ["📄 Документ в PDF"], ["🔙 Меню Инструментов"]]
 }
 
 INPUT_BACK_BUTTONS = {
@@ -338,35 +420,67 @@ INPUT_BACK_BUTTONS = {
 }
 
 REMINDER_BUTTONS = {
-    "tr": [["➕ Hatırlatıcı Ekle"], ["📋 Hatırlatıcıları Göster"], ["🗑️ Hatırlatıcı Sil"], ["🔙 Geri"]],
-    "en": [["➕ Add Reminder"], ["📋 Show Reminders"], ["🗑️ Delete Reminder"], ["🔙 Back"]],
-    "ru": [["➕ Добавить Напоминание"], ["📋 Показать Напоминания"], ["🗑️ Удалить Напоминание"], ["🔙 Назад"]]
+    "tr": [["➕ Hatırlatıcı Ekle"], ["📋 Hatırlatıcıları Göster"], ["🗑️ Hatırlatıcı Sil"], ["🔙 Araçlar Menüsü"]],
+    "en": [["➕ Add Reminder"], ["📋 Show Reminders"], ["🗑️ Delete Reminder"], ["🔙 Tools Menu"]],
+    "ru": [["➕ Добавить Напоминание"], ["📋 Показать Напоминания"], ["🗑️ Удалить Напоминание"], ["🔙 Меню Инструментов"]]
 }
 
+# BUTTON MAPPINGS (Karar Çarkı Silindi)
 BUTTON_MAPPINGS = {
+    "menu": {"🏠 menüye dön", "🏠 back to menu", "🏠 назад в меню", "🔙 geri", "🔙 back", "🔙 назад"},
+    "back_to_tools": {"🔙 araçlar menüsü", "🔙 tools menu", "🔙 меню инструментов"},
+    "back_to_games": {"🔙 oyun odası", "🔙 game room", "🔙 игровая комната"},
+    
+    # ANA MENÜ KATEGORİLERİ
     "notes_main_button": {"📝 notlar", "📝 notes", "📝 заметки"},
+    "games_main_button": {"🎮 oyun odası", "🎮 game room", "🎮 игровая комната"},
+    "tools_main_button": {"🛠 araçlar", "🛠 tools", "🛠 инструменты"},
+    
+    # ARAÇLAR
+    "qrcode_button": {"📷 qr kod", "📷 qr code", "📷 qr-код", "📷 qr kod oluştur"},
+    "pdf_converter_main_button": {"📄 pdf dönüştürücü", "📄 pdf converter", "📄 конвертер pdf", "📄 pdf çevirici"},
+    "weather_main_button": {"☀️ hava durumu", "☀️ weather", "☀️ погода"},
+    "reminder": {"⏰ hatırlatıcı", "⏰ reminder", "⏰ напоминание"},
+    "language": {"🌐 dil değiştir", "🌐 change language", "🌐 сменить язык"},
+    # Developer butonu için genişletilmiş liste (Emoji farklılıklarını önlemek için)
+    "developer_main_button": {
+        "👨‍💻 geliştirici", "👨‍💻 developer", "👨‍💻 разработчик",
+        "geliştirici", "developer", "разработчик", 
+        "👨‍💻 geliştirici", "👨‍💻developer"
+    },
+    
+    # OYUNLAR MENÜSÜ
+    "xox_game": {"❌⭕ xox", "❌⭕ tic-tac-toe", "❌⭕ крестики-нолики"},
     "dice": {"🎲 zar", "🎲 dice", "🎲 кубик"},
     "coinflip": {"🪙 yazı tura", "🪙 coinflip", "🪙 монета"},
-    "time": {"🕒 saat", "🕒 time", "🕒 время"},
-    "reminder": {"⏰ hatırlatıcı", "⏰ reminder", "⏰ напоминание"},
-    "tkm_main": {"t-k-m 🪨📄✂️", "r-p-s 🪨📄✂️", "к-б-н 🪨📄✂️"},
-    "language": {"🌐 dil değiştir", "🌐 change language", "🌐 сменить язык"},
-    "play_again": {"🔁 tekrar oyna", "🔁 play again", "🔁 сыграть снова"},
-    "menu": {"🏠 menüye dön", "🏠 back to menu", "🏠 назад в меню", "🔙 geri", "🔙 back", "🔙 назад"},
-    "add_note_button": {"➕ not ekle", "➕ add note", "➕ добавить заметку"},
-    "show_all_notes_button": {"📋 tüm notları göster", "📋 show all notes", "📋 показать все заметки"},
-    "delete_note_button": {"🗑️ not sil", "🗑️ delete note", "🗑️ удалить заметку"},
+    # TKM için hem buton metnini hem de eski tanımları ekledik
+    "tkm_main": {
+        "t-k-m 🪨📄✂️", "r-p-s 🪨📄✂️", "к-б-н 🪨📄✂️", # Eski ihtimaller
+        "🪨📄✂️ t-k-m", "🪨📄✂️ r-p-s", "🪨📄✂️ к-б-н", # YENİ: Butondaki doğru sıralama
+        "taş kağıt makas", "rock paper scissors", "tkm", "rps" # Yedekler
+    },
+    
+    # NOTLAR MENÜSÜ
+    "add_note_button": {"➕ not ekle", "➕ add note", "➕ добавить", "➕ добавить заметку"},
+    "edit_note_button": {"✏️ not düzenle", "✏️ edit note", "✏️ изменить"},
+    
+    # DÜZELTME 1: Rusça "Tüm notları göster" butonunun doğru eşleşmesi eklendi
+    "show_all_notes_button": {
+        "📋 tüm notları göster", "📋 show all notes", "📋 показать все заметки", "📋 notları göster",
+        "📋 показать все" # Rusça butondaki tam metin eklendi
+    },
+    
+    "delete_note_button": {"🗑️ not sil", "🗑️ delete note", "🗑️ удалить заметку", "🗑️ удалить"},
+    
+    # Diğerleri
     "select_delete_note_button": {"✍️ not seçerek sil", "✍️ select note to delete", "✍️ удалить по номеру"},
+    "play_again": {"🔁 tekrar oyna", "🔁 play again", "🔁 сыграть снова"},
     "tkm_rock": {"🪨 taş", "🪨 rock", "🪨 камень"},
     "tkm_paper": {"📄 kağıt", "📄 paper", "📄 бумага"},
     "tkm_scissors": {"✂️ makas", "✂️ scissors", "✂️ ножницы"},
-    "qrcode_button": {"📷 qr kod oluştur", "📷 create qr code", "📷 создать qr-код"},
-    "pdf_converter_main_button": {"📄 pdf dönüştürücü", "📄 pdf converter", "📄 конвертер pdf"},
     "text_to_pdf_button": {"📝 metinden pdf'e", "📝 text to pdf", "📝 текст в pdf"},
     "image_to_pdf_button": {"🖼️ resimden pdf'e", "🖼️ image to pdf", "🖼️ изображение в pdf"},
     "document_to_pdf_button": {"📄 belgeden pdf'e", "📄 document to pdf", "📄 документ в pdf"},
-    "weather_main_button": {"☀️ hava durumu", "☀️ weather", "☀️ погода"}, 
-    "developer_main_button": {"👨‍💻 geliştirici", "👨‍💻 developer", "👨‍💻 разработчик"}, 
     "add_reminder_button": {"➕ hatırlatıcı ekle", "➕ add reminder", "➕ добавить напоминание"},
     "show_reminders_button": {"📋 hatırlatıcıları göster", "📋 show reminders", "📋 показать напоминания"},
     "delete_reminder_button": {"🗑️ hatırlatıcı sil", "🗑️ delete reminder", "🗑️ удалить напоминание"},

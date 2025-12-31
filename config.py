@@ -10,12 +10,18 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Font dosyasının proje ana dizininde (main.py ile aynı yerde) olduğunu varsayıyoruz
 FONT_PATH = os.path.join(BASE_DIR, "DejaVuSans.ttf")
 NOTES_PER_PAGE = 5
+TIMEZONE = os.getenv("TIMEZONE", "Europe/Istanbul")  # Varsayilan: Turkiye
 
 # --- API ANAHTARLARI ---
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 OPENWEATHERMAP_API_KEY = os.getenv("OPENWEATHERMAP_API_KEY")
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+# --- ADMIN AYARLARI ---
+# ADMIN_IDS: Virgülle ayrılmış Telegram user ID'leri (örn: "123456789,987654321")
+_admin_ids_str = os.getenv("ADMIN_IDS", "")
+ADMIN_IDS = [int(x.strip()) for x in _admin_ids_str.split(",") if x.strip().isdigit()]
 
 # --- SUPABASE BAĞLANTISI ---
 supabase: Client = None

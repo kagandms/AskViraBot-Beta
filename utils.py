@@ -1,14 +1,27 @@
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
-from texts import MAIN_BUTTONS, NOTES_BUTTONS, DELETE_NOTES_BUTTONS, INPUT_BACK_BUTTONS, PDF_CONVERTER_BUTTONS, SOCIAL_MEDIA_LINKS, REMINDER_BUTTONS, TEXTS
+# TOOLS_BUTTONS eklendi
+from texts import MAIN_BUTTONS, NOTES_BUTTONS, DELETE_NOTES_BUTTONS, INPUT_BACK_BUTTONS, PDF_CONVERTER_BUTTONS, SOCIAL_MEDIA_LINKS, REMINDER_BUTTONS, TEXTS, GAMES_BUTTONS, TOOLS_BUTTONS
 
 # --- KLAVYE OLUŞTURUCULAR ---
 
 def get_main_keyboard_markup(lang):
+    # Ana menü klavyesi
     buttons = MAIN_BUTTONS.get(lang, MAIN_BUTTONS["en"])
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
+def get_games_keyboard_markup(lang):
+    # Oyunlar menüsü klavyesi (YENİ EKLENEN)
+    buttons = GAMES_BUTTONS.get(lang, GAMES_BUTTONS["en"])
+    return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
+
 def get_notes_keyboard_markup(lang):
+    # Notlar menüsü klavyesi
     buttons = NOTES_BUTTONS.get(lang, NOTES_BUTTONS["en"])
+    return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
+
+def get_tools_keyboard_markup(lang):
+    # Araçlar menüsü klavyesi
+    buttons = TOOLS_BUTTONS.get(lang, TOOLS_BUTTONS["en"])
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
 def get_delete_notes_keyboard_markup(lang):

@@ -2,10 +2,9 @@ python-telegram-bot
 flask
 supabase
 python-dotenv
-fpdf
-img2pdf
-aiohttp
+fpdf2
 qrcode
 Pillow
+requests
 pytz
 certifi
