@@ -5,7 +5,7 @@ Sadece ADMIN_IDS listesindeki kullanıcılar erişebilir.
 
 import asyncio
 from datetime import datetime
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ContextTypes
 import database as db
 from config import ADMIN_IDS, TIMEZONE
@@ -99,14 +99,21 @@ async def start_broadcast(query, context):
     user_id = query.from_user.id
     context.user_data['admin_broadcast'] = True
     
-    keyboard = [[InlineKeyboardButton("❌ İptal", callback_data="admin_back")]]
-    await query.edit_message_text(
+    # Inline mesajı sil ve yeni mesaj gönder (mesaj ID'sini sakla)
+    await query.delete_message()
+    
+    # Reply Keyboard ile Geri butonu
+    reply_keyboard = ReplyKeyboardMarkup([["⬅️ Geri"]], resize_keyboard=True, one_time_keyboard=True)
+    
+    broadcast_msg = await query.message.chat.send_message(
         "📢 *Duyuru Gönder*\n\n"
         "Tüm kullanıcılara göndermek istediğiniz mesajı yazın.\n"
         "İptal etmek için aşağıdaki butona basın.",
-        reply_markup=InlineKeyboardMarkup(keyboard),
+        reply_markup=reply_keyboard,
         parse_mode="Markdown"
     )
+    # Mesaj ID'sini sakla (sonra silmek için)
+    context.user_data['broadcast_prompt_msg_id'] = broadcast_msg.message_id
 
 async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Duyuru mesajını işle ve gönder"""
@@ -118,8 +125,35 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
     if not context.user_data.get('admin_broadcast'):
         return False
     
+    message = update.message.text.strip()
+    
+    # Geri butonuna basıldıysa iptal et
+    if message.lower() in ["⬅️ geri", "geri", "back"]:
+        context.user_data['admin_broadcast'] = False
+        # Prompt mesajını sil
+        prompt_msg_id = context.user_data.pop('broadcast_prompt_msg_id', None)
+        if prompt_msg_id:
+            try:
+                await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=prompt_msg_id)
+            except Exception:
+                pass
+        # Admin panelini tekrar aç
+        await update.message.reply_text(
+            "🔧 *Admin Paneli*\n\nBir işlem seçin:",
+            reply_markup=get_admin_keyboard(),
+            parse_mode="Markdown"
+        )
+        return True
+    
     context.user_data['admin_broadcast'] = False
-    message = update.message.text
+    
+    # Prompt mesajını sil
+    prompt_msg_id = context.user_data.pop('broadcast_prompt_msg_id', None)
+    if prompt_msg_id:
+        try:
+            await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=prompt_msg_id)
+        except Exception:
+            pass
     
     # Durum mesajı
     status_msg = await update.message.reply_text("📤 Duyuru gönderiliyor...")
@@ -149,8 +183,11 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
             f"✅ *Duyuru Tamamlandı*\n\n"
             f"📤 Gönderilen: {sent}\n"
             f"❌ Başarısız: {failed}",
-            parse_mode="Markdown"
+            parse_mode="Markdown",
+            reply_markup=None
         )
+        # Reply keyboard'u kaldır
+        await update.message.reply_text("📋 Ana menüye dönmek için /admin yazabilirsiniz.", reply_markup=ReplyKeyboardRemove())
     except Exception as e:
         await status_msg.edit_text(f"❌ Hata: {e}")
     
