@@ -9,6 +9,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKe
 from telegram.ext import ContextTypes
 import database as db
 from config import ADMIN_IDS, TIMEZONE
+from utils import get_main_keyboard_markup
 import pytz
 
 def is_admin(user_id: int) -> bool:
@@ -21,7 +22,7 @@ def get_admin_keyboard():
         [InlineKeyboardButton("📊 İstatistikler", callback_data="admin_stats")],
         [InlineKeyboardButton("📢 Duyuru Gönder", callback_data="admin_broadcast")],
         [InlineKeyboardButton("👥 Kullanıcı Listesi", callback_data="admin_users")],
-        [InlineKeyboardButton("❌ Kapat", callback_data="admin_close")]
+        [InlineKeyboardButton("◀️ Geri", callback_data="admin_exit_to_menu")]
     ]
     return InlineKeyboardMarkup(keyboard)
 
@@ -57,6 +58,15 @@ async def admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await start_broadcast(query, context)
     elif query.data == "admin_users":
         await show_users(query, context)
+    elif query.data == "admin_exit_to_menu":
+        # Admin panelini kapat ve ana menüye dön
+        user_id = query.from_user.id
+        lang = await asyncio.to_thread(db.get_user_lang, user_id)
+        await query.delete_message()
+        await query.message.chat.send_message(
+            "🏠 Ana menüye döndünüz.",
+            reply_markup=get_main_keyboard_markup(lang)
+        )
     elif query.data == "admin_close":
         await query.delete_message()
     elif query.data == "admin_back":
@@ -137,11 +147,11 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
                 await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=prompt_msg_id)
             except Exception:
                 pass
-        # Admin panelini tekrar aç
+        # Ana menüye dön
+        lang = await asyncio.to_thread(db.get_user_lang, user_id)
         await update.message.reply_text(
-            "🔧 *Admin Paneli*\n\nBir işlem seçin:",
-            reply_markup=get_admin_keyboard(),
-            parse_mode="Markdown"
+            "🏠 Ana menüye döndünüz.",
+            reply_markup=get_main_keyboard_markup(lang)
         )
         return True
     
@@ -186,8 +196,9 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
             parse_mode="Markdown",
             reply_markup=None
         )
-        # Reply keyboard'u kaldır
-        await update.message.reply_text("📋 Ana menüye dönmek için /admin yazabilirsiniz.", reply_markup=ReplyKeyboardRemove())
+        # Ana menüye dön
+        lang = await asyncio.to_thread(db.get_user_lang, user_id)
+        await update.message.reply_text("🏠 Ana menüye döndünüz.", reply_markup=get_main_keyboard_markup(lang))
     except Exception as e:
         await status_msg.edit_text(f"❌ Hata: {e}")
     
