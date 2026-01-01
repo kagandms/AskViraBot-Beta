@@ -193,17 +193,16 @@ async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
         
     # ZORLUK SEÇİMİ (Henüz oyun başlamadıysa)
     if not game_state["active"]:
-        diff_map = {
-            "🟢 Kolay": "easy", "🟢 Easy": "easy", "🟢 Легко": "easy",
-            "🟡 Orta": "medium", "🟡 Medium": "medium", "🟡 Средне": "medium",
-            "🔴 Zor": "hard", "🔴 Hard": "hard", "🔴 Сложно": "hard"
-        }
-        
+        text_lower = text.lower()
         selected_diff = None
-        for key, val in diff_map.items():
-            if key in text:
-                selected_diff = val
-                break
+        
+        # Toleranslı metin eşleşmesi (emoji olmadan da çalışır)
+        if "kolay" in text_lower or "easy" in text_lower or "легко" in text_lower:
+            selected_diff = "easy"
+        elif "orta" in text_lower or "medium" in text_lower or "средне" in text_lower:
+            selected_diff = "medium"
+        elif "zor" in text_lower or "hard" in text_lower or "сложно" in text_lower:
+            selected_diff = "hard"
         
         if selected_diff:
             game_state["difficulty"] = selected_diff
