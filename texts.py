@@ -471,9 +471,9 @@ TEXTS = {
 
 # --- YENİLENMİŞ ANA MENÜ (AI Asistan eklendi) ---
 MAIN_BUTTONS = {
-    "tr": [["🛠 Araçlar", "🎮 Oyun Odası"], ["🌐 Dil Değiştir", "👨‍💻 Geliştirici"], ["🤖 AI Asistan"]],
-    "en": [["🛠 Tools", "🎮 Game Room"], ["🌐 Change Language", "👨‍💻 Developer"], ["🤖 AI Assistant"]],
-    "ru": [["🛠 Инструменты", "🎮 Игровая Комната"], ["🌐 Сменить Язык", "👨‍💻 Разработчик"], ["🤖 AI Ассистент"]]
+    "tr": [["🛠 Araçlar", "🎮 Oyun Odası"], ["🌐 Dil Değiştir", "👨‍💻 Geliştirici"], ["🤖 AI Asistan (Beta)"]],
+    "en": [["🛠 Tools", "🎮 Game Room"], ["🌐 Change Language", "👨‍💻 Developer"], ["🤖 AI Assistant (Beta)"]],
+    "ru": [["🛠 Инструменты", "🎮 Игровая Комната"], ["🌐 Сменить Язык", "👨‍💻 Разработчик"], ["🤖 AI Ассистент (Beta)"]]
 }
 
 TOOLS_BUTTONS = {
@@ -614,7 +614,7 @@ BUTTON_MAPPINGS = {
     "back_to_platform": {"🔙 platform seçimi", "🔙 platform selection", "🔙 выбор платформы"},
     
     # AI ASISTAN
-    "ai_main_button": {"🤖 ai asistan", "🤖 ai assistant", "🤖 ai ассистент"},
+    "ai_main_button": {"🤖 ai asistan (beta)", "🤖 ai assistant (beta)", "🤖 ai ассистент (beta)"},
     "ai_start_chat": {"🧠 sohbete başla", "🧠 start chat", "🧠 начать чат"},
     "ai_end_chat": {"🔚 sohbeti bitir", "🔚 end chat", "🔚 завершить чат"},
     "ai_back_to_menu": {"🔙 ana menü", "🔙 main menu", "🔙 главное меню"},
