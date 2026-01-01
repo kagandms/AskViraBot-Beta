@@ -257,6 +257,15 @@ async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
+    # API Key kontrolü - en başta yap
+    api_key = OPENWEATHERMAP_API_KEY
+    if not api_key:
+        await update.message.reply_text(
+            "⚠️ Hava durumu servisi şu anda kullanılamıyor.",
+            reply_markup=get_tools_keyboard_markup(lang)
+        )
+        return
+    
     if context.args:
         city = ' '.join(context.args)
         await get_weather_data(update, context, city)
@@ -264,13 +273,7 @@ async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         state.clear_user_states(user_id)
         state.waiting_for_weather_city.add(user_id)
         
-        # 1. Adım: Alttaki klavyeyi sadece "Geri" butonu olacak şekilde güncelle
-        await update.message.reply_text(
-            TEXTS["weather_prompt_city"][lang],
-            reply_markup=get_input_back_keyboard_markup(lang)
-        )
-        
-        # 2. Adım: Şehir seçim butonlarını sun
+        # Şehir seçim butonlarını oluştur
         cities = CITY_NAMES_TRANSLATED.get(lang, CITY_NAMES_TRANSLATED["en"])
         keyboard = []
         row = []
@@ -282,8 +285,13 @@ async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if row:
             keyboard.append(row)
         
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        await update.message.reply_text(TEXTS["weather_select_city"][lang], reply_markup=reply_markup)
+        inline_markup = InlineKeyboardMarkup(keyboard)
+        
+        # TEK MESAJ: Hem prompt hem de şehir butonları birlikte
+        await update.message.reply_text(
+            TEXTS["weather_prompt_city"][lang],
+            reply_markup=inline_markup
+        )
 
 async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, city_name):
     user_id = update.effective_user.id
