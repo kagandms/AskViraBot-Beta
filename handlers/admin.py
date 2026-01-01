@@ -84,6 +84,11 @@ async def show_stats(query, context):
         notes = await asyncio.to_thread(db.get_all_notes_count)
         reminders = await asyncio.to_thread(db.get_all_reminders_count)
         
+        # AI kullanım istatistikleri
+        import state
+        total_ai_usage = sum(state.ai_daily_usage.values())
+        ai_active_users = len(state.ai_daily_usage)
+        
         tz = pytz.timezone(TIMEZONE)
         now = datetime.now(tz).strftime("%d.%m.%Y %H:%M")
         
@@ -92,6 +97,10 @@ async def show_stats(query, context):
 👥 Toplam Kullanıcı: *{users}*
 📝 Toplam Not: *{notes}*
 ⏰ Aktif Hatırlatıcı: *{reminders}*
+
+🧠 *AI Kullanımı (Son 24 Saat)*
+├ Toplam Kredi: *{total_ai_usage}*
+└ Kullanan Kişi: *{ai_active_users}*
 
 🕐 Güncelleme: {now}
 """

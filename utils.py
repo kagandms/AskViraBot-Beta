@@ -1,12 +1,19 @@
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 # TOOLS_BUTTONS eklendi
 from texts import MAIN_BUTTONS, NOTES_BUTTONS, DELETE_NOTES_BUTTONS, INPUT_BACK_BUTTONS, PDF_CONVERTER_BUTTONS, SOCIAL_MEDIA_LINKS, REMINDER_BUTTONS, TEXTS, GAMES_BUTTONS, TOOLS_BUTTONS
+from config import ADMIN_IDS
 
 # --- KLAVYE OLUŞTURUCULAR ---
 
-def get_main_keyboard_markup(lang):
+def get_main_keyboard_markup(lang, user_id=None):
     # Ana menü klavyesi
-    buttons = MAIN_BUTTONS.get(lang, MAIN_BUTTONS["en"])
+    buttons = [row[:] for row in MAIN_BUTTONS.get(lang, MAIN_BUTTONS["en"])]  # Deep copy
+    
+    # Admin kullanıcıya özel buton ekle
+    if user_id and user_id in ADMIN_IDS:
+        admin_button = {"tr": "🔒 Yönetim", "en": "🔒 Admin", "ru": "🔒 Управление"}
+        buttons.append([admin_button.get(lang, admin_button["en"])])
+    
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
 def get_games_keyboard_markup(lang):

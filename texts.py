@@ -443,9 +443,14 @@ TEXTS = {
         "ru": "⚠️ Вы достигли дневного лимита AI сообщений (30/30).\nПопробуйте завтра!"
     },
     "ai_remaining_footer": {
-        "tr": "💬 Kalan: {remaining}/30",
-        "en": "💬 Remaining: {remaining}/30",
-        "ru": "💬 Осталось: {remaining}/30"
+        "tr": "💬 Hak: {status}",
+        "en": "💬 Quota: {status}",
+        "ru": "💬 Лимит: {status}"
+    },
+    "ai_unlimited_text": {
+        "tr": "♾️ Sınırsız",
+        "en": "♾️ Unlimited",
+        "ru": "♾️ Безлимит"
     },
     "ai_error": {
         "tr": "❌ AI yanıt verirken bir hata oluştu. Lütfen tekrar deneyin.",
@@ -608,4 +613,7 @@ BUTTON_MAPPINGS = {
     "ai_start_chat": {"🧠 sohbete başla", "🧠 start chat", "🧠 начать чат"},
     "ai_end_chat": {"🔚 sohbeti bitir", "🔚 end chat", "🔚 завершить чат"},
     "ai_back_to_menu": {"🔙 ana menü", "🔙 main menu", "🔙 главное меню"},
+    
+    # ADMIN PANEL
+    "admin_panel_button": {"🔒 yönetim", "🔒 admin", "🔒 управление"},
 }

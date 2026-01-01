@@ -87,8 +87,15 @@ async def ai_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     remaining = get_user_remaining_quota(user_id)
     
+    # Adminler için "Sınırsız" göster
+    if user_id in ADMIN_IDS:
+        limit_text = TEXTS["ai_unlimited_text"][lang]
+        msg = TEXTS["ai_menu_prompt"][lang].format(remaining=remaining, limit=limit_text)
+    else:
+        msg = TEXTS["ai_menu_prompt"][lang].format(remaining=remaining, limit=AI_DAILY_LIMIT)
+    
     await update.message.reply_text(
-        TEXTS["ai_menu_prompt"][lang].format(remaining=remaining, limit=AI_DAILY_LIMIT),
+        msg,
         reply_markup=get_ai_menu_keyboard(lang)
     )
 
@@ -197,7 +204,12 @@ Kullanıcının dilinde yanıt ver."""
         await thinking_msg.delete()
         
         # Kalan hak bilgisi ekle
-        footer = TEXTS["ai_remaining_footer"][lang].format(remaining=new_remaining)
+        if user_id in ADMIN_IDS:
+            status_text = TEXTS["ai_unlimited_text"][lang]
+        else:
+            status_text = f"{new_remaining}/{AI_DAILY_LIMIT}"
+            
+        footer = TEXTS["ai_remaining_footer"][lang].format(status=status_text)
         await update.message.reply_text(
             f"{ai_response}\n\n{footer}",
             reply_markup=get_ai_chat_keyboard(lang)

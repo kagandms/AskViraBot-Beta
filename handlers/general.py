@@ -36,13 +36,13 @@ async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
             text=TEXTS["menu_prompt"][lang],
-            reply_markup=get_main_keyboard_markup(lang)
+            reply_markup=get_main_keyboard_markup(lang, user_id)
         )
     # Normal mesaj (/menu veya metin) üzerinden geldiyse
     else:
         await update.message.reply_text(
             TEXTS["menu_prompt"][lang],
-            reply_markup=get_main_keyboard_markup(lang)
+            reply_markup=get_main_keyboard_markup(lang, user_id)
         )
 
 async def set_language(update: Update, context: ContextTypes.DEFAULT_TYPE):

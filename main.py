@@ -123,6 +123,10 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Geliştirici butonu
     elif text in BUTTON_MAPPINGS.get("developer_main_button", set()):
         await tools.show_developer_info(update, context)
+    
+    # Admin Panel butonu (sadece adminler için)
+    elif text in BUTTON_MAPPINGS.get("admin_panel_button", set()):
+        await admin.admin_command(update, context)
 
     # NOTLAR MENÜSÜ
     elif text in BUTTON_MAPPINGS.get("add_note_button", set()):
