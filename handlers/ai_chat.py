@@ -1,6 +1,6 @@
 """
 AI Chat Handler for DruzhikBot
-Google Gemini API Integration with Daily Limits
+OpenRouter API Integration with DeepSeek Model
 """
 
 import asyncio
@@ -8,28 +8,33 @@ from datetime import date
 import logging
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes
+from openai import OpenAI
 
 import database as db
 import state
-from config import GEMINI_API_KEY, AI_DAILY_LIMIT
+from config import OPENROUTER_API_KEY, AI_DAILY_LIMIT
 from texts import TEXTS, BUTTON_MAPPINGS
 from utils import get_main_keyboard_markup
 from rate_limiter import rate_limit
 
 logger = logging.getLogger(__name__)
 
-# --- GEMINI YAPILANDIRMASI ---
-model = None
-if GEMINI_API_KEY:
+# --- OPENROUTER YAPILANDIRMASI ---
+client = None
+if OPENROUTER_API_KEY:
     try:
-        import google.generativeai as genai
-        genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        logger.info("✅ Gemini API yapılandırıldı.")
+        client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=OPENROUTER_API_KEY
+        )
+        logger.info("✅ OpenRouter API yapılandırıldı.")
     except Exception as e:
-        logger.error(f"❌ Gemini yapılandırma hatası: {e}")
+        logger.error(f"❌ OpenRouter yapılandırma hatası: {e}")
 else:
-    logger.warning("⚠️ GEMINI_API_KEY eksik! AI özelliği çalışmayacak.")
+    logger.warning("⚠️ OPENROUTER_API_KEY eksik! AI özelliği çalışmayacak.")
+
+# Model adı
+AI_MODEL = "deepseek/deepseek-r1-0528:free"
 
 # --- AI MENÜ BUTONLARI ---
 AI_MENU_BUTTONS = {
@@ -143,10 +148,10 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return True
     
-    # API Key / Model kontrolü
-    if not model:
+    # API Key / Client kontrolü
+    if not client:
         await update.message.reply_text(
-            f"❌ AI servisi yapılandırılmamış.\nAPI Key: {'Var' if GEMINI_API_KEY else 'YOK'}",
+            f"❌ AI servisi yapılandırılmamış.\nAPI Key: {'Var' if OPENROUTER_API_KEY else 'YOK'}",
             reply_markup=get_ai_chat_keyboard(lang)
         )
         return True
@@ -155,34 +160,29 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     thinking_msg = await update.message.reply_text(TEXTS["ai_thinking"][lang])
     
     try:
-        # Gemini API çağrısı
+        # OpenRouter API çağrısı
         system_prompt = """Sen DruzhikBot adlı bir Telegram botunun içinde çalışan yardımcı bir asistansın.
-        Kullanıcıyla sohbet et, sorularını yanıtla, yardımcı ol.
-        Kısa ve öz cevaplar ver (max 2-3 paragraf).
-        Emoji kullanabilirsin.
-        Kullanıcının dilinde yanıt ver."""
+Kullanıcıyla sohbet et, sorularını yanıtla, yardımcı ol.
+Kısa ve öz cevaplar ver (max 2-3 paragraf).
+Emoji kullanabilirsin.
+Kullanıcının dilinde yanıt ver."""
         
-        full_prompt = f"{system_prompt}\n\nKullanıcı: {user_message}"
+        def call_openrouter():
+            return client.chat.completions.create(
+                model=AI_MODEL,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_message}
+                ],
+                max_tokens=500
+            )
         
-        # Senkron API çağrısını thread'de çalıştır
-        def call_gemini():
-            return model.generate_content(full_prompt)
-        
-        response = await asyncio.to_thread(call_gemini)
+        response = await asyncio.to_thread(call_openrouter)
         
         # Response kontrolü
         ai_response = None
-        try:
-            ai_response = response.text
-        except ValueError as ve:
-            logger.error(f"Gemini response.text error: {ve}")
-            if hasattr(response, 'prompt_feedback') and response.prompt_feedback:
-                ai_response = f"⚠️ İçerik engellendi: {response.prompt_feedback}"
-            else:
-                ai_response = "⚠️ Yanıt alınamadı, lütfen tekrar deneyin."
-        except Exception as inner_e:
-            logger.error(f"Gemini inner error: {inner_e}")
-            ai_response = f"⚠️ Yanıt işleme hatası: {str(inner_e)[:50]}"
+        if response.choices and len(response.choices) > 0:
+            ai_response = response.choices[0].message.content
         
         if not ai_response:
             ai_response = "⚠️ Boş yanıt alındı, lütfen farklı bir soru sorun."
@@ -206,7 +206,7 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.error(f"AI Error: {error_str}")
         await thinking_msg.delete()
         
-        # Kullanıcıya detaylı hata göster (debug için)
+        # Kullanıcıya detaylı hata göster
         error_preview = error_str[:100] if len(error_str) > 100 else error_str
         await update.message.reply_text(
             f"❌ AI Hatası: {error_preview}",

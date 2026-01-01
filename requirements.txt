@@ -9,4 +9,4 @@ requests
 pytz
 certifi
 yt-dlp
-google-generativeai
+openai
