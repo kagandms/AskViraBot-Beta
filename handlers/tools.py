@@ -344,7 +344,8 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
         logging.getLogger(__name__).error(f"Weather Error: {e}")
         await target_message.reply_text(TEXTS["weather_api_error"][lang])
     
-    state.waiting_for_weather_city.discard(user_id)
+    # State'i silmiyoruz - kullanıcı başka şehir seçebilir veya Geri'ye basabilir
+    # state.waiting_for_weather_city.discard(user_id)  # KALDIRILDI
 
 async def weather_callback_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
