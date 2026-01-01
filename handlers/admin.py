@@ -65,7 +65,7 @@ async def admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.delete_message()
         await query.message.chat.send_message(
             "🏠 Ana menüye döndünüz.",
-            reply_markup=get_main_keyboard_markup(lang)
+            reply_markup=get_main_keyboard_markup(lang, user_id)
         )
     elif query.data == "admin_close":
         await query.delete_message()
@@ -160,7 +160,7 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
         lang = await asyncio.to_thread(db.get_user_lang, user_id)
         await update.message.reply_text(
             "🏠 Ana menüye döndünüz.",
-            reply_markup=get_main_keyboard_markup(lang)
+            reply_markup=get_main_keyboard_markup(lang, user_id)
         )
         return True
     
@@ -207,7 +207,7 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
         )
         # Ana menüye dön
         lang = await asyncio.to_thread(db.get_user_lang, user_id)
-        await update.message.reply_text("🏠 Ana menüye döndünüz.", reply_markup=get_main_keyboard_markup(lang))
+        await update.message.reply_text("🏠 Ana menüye döndünüz.", reply_markup=get_main_keyboard_markup(lang, user_id))
     except Exception as e:
         await status_msg.edit_text(f"❌ Hata: {e}")
     
