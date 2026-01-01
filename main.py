@@ -29,7 +29,7 @@ async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(TEXTS["unknown_command"][lang])
 
 # --- ANA BUTON YÖNETİCİSİ (ROUTER) ---
-async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message:
         return
 
@@ -215,8 +215,18 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # DİL
     elif text in {"🇹🇷 türkçe", "🇬🇧 english", "🇷🇺 русский"}:
         await general.set_language(update, context)
+
     else:
         await unknown_command(update, context)
+
+async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await handle_buttons_logic(update, context)
+    except Exception as e:
+        logger.error(f"Error in handle_buttons: {e}", exc_info=True)
+        # Hata detayını kullanıcıya göster (Debug için)
+        if update.message:
+            await update.message.reply_text(f"⚠️ Hata: {str(e)}")
 
 async def on_startup(application):
     logger.info("Bot başlatılıyor... Bekleyen hatırlatıcılar kontrol ediliyor.")
