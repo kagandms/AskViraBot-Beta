@@ -15,6 +15,7 @@ import database as db
 from texts import TEXTS
 from utils import get_tools_keyboard_markup
 from rate_limiter import rate_limit
+import state
 
 logger = logging.getLogger(__name__)
 

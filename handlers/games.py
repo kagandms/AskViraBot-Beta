@@ -217,10 +217,24 @@ async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
         return
 
     # OYUN HAMLESİ
-    # Gelen text: 1️⃣, 2️⃣... vs.
+    # Gelen text: 1️⃣, 2️⃣... vs. veya düz sayılar
     mapping = {"1️⃣": 0, "2️⃣": 1, "3️⃣": 2, "4️⃣": 3, "5️⃣": 4, "6️⃣": 5, "7️⃣": 6, "8️⃣": 7, "9️⃣": 8}
     
-    move_index = mapping.get(text)
+    # Toleranslı eşleşme: önce tam eşleşme dene
+    move_index = mapping.get(text.strip())
+    
+    # Eğer bulunamazsa, metin içinde anahtar ara
+    if move_index is None:
+        for emoji, idx in mapping.items():
+            if emoji in text:
+                move_index = idx
+                break
+    
+    # Hala bulunamazsa düz sayıları kontrol et
+    if move_index is None:
+        text_clean = text.strip()
+        if text_clean in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+            move_index = int(text_clean) - 1
     
     if move_index is None:
         await update.message.reply_text(TEXTS["xox_invalid_move"][lang])
