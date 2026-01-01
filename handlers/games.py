@@ -284,8 +284,8 @@ async def finish_get_xox_game(update, board, winner, lang, user_id, difficulty):
     # LOGLAMA
     await asyncio.to_thread(db.log_xox_game, user_id, winner, difficulty)
     
-    # 2 Saniye bekle sonra menüye dön
-    await asyncio.sleep(2)
+    # Kısa bekleme sonra menüye dön
+    await asyncio.sleep(0.5)
     state.playing_xox.pop(user_id, None)
     await games_menu(update, context=None) # context=None olabilir çünkü games_menu context kullanmıyor (user_id update'den alınıyor)
     # NOT: games_menu update.effective_user.id kullanıyor, bu yüzden update objesi geçerli olmalı.

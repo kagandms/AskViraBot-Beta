@@ -640,7 +640,7 @@ BUTTON_MAPPINGS = {
     "delete_reminder_button": {"🗑️ hatırlatıcı sil", "🗑️ delete reminder", "🗑️ удалить напоминание"},
     
     # VIDEO DOWNLOADER
-    "video_downloader_main_button": {"📥 video indir", "📥 video download", "📥 скачать видео"},
+    "video_downloader_main_button": {"📥 video indir", "📥 video i̇ndir", "📥 video download", "📥 скачать видео"},
     "video_platform_tiktok": {"📱 tiktok"},
     "video_platform_twitter": {"🐦 twitter/x"},
     "video_platform_instagram": {"📸 instagram"},
