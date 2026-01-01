@@ -6,6 +6,7 @@ fpdf2
 qrcode
 Pillow
 requests
+aiohttp
 pytz
 certifi
 yt-dlp

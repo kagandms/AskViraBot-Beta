@@ -1,13 +1,14 @@
 """
 Metro Istanbul Handler
 Provides real-time metro departure times using IBB Metro Istanbul API
+Optimized with caching and async HTTP requests for better performance
 """
 
 import asyncio
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
-import requests
+import aiohttp
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 import database as db
@@ -23,49 +24,117 @@ ISTANBUL_TZ = pytz.timezone('Europe/Istanbul')
 # API Base URL
 METRO_API_BASE = "https://api.ibb.gov.tr/MetroIstanbul/api/MetroMobile/V2"
 
+# --- CACHING SYSTEM ---
+# Cache for metro lines (rarely changes)
+_lines_cache = {"data": None, "expires": None}
+# Cache for stations by line_id
+_stations_cache = {}
+# Cache TTL (Time To Live)
+LINES_CACHE_TTL = timedelta(minutes=10)
+STATIONS_CACHE_TTL = timedelta(minutes=5)
+
+# Global HTTP session for connection pooling
+_http_session = None
+
+
+async def get_http_session():
+    """Get or create a shared HTTP session for connection pooling"""
+    global _http_session
+    if _http_session is None or _http_session.closed:
+        timeout = aiohttp.ClientTimeout(total=10)
+        _http_session = aiohttp.ClientSession(timeout=timeout)
+    return _http_session
+
+
+async def close_http_session():
+    """Close the HTTP session (call on bot shutdown)"""
+    global _http_session
+    if _http_session and not _http_session.closed:
+        await _http_session.close()
+        _http_session = None
+
+
 # --- API HELPER FUNCTIONS ---
 
-async def fetch_lines():
-    """Fetch all metro lines"""
+async def fetch_lines(force_refresh=False):
+    """Fetch all metro lines with caching"""
+    global _lines_cache
+    
+    # Check cache first
+    now = datetime.now()
+    if not force_refresh and _lines_cache["data"] and _lines_cache["expires"] and now < _lines_cache["expires"]:
+        logger.debug("Returning cached metro lines")
+        return _lines_cache["data"]
+    
     try:
-        response = await asyncio.to_thread(
-            lambda: requests.get(f"{METRO_API_BASE}/GetLines", timeout=10)
-        )
-        data = response.json()
-        if data.get("Success"):
-            return data.get("Data", [])
+        session = await get_http_session()
+        async with session.get(f"{METRO_API_BASE}/GetLines") as response:
+            data = await response.json()
+            if data.get("Success"):
+                result = data.get("Data", [])
+                # Update cache
+                _lines_cache["data"] = result
+                _lines_cache["expires"] = now + LINES_CACHE_TTL
+                logger.debug("Fetched and cached metro lines from API")
+                return result
     except Exception as e:
         logger.error(f"Metro API Error (GetLines): {e}")
+        # Return cached data if available, even if expired
+        if _lines_cache["data"]:
+            logger.debug("Returning expired cache due to API error")
+            return _lines_cache["data"]
     return []
 
-async def fetch_stations_by_line(line_id: int):
-    """Fetch stations for a specific line"""
+
+async def fetch_stations_by_line(line_id: int, force_refresh=False):
+    """Fetch stations for a specific line with caching"""
+    global _stations_cache
+    
+    # Check cache first
+    now = datetime.now()
+    cache_key = str(line_id)
+    if not force_refresh and cache_key in _stations_cache:
+        cached = _stations_cache[cache_key]
+        if cached["expires"] and now < cached["expires"]:
+            logger.debug(f"Returning cached stations for line {line_id}")
+            return cached["data"]
+    
     try:
-        response = await asyncio.to_thread(
-            lambda: requests.get(f"{METRO_API_BASE}/GetStationById/{line_id}", timeout=10)
-        )
-        data = response.json()
-        if data.get("Success"):
-            return data.get("Data", [])
+        session = await get_http_session()
+        async with session.get(f"{METRO_API_BASE}/GetStationById/{line_id}") as response:
+            data = await response.json()
+            if data.get("Success"):
+                result = data.get("Data", [])
+                # Update cache
+                _stations_cache[cache_key] = {
+                    "data": result,
+                    "expires": now + STATIONS_CACHE_TTL
+                }
+                logger.debug(f"Fetched and cached stations for line {line_id}")
+                return result
     except Exception as e:
         logger.error(f"Metro API Error (GetStationById): {e}")
+        # Return cached data if available
+        if cache_key in _stations_cache:
+            return _stations_cache[cache_key]["data"]
     return []
 
+
 async def fetch_directions_by_line(line_id: int):
-    """Fetch directions for a specific line"""
+    """Fetch directions for a specific line (not cached - small data)"""
     try:
-        response = await asyncio.to_thread(
-            lambda: requests.get(f"{METRO_API_BASE}/GetDirectionById/{line_id}", timeout=10)
-        )
-        data = response.json()
-        if data.get("Success"):
-            return data.get("Data", [])
+        session = await get_http_session()
+        async with session.get(f"{METRO_API_BASE}/GetDirectionById/{line_id}") as response:
+            data = await response.json()
+            if data.get("Success"):
+                return data.get("Data", [])
     except Exception as e:
         logger.error(f"Metro API Error (GetDirectionById): {e}")
     return []
 
+
 async def fetch_timetable(station_id: int, direction_id: int):
-    """Fetch departure times for a station and direction"""
+    """Fetch departure times for a station and direction (never cached - real-time data)"""
     try:
         now = datetime.now(ISTANBUL_TZ).strftime("%Y-%m-%dT%H:%M:%S+03:00")
         payload = {
@@ -73,17 +142,15 @@ async def fetch_timetable(station_id: int, direction_id: int):
             "DirectionId": direction_id,
             "DateTime": now
         }
-        response = await asyncio.to_thread(
-            lambda: requests.post(
-                f"{METRO_API_BASE}/GetTimeTable",
-                json=payload,
-                headers={"Content-Type": "application/json"},
-                timeout=10
-            )
-        )
-        data = response.json()
-        if data.get("Success"):
-            return data.get("Data", [])
+        session = await get_http_session()
+        async with session.post(
+            f"{METRO_API_BASE}/GetTimeTable",
+            json=payload,
+            headers={"Content-Type": "application/json"}
+        ) as response:
+            data = await response.json()
+            if data.get("Success"):
+                return data.get("Data", [])
     except Exception as e:
         logger.error(f"Metro API Error (GetTimeTable): {e}")
     return []
@@ -338,6 +405,7 @@ async def metro_back_callback(update: Update, context: ContextTypes.DEFAULT_TYPE
     
     await query.answer()
     
+    # Use cached lines for faster response
     lines = await fetch_lines()
     
     if not lines:
