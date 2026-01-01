@@ -370,21 +370,49 @@ async def weather_callback_query(update: Update, context: ContextTypes.DEFAULT_T
 # --- GELİŞTİRİCİ ---
 async def show_developer_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
+    # Sosyal medya linkleri mesaj içinde (tıklanabilir)
+    dev_text = {
+        "tr": f"""👨‍💻 *Geliştirici Bilgileri*
 
+{TEXTS["developer_info_prompt"][lang]}
+
+🌐 [Web Sitem]({SOCIAL_MEDIA_LINKS["website"]})
+📸 [Instagram]({SOCIAL_MEDIA_LINKS["instagram"]})
+✈️ [Telegram]({SOCIAL_MEDIA_LINKS["telegram"]})
+💼 [LinkedIn]({SOCIAL_MEDIA_LINKS["linkedin"]})
+""",
+        "en": f"""👨‍💻 *Developer Info*
+
+{TEXTS["developer_info_prompt"][lang]}
+
+🌐 [My Website]({SOCIAL_MEDIA_LINKS["website"]})
+📸 [Instagram]({SOCIAL_MEDIA_LINKS["instagram"]})
+✈️ [Telegram]({SOCIAL_MEDIA_LINKS["telegram"]})
+💼 [LinkedIn]({SOCIAL_MEDIA_LINKS["linkedin"]})
+""",
+        "ru": f"""👨‍💻 *Информация о разработчике*
+
+{TEXTS["developer_info_prompt"][lang]}
+
+🌐 [Мой сайт]({SOCIAL_MEDIA_LINKS["website"]})
+📸 [Instagram]({SOCIAL_MEDIA_LINKS["instagram"]})
+✈️ [Telegram]({SOCIAL_MEDIA_LINKS["telegram"]})
+💼 [LinkedIn]({SOCIAL_MEDIA_LINKS["linkedin"]})
+"""
+    }
     
-    keyboard = [
-        [InlineKeyboardButton(TEXTS["my_website"][lang], url=SOCIAL_MEDIA_LINKS["website"])],
-        [InlineKeyboardButton("Instagram", url=SOCIAL_MEDIA_LINKS["instagram"]),
-         InlineKeyboardButton("Telegram", url=SOCIAL_MEDIA_LINKS["telegram"])],
-        [InlineKeyboardButton("LinkedIn", url=SOCIAL_MEDIA_LINKS["linkedin"])],
-        [InlineKeyboardButton(TEXTS["back_button_inline"][lang], callback_data="back_to_main_menu")]
-    ]
+    # Geri butonu Reply Keyboard
+    back_text = TEXTS["back_button_inline"][lang] if "back_button_inline" in TEXTS else "🔙 Geri"
+    keyboard = [[back_text]]
     
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(TEXTS["developer_info_prompt"][lang], reply_markup=reply_markup)
+    await update.message.reply_text(
+        dev_text.get(lang, dev_text["en"]),
+        reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True),
+        parse_mode="Markdown",
+        disable_web_page_preview=True
+    )
 
 async def handle_social_media_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
