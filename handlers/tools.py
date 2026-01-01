@@ -5,7 +5,7 @@ import os
 import qrcode
 from fpdf import FPDF
 from PIL import Image
-import requests
+import aiohttp
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 import database as db
@@ -323,11 +323,11 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
     target_message = update.message if update.message else update.callback_query.message
 
     try:
-        # Non-blocking request with asyncio
-        response = await asyncio.to_thread(
-            lambda: requests.get(url, timeout=10)
-        )
-        data = response.json()
+        # Async HTTP request with aiohttp
+        timeout = aiohttp.ClientTimeout(total=10)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.get(url) as response:
+                data = await response.json()
 
         if data["cod"] == 200:
             weather_desc = data["weather"][0]["description"]
@@ -350,9 +350,9 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
         else:
             await target_message.reply_text(TEXTS["weather_city_not_found"][lang].format(city=city_name))
 
-    except requests.exceptions.Timeout:
+    except asyncio.TimeoutError:
         await target_message.reply_text(TEXTS["weather_api_error"][lang])
-    except requests.exceptions.ConnectionError:
+    except aiohttp.ClientError:
         await target_message.reply_text(TEXTS["weather_api_error"][lang])
     except Exception as e:
         logging.getLogger(__name__).error(f"Weather Error: {e}")
