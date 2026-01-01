@@ -8,7 +8,6 @@ from datetime import date
 import logging
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes
-import google.generativeai as genai
 
 import database as db
 import state
@@ -20,11 +19,16 @@ from rate_limiter import rate_limit
 logger = logging.getLogger(__name__)
 
 # --- GEMINI YAPILANDIRMASI ---
+model = None
 if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    try:
+        import google.generativeai as genai
+        genai.configure(api_key=GEMINI_API_KEY)
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        logger.info("✅ Gemini API yapılandırıldı.")
+    except Exception as e:
+        logger.error(f"❌ Gemini yapılandırma hatası: {e}")
 else:
-    model = None
     logger.warning("⚠️ GEMINI_API_KEY eksik! AI özelliği çalışmayacak.")
 
 # --- AI MENÜ BUTONLARI ---
@@ -139,10 +143,10 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return True
     
-    # API Key kontrolü
+    # API Key / Model kontrolü
     if not model:
         await update.message.reply_text(
-            TEXTS["ai_api_error"][lang],
+            f"❌ AI servisi yapılandırılmamış.\nAPI Key: {'Var' if GEMINI_API_KEY else 'YOK'}",
             reply_markup=get_ai_chat_keyboard(lang)
         )
         return True
@@ -151,7 +155,7 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     thinking_msg = await update.message.reply_text(TEXTS["ai_thinking"][lang])
     
     try:
-        # Gemini API çağrısı (Blocking, thread içinde çalıştır)
+        # Gemini API çağrısı
         system_prompt = """Sen DruzhikBot adlı bir Telegram botunun içinde çalışan yardımcı bir asistansın.
         Kullanıcıyla sohbet et, sorularını yanıtla, yardımcı ol.
         Kısa ve öz cevaplar ver (max 2-3 paragraf).
@@ -160,20 +164,25 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         full_prompt = f"{system_prompt}\n\nKullanıcı: {user_message}"
         
-        response = await asyncio.to_thread(
-            lambda: model.generate_content(full_prompt)
-        )
+        # Senkron API çağrısını thread'de çalıştır
+        def call_gemini():
+            return model.generate_content(full_prompt)
         
-        # Response kontrolü - bazen .text hata verebilir
+        response = await asyncio.to_thread(call_gemini)
+        
+        # Response kontrolü
         ai_response = None
         try:
             ai_response = response.text
-        except ValueError:
-            # Blocked content veya empty response durumu
-            if response.prompt_feedback:
-                ai_response = "⚠️ Bu soruya yanıt veremiyorum."
+        except ValueError as ve:
+            logger.error(f"Gemini response.text error: {ve}")
+            if hasattr(response, 'prompt_feedback') and response.prompt_feedback:
+                ai_response = f"⚠️ İçerik engellendi: {response.prompt_feedback}"
             else:
                 ai_response = "⚠️ Yanıt alınamadı, lütfen tekrar deneyin."
+        except Exception as inner_e:
+            logger.error(f"Gemini inner error: {inner_e}")
+            ai_response = f"⚠️ Yanıt işleme hatası: {str(inner_e)[:50]}"
         
         if not ai_response:
             ai_response = "⚠️ Boş yanıt alındı, lütfen farklı bir soru sorun."
@@ -193,10 +202,14 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         
     except Exception as e:
-        logger.error(f"AI Error: {e}")
+        error_str = str(e)
+        logger.error(f"AI Error: {error_str}")
         await thinking_msg.delete()
+        
+        # Kullanıcıya detaylı hata göster (debug için)
+        error_preview = error_str[:100] if len(error_str) > 100 else error_str
         await update.message.reply_text(
-            TEXTS["ai_error"][lang],
+            f"❌ AI Hatası: {error_preview}",
             reply_markup=get_ai_chat_keyboard(lang)
         )
     
