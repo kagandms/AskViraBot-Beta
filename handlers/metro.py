@@ -133,10 +133,17 @@ async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     if row:
         keyboard.append(row)
     
+    # Add back button to return to tools menu
+    keyboard.append([InlineKeyboardButton(
+        TEXTS["back_button_inline"][lang],
+        callback_data="metro_back_tools"
+    )])
+    
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
         TEXTS["metro_menu_prompt"][lang],
-        reply_markup=reply_markup
+        reply_markup=reply_markup,
+        parse_mode="Markdown"
     )
 
 
@@ -356,10 +363,17 @@ async def metro_back_callback(update: Update, context: ContextTypes.DEFAULT_TYPE
     if row:
         keyboard.append(row)
     
+    # Add back button to return to tools menu
+    keyboard.append([InlineKeyboardButton(
+        TEXTS["back_button_inline"][lang],
+        callback_data="metro_back_tools"
+    )])
+    
     reply_markup = InlineKeyboardMarkup(keyboard)
     await query.message.edit_text(
         TEXTS["metro_menu_prompt"][lang],
-        reply_markup=reply_markup
+        reply_markup=reply_markup,
+        parse_mode="Markdown"
     )
 
 
@@ -377,3 +391,9 @@ async def metro_callback_query(update: Update, context: ContextTypes.DEFAULT_TYP
         await metro_direction_callback(update, context)
     elif data == "metro_back_lines":
         await metro_back_callback(update, context)
+    elif data == "metro_back_tools":
+        # Close the metro message and inform user to use tools menu
+        await query.answer()
+        user_id = query.from_user.id
+        lang = await asyncio.to_thread(db.get_user_lang, user_id)
+        await query.message.delete()

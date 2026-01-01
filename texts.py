@@ -470,9 +470,9 @@ TEXTS = {
     
     # --- METRO İSTANBUL ---
     "metro_menu_prompt": {
-        "tr": "🚇 Metro İstanbul\n\nBir hat seçin:",
-        "en": "🚇 Metro Istanbul\n\nSelect a line:",
-        "ru": "🚇 Метро Стамбул\n\nВыберите линию:"
+        "tr": "🚇 Metro İstanbul\n\nBir hat seçin:\n\n_ℹ️ Veriler İBB'den alınmaktadır. Gerçek zamanlı sapmalar olabilir._",
+        "en": "🚇 Metro Istanbul\n\nSelect a line:\n\n_ℹ️ Data sourced from IBB. Real-time deviations may occur._",
+        "ru": "🚇 Метро Стамбул\n\nВыберите линию:\n\n_ℹ️ Данные получены из IBB. Возможны отклонения._"
     },
     "metro_select_station": {
         "tr": "🚇 {line}\n\nBir istasyon seçin:",
