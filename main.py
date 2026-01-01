@@ -66,6 +66,10 @@ async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYP
     if user_id in state.playing_xox:
         await games.handle_xox_message(update, context)
         return
+    if user_id in state.admin_menu_active:
+        handled = await admin.handle_admin_message(update, context)
+        if handled:
+            return
     if user_id in state.waiting_for_new_note_input:
         await notes.handle_new_note_input(update, context)
         return

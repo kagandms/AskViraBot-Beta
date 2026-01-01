@@ -32,6 +32,9 @@ ai_last_reset_date = None        # Son sıfırlama tarihi
 metro_browsing = set()       # Metro menüsünde geziniyor
 metro_selection = {}         # Seçimler {user_id: {"line": id, "line_name": name, "station": id}}
 
+# --- ADMIN DURUMLARI ---
+admin_menu_active = set()    # Admin menüsünde
+
 def clear_user_states(user_id):
     """Kullanıcının tüm aktif durumlarını temizler."""
     playing_tkm.discard(user_id)
@@ -62,3 +65,6 @@ def clear_user_states(user_id):
     # Metro
     metro_browsing.discard(user_id)
     metro_selection.pop(user_id, None)
+    
+    # Admin
+    admin_menu_active.discard(user_id)

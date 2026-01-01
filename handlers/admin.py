@@ -11,35 +11,77 @@ import database as db
 from config import ADMIN_IDS, TIMEZONE
 from utils import get_main_keyboard_markup
 import pytz
+import state
 
 def is_admin(user_id: int) -> bool:
     """Kullanıcının admin olup olmadığını kontrol eder"""
     return user_id in ADMIN_IDS
 
 def get_admin_keyboard():
-    """Admin menü klavyesi"""
+    """Admin menü klavyesi (Reply Keyboard)"""
     keyboard = [
-        [InlineKeyboardButton("📊 İstatistikler", callback_data="admin_stats")],
-        [InlineKeyboardButton("📢 Duyuru Gönder", callback_data="admin_broadcast")],
-        [InlineKeyboardButton("👥 Kullanıcı Listesi", callback_data="admin_users")],
-        [InlineKeyboardButton("◀️ Geri", callback_data="admin_exit_to_menu")]
+        ["📊 İstatistikler", "👥 Kullanıcı Listesi"],
+        ["📢 Duyuru Gönder"],
+        ["◀️ Geri"]
     ]
-    return InlineKeyboardMarkup(keyboard)
+    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
 async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Admin paneli ana komutu"""
     user_id = update.effective_user.id
     
     if not is_admin(user_id):
-        # Yetkisiz kullanıcılara sessizce yanıt verme veya uyar
         await update.message.reply_text("⛔ Bu komuta erişim yetkiniz yok.")
         return
+    
+    # State başlat
+    state.clear_user_states(user_id)
+    state.admin_menu_active.add(user_id)
     
     await update.message.reply_text(
         "🔧 *Admin Paneli*\n\nBir işlem seçin:",
         reply_markup=get_admin_keyboard(),
         parse_mode="Markdown"
     )
+
+async def handle_admin_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Admin paneli mesaj handler'ı (Reply Keyboard)"""
+    user_id = update.effective_user.id
+    
+    if user_id not in state.admin_menu_active:
+        return False
+    
+    if not is_admin(user_id):
+        return False
+    
+    text = update.message.text.strip()
+    
+    # Geri butonu
+    if "Geri" in text or "geri" in text.lower():
+        state.admin_menu_active.discard(user_id)
+        lang = await asyncio.to_thread(db.get_user_lang, user_id)
+        await update.message.reply_text(
+            "🏠 Ana menüye döndünüz.",
+            reply_markup=get_main_keyboard_markup(lang, user_id)
+        )
+        return True
+    
+    # İstatistikler
+    if "İstatistik" in text:
+        await show_stats_reply(update, context)
+        return True
+    
+    # Kullanıcı Listesi
+    if "Kullanıcı" in text:
+        await show_users_reply(update, context)
+        return True
+    
+    # Duyuru Gönder
+    if "Duyuru" in text:
+        await start_broadcast_reply(update, context)
+        return True
+    
+    return False
 
 async def admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Admin panel callback handler"""
@@ -236,3 +278,70 @@ async def show_users(query, context):
         )
     except Exception as e:
         await query.edit_message_text(f"❌ Hata: {e}")
+
+# --- REPLY KEYBOARD BASED HELPERS ---
+
+async def show_stats_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """İstatistikleri göster (Reply Keyboard için)"""
+    try:
+        users = await asyncio.to_thread(db.get_all_users_count)
+        notes = await asyncio.to_thread(db.get_all_notes_count)
+        reminders = await asyncio.to_thread(db.get_all_reminders_count)
+        
+        total_ai_usage = sum(state.ai_daily_usage.values())
+        ai_active_users = len(state.ai_daily_usage)
+        
+        tz = pytz.timezone(TIMEZONE)
+        now = datetime.now(tz).strftime("%d.%m.%Y %H:%M")
+        
+        stats_text = f"""📊 *Bot İstatistikleri*
+
+👥 Toplam Kullanıcı: *{users}*
+📝 Toplam Not: *{notes}*
+⏰ Aktif Hatırlatıcı: *{reminders}*
+
+🧠 *AI Kullanımı (Son 24 Saat)*
+├ Toplam Kredi: *{total_ai_usage}*
+└ Kullanan Kişi: *{ai_active_users}*
+
+🕐 Güncelleme: {now}
+"""
+        await update.message.reply_text(stats_text, parse_mode="Markdown", reply_markup=get_admin_keyboard())
+    except Exception as e:
+        await update.message.reply_text(f"❌ Hata: {e}")
+
+async def show_users_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Son kullanıcıları listele (Reply Keyboard için)"""
+    try:
+        users = await asyncio.to_thread(db.get_recent_users, 10)
+        
+        if not users:
+            users_text = "👥 Henüz kullanıcı yok."
+        else:
+            lines = ["👥 *Son 10 Kullanıcı*\n"]
+            for i, user in enumerate(users, 1):
+                uid = user.get('user_id', 'N/A')
+                lang = user.get('language', '?')
+                lines.append(f"{i}. `{uid}` ({lang})")
+            users_text = "\n".join(lines)
+        
+        await update.message.reply_text(users_text, parse_mode="Markdown", reply_markup=get_admin_keyboard())
+    except Exception as e:
+        await update.message.reply_text(f"❌ Hata: {e}")
+
+async def start_broadcast_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Duyuru gönderme modunu başlat (Reply Keyboard için)"""
+    user_id = update.effective_user.id
+    context.user_data['admin_broadcast'] = True
+    state.admin_menu_active.discard(user_id)  # Admin menüsünden çık
+    
+    reply_keyboard = ReplyKeyboardMarkup([["⬅️ Geri"]], resize_keyboard=True, one_time_keyboard=True)
+    
+    await update.message.reply_text(
+        "📢 *Duyuru Gönder*\n\n"
+        "Tüm kullanıcılara göndermek istediğiniz mesajı yazın.\n"
+        "İptal etmek için aşağıdaki butona basın.",
+        reply_markup=reply_keyboard,
+        parse_mode="Markdown"
+    )
+
