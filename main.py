@@ -70,6 +70,10 @@ async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYP
         handled = await admin.handle_admin_message(update, context)
         if handled:
             return
+    if user_id in state.developer_menu_active:
+        handled = await tools.handle_developer_message(update, context)
+        if handled:
+            return
     if user_id in state.waiting_for_new_note_input:
         await notes.handle_new_note_input(update, context)
         return

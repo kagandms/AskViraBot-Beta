@@ -35,6 +35,9 @@ metro_selection = {}         # Seçimler {user_id: {"line": id, "line_name": nam
 # --- ADMIN DURUMLARI ---
 admin_menu_active = set()    # Admin menüsünde
 
+# --- GELİŞTİRİCİ DURUMU ---
+developer_menu_active = set()  # Geliştirici menüsünde
+
 def clear_user_states(user_id):
     """Kullanıcının tüm aktif durumlarını temizler."""
     playing_tkm.discard(user_id)
@@ -68,3 +71,6 @@ def clear_user_states(user_id):
     
     # Admin
     admin_menu_active.discard(user_id)
+    
+    # Developer
+    developer_menu_active.discard(user_id)

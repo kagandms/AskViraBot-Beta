@@ -368,51 +368,70 @@ async def weather_callback_query(update: Update, context: ContextTypes.DEFAULT_T
         await get_weather_data(update, context, city_key)
 
 # --- GELİŞTİRİCİ ---
+def get_developer_keyboard(lang):
+    """Geliştirici menü klavyesi"""
+    labels = {
+        "tr": [["🌐 Web Sitem", "📸 Instagram"], ["✈️ Telegram", "💼 LinkedIn"], ["🔙 Geri"]],
+        "en": [["🌐 My Website", "📸 Instagram"], ["✈️ Telegram", "💼 LinkedIn"], ["🔙 Back"]],
+        "ru": [["🌐 Мой Сайт", "📸 Instagram"], ["✈️ Telegram", "💼 LinkedIn"], ["🔙 Назад"]]
+    }
+    return ReplyKeyboardMarkup(labels.get(lang, labels["en"]), resize_keyboard=True)
+
 async def show_developer_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
-    # Sosyal medya linkleri mesaj içinde (tıklanabilir)
-    dev_text = {
-        "tr": f"""👨‍💻 *Geliştirici Bilgileri*
-
-{TEXTS["developer_info_prompt"][lang]}
-
-🌐 [Web Sitem]({SOCIAL_MEDIA_LINKS["website"]})
-📸 [Instagram]({SOCIAL_MEDIA_LINKS["instagram"]})
-✈️ [Telegram]({SOCIAL_MEDIA_LINKS["telegram"]})
-💼 [LinkedIn]({SOCIAL_MEDIA_LINKS["linkedin"]})
-""",
-        "en": f"""👨‍💻 *Developer Info*
-
-{TEXTS["developer_info_prompt"][lang]}
-
-🌐 [My Website]({SOCIAL_MEDIA_LINKS["website"]})
-📸 [Instagram]({SOCIAL_MEDIA_LINKS["instagram"]})
-✈️ [Telegram]({SOCIAL_MEDIA_LINKS["telegram"]})
-💼 [LinkedIn]({SOCIAL_MEDIA_LINKS["linkedin"]})
-""",
-        "ru": f"""👨‍💻 *Информация о разработчике*
-
-{TEXTS["developer_info_prompt"][lang]}
-
-🌐 [Мой сайт]({SOCIAL_MEDIA_LINKS["website"]})
-📸 [Instagram]({SOCIAL_MEDIA_LINKS["instagram"]})
-✈️ [Telegram]({SOCIAL_MEDIA_LINKS["telegram"]})
-💼 [LinkedIn]({SOCIAL_MEDIA_LINKS["linkedin"]})
-"""
-    }
+    # State başlat
+    import state
+    state.clear_user_states(user_id)
+    state.developer_menu_active.add(user_id)
     
-    # Geri butonu Reply Keyboard
-    back_text = TEXTS["back_button_inline"][lang] if "back_button_inline" in TEXTS else "🔙 Geri"
-    keyboard = [[back_text]]
+    dev_text = {
+        "tr": "👨‍💻 *Geliştirici Bilgileri*\n\nSosyal medya hesaplarıma aşağıdaki bağlantılardan ulaşabilirsiniz:",
+        "en": "👨‍💻 *Developer Info*\n\nYou can reach my social media accounts through the links below:",
+        "ru": "👨‍💻 *Информация о разработчике*\n\nВы можете связаться со мной через соцсети по ссылкам ниже:"
+    }
     
     await update.message.reply_text(
         dev_text.get(lang, dev_text["en"]),
-        reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True),
-        parse_mode="Markdown",
-        disable_web_page_preview=True
+        reply_markup=get_developer_keyboard(lang),
+        parse_mode="Markdown"
     )
+
+async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Geliştirici menüsü buton işleyicisi"""
+    import state
+    user_id = update.effective_user.id
+    
+    if user_id not in state.developer_menu_active:
+        return False
+    
+    text = update.message.text.lower()
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Geri butonu
+    if "geri" in text or "back" in text or "назад" in text:
+        state.developer_menu_active.discard(user_id)
+        from handlers.general import menu_command
+        await menu_command(update, context)
+        return True
+    
+    # Sosyal medya linkleri
+    link = None
+    if "web" in text or "сайт" in text:
+        link = SOCIAL_MEDIA_LINKS["website"]
+    elif "instagram" in text:
+        link = SOCIAL_MEDIA_LINKS["instagram"]
+    elif "telegram" in text:
+        link = SOCIAL_MEDIA_LINKS["telegram"]
+    elif "linkedin" in text:
+        link = SOCIAL_MEDIA_LINKS["linkedin"]
+    
+    if link:
+        await update.message.reply_text(f"🔗 {link}", reply_markup=get_developer_keyboard(lang))
+        return True
+    
+    return False
 
 async def handle_social_media_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
