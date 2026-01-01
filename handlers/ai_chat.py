@@ -128,7 +128,7 @@ async def end_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     await update.message.reply_text(
         TEXTS["ai_chat_ended"][lang],
-        reply_markup=get_main_keyboard_markup(lang)
+        reply_markup=get_main_keyboard_markup(lang, user_id)
     )
 
 async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE):

@@ -12,7 +12,7 @@ import database as db
 import state
 from texts import TEXTS, PDF_CONVERTER_BUTTONS, BUTTON_MAPPINGS, CITY_NAMES_TRANSLATED, SOCIAL_MEDIA_LINKS
 from config import OPENWEATHERMAP_API_KEY, FONT_PATH
-from utils import get_input_back_keyboard_markup, get_main_keyboard_markup, get_tools_keyboard_markup
+from utils import get_input_back_keyboard_markup, get_main_keyboard_markup, get_tools_keyboard_markup, get_weather_cities_keyboard
 from rate_limiter import rate_limit
 
 # --- YARDIMCI FONKSİYONLAR ---
@@ -273,24 +273,10 @@ async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         state.clear_user_states(user_id)
         state.waiting_for_weather_city.add(user_id)
         
-        # Şehir seçim butonlarını oluştur
-        cities = CITY_NAMES_TRANSLATED.get(lang, CITY_NAMES_TRANSLATED["en"])
-        keyboard = []
-        row = []
-        for city_key, city_name in cities.items():
-            row.append(InlineKeyboardButton(city_name, callback_data=f"weather_{city_key}"))
-            if len(row) == 2:
-                keyboard.append(row)
-                row = []
-        if row:
-            keyboard.append(row)
-        
-        inline_markup = InlineKeyboardMarkup(keyboard)
-        
-        # TEK MESAJ: Hem prompt hem de şehir butonları birlikte
+        # TEK MESAJ: Şehir seçim klavyesini (Reply Keyboard) gönder
         await update.message.reply_text(
             TEXTS["weather_prompt_city"][lang],
-            reply_markup=inline_markup
+            reply_markup=get_weather_cities_keyboard(lang)
         )
 
 async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, city_name):
@@ -345,8 +331,8 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
                 humidity=humidity,
                 wind_speed=wind_speed
             )
-            # BAŞARILI SONUÇ: Araçlar menüsü klavyesini geri getir
-            await target_message.reply_text(msg, reply_markup=get_tools_keyboard_markup(lang))
+            # BAŞARILI SONUÇ: Şehir seçim klavyesini geri getir (Reply Keyboard)
+            await target_message.reply_text(msg, reply_markup=get_weather_cities_keyboard(lang))
         else:
             await target_message.reply_text(TEXTS["weather_city_not_found"][lang].format(city=city_name))
 

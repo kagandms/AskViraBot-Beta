@@ -1,6 +1,6 @@
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 # TOOLS_BUTTONS eklendi
-from texts import MAIN_BUTTONS, NOTES_BUTTONS, DELETE_NOTES_BUTTONS, INPUT_BACK_BUTTONS, PDF_CONVERTER_BUTTONS, SOCIAL_MEDIA_LINKS, REMINDER_BUTTONS, TEXTS, GAMES_BUTTONS, TOOLS_BUTTONS
+from texts import MAIN_BUTTONS, NOTES_BUTTONS, DELETE_NOTES_BUTTONS, INPUT_BACK_BUTTONS, PDF_CONVERTER_BUTTONS, SOCIAL_MEDIA_LINKS, REMINDER_BUTTONS, TEXTS, GAMES_BUTTONS, TOOLS_BUTTONS, CITY_NAMES_TRANSLATED
 from config import ADMIN_IDS
 
 # --- KLAVYE OLUŞTURUCULAR ---
@@ -56,6 +56,29 @@ def get_social_media_keyboard(lang):
 def get_reminder_keyboard_markup(lang):
     buttons = REMINDER_BUTTONS.get(lang, REMINDER_BUTTONS["en"])
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
+
+def get_weather_cities_keyboard(lang):
+    # Hava durumu şehir seçimi için Reply Keyboard
+    cities_dict = CITY_NAMES_TRANSLATED.get(lang, CITY_NAMES_TRANSLATED["en"])
+    # Dictionary values (şehir isimleri) alınıyor
+    city_names = list(cities_dict.values())
+    
+    # 2'li satırlar halinde düzenle
+    keyboard = []
+    row = []
+    for city in city_names:
+        row.append(city)
+        if len(row) == 2:
+            keyboard.append(row)
+            row = []
+    if row:
+        keyboard.append(row)
+        
+    # Geri butonu
+    back_text = TEXTS["back_button"][lang] if "back_button" in TEXTS else ("⬅️ Geri" if lang == "tr" else "⬅️ Back")
+    keyboard.append([back_text])
+    
+    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
 def format_remaining_time(remaining_seconds: float, lang: str) -> str:
     days = int(remaining_seconds // (24 * 3600))

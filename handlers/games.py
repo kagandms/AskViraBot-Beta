@@ -24,35 +24,60 @@ async def games_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=get_games_keyboard_markup(lang)
     )
 
-# --- XOX (TIC TAC TOE) ---
-def get_xox_board_markup(board):
-    """3x3 XOX tahtası oluşturur (Inline Keyboard)"""
-    keyboard = []
-    for i in range(3):
-        row = []
-        for j in range(3):
-            index = i * 3 + j
-            text = board[index]
-            if text == " ": text = "⬜" # Boşluk için
-            callback_data = f"xox_move_{index}"
-            row.append(InlineKeyboardButton(text, callback_data=callback_data))
-        keyboard.append(row)
-    return InlineKeyboardMarkup(keyboard)
+# --- XOX (TIC TAC TOE) - REPLY KEYBOARD VERSION ---
 
-def get_xox_difficulty_markup(lang):
-    """Zorluk seçimi için inline keyboard"""
+def get_xox_board_reply_markup(board):
+    """3x3 XOX tahtası (Reply Keyboard) - Numaralı"""
+    keyboard = []
+    
+    # Mapping for empty cells to numbers/emojis
+    # 0 1 2
+    # 3 4 5
+    # 6 7 8
+    
+    # Numpad düzeni (1-9)
+    # 1 2 3
+    # 4 5 6
+    # 7 8 9
+    
+    mapping = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"]
+    
+    current_row = []
+    for i in range(9):
+        cell = board[i]
+        if cell == " ":
+            text = mapping[i]
+        else:
+            text = "❌" if cell == "X" else "⭕"
+            
+        current_row.append(text)
+        
+        if len(current_row) == 3:
+            keyboard.append(current_row)
+            current_row = []
+            
+    # Çıkış butonu
+    keyboard.append(["🔙 Oyunlar Menüsü"])
+    
+    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+
+def get_xox_difficulty_reply_markup(lang):
+    """Zorluk seçimi için Reply keyboard"""
     texts = {
         "tr": ["🟢 Kolay", "🟡 Orta", "🔴 Zor"],
         "en": ["🟢 Easy", "🟡 Medium", "🔴 Hard"],
         "ru": ["🟢 Легко", "🟡 Средне", "🔴 Сложно"]
     }
     labels = texts.get(lang, texts["en"])
-    keyboard = [[
-        InlineKeyboardButton(labels[0], callback_data="xox_diff_easy"),
-        InlineKeyboardButton(labels[1], callback_data="xox_diff_medium"),
-        InlineKeyboardButton(labels[2], callback_data="xox_diff_hard")
-    ]]
-    return InlineKeyboardMarkup(keyboard)
+    
+    # Geri butonu
+    back = TEXTS["back_button"][lang] if "back_button" in TEXTS else ("⬅️ Geri" if lang == "tr" else "⬅️ Back")
+    
+    keyboard = [
+        [labels[0], labels[1], labels[2]],
+        [back]
+    ]
+    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
 def check_winner(board):
     """Kazananı kontrol eder. Return: 'X', 'O', 'Draw' veya None"""
@@ -67,42 +92,25 @@ def check_winner(board):
     if " " not in board: return "Draw"
     return None
 
-# --- BOT ZORLUK SEVİYELERİ ---
+# --- BOT ZORLUK SEVİYELERİ (Aynı kalıyor) ---
 def bot_move_easy(board):
-    """Kolay: Tamamen rastgele hamle"""
     empty = [i for i, x in enumerate(board) if x == " "]
     return random.choice(empty) if empty else None
 
 def bot_move_medium(board):
-    """Orta: Kazanma/engelleme stratejisi, yoksa rastgele"""
     wins = [(0,1,2), (3,4,5), (6,7,8), (0,3,6), (1,4,7), (2,5,8), (0,4,8), (2,4,6)]
-    
-    # 1. Kazanabilecek hamle var mı?
     for a, b, c in wins:
         line = [board[a], board[b], board[c]]
-        if line.count("O") == 2 and line.count(" ") == 1:
-            return [a, b, c][line.index(" ")]
-    
-    # 2. Rakibi engelleyecek hamle var mı?
+        if line.count("O") == 2 and line.count(" ") == 1: return [a, b, c][line.index(" ")]
     for a, b, c in wins:
         line = [board[a], board[b], board[c]]
-        if line.count("X") == 2 and line.count(" ") == 1:
-            return [a, b, c][line.index(" ")]
-    
-    # 3. Merkez boşsa al
-    if board[4] == " ":
-        return 4
-    
-    # 4. Rastgele köşe
+        if line.count("X") == 2 and line.count(" ") == 1: return [a, b, c][line.index(" ")]
+    if board[4] == " ": return 4
     corners = [i for i in [0, 2, 6, 8] if board[i] == " "]
-    if corners:
-        return random.choice(corners)
-    
-    # 5. Rastgele boş
+    if corners: return random.choice(corners)
     return bot_move_easy(board)
 
 def minimax(board, is_maximizing):
-    """Zor: Minimax algoritması - yenilmez bot"""
     winner = check_winner(board)
     if winner == "O": return 10
     if winner == "X": return -10
@@ -128,10 +136,8 @@ def minimax(board, is_maximizing):
         return best
 
 def bot_move_hard(board):
-    """Zor: Minimax ile en iyi hamle - YENİLMEZ"""
     best_score = -float('inf')
     best_move = None
-    
     for i in range(9):
         if board[i] == " ":
             board[i] = "O"
@@ -140,24 +146,22 @@ def bot_move_hard(board):
             if score > best_score:
                 best_score = score
                 best_move = i
-    
     return best_move
 
 def bot_make_move(board, difficulty="easy"):
-    """Zorluk seviyesine göre bot hamlesi"""
-    if difficulty == "easy":
-        return bot_move_easy(board)
-    elif difficulty == "medium":
-        return bot_move_medium(board)
-    else:  # hard
-        return bot_move_hard(board)
+    if difficulty == "easy": return bot_move_easy(board)
+    elif difficulty == "medium": return bot_move_medium(board)
+    else: return bot_move_hard(board)
 
 @rate_limit("games")
 async def xox_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Zorluk seçimi ekranını göster"""
+    """Zorluk seçimini başlat (Reply Keyboard)"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # State ayarla
     state.clear_user_states(user_id)
+    state.playing_xox[user_id] = {"board": [" "]*9, "difficulty": None, "active": False}
     
     # Zorluk seçim metni
     difficulty_prompt = {
@@ -168,90 +172,111 @@ async def xox_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     await update.message.reply_text(
         difficulty_prompt.get(lang, difficulty_prompt["en"]),
-        reply_markup=get_xox_difficulty_markup(lang)
+        reply_markup=get_xox_difficulty_reply_markup(lang)
     )
 
-async def xox_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    user_id = query.from_user.id
+async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """XOX hamlelerini ve seçimlerini yönetir"""
+    user_id = update.effective_user.id
+    if user_id not in state.playing_xox:
+        return
+        
+    text = update.message.text
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    game_state = state.playing_xox[user_id]
     
-    await query.answer()
-    
-    # ZORLUK SEÇİMİ
-    if query.data.startswith("xox_diff_"):
-        difficulty = query.data.split("_")[2]  # easy, medium, hard
-        board = [" "] * 9
-        state.playing_xox[user_id] = {"board": board, "difficulty": difficulty}
+    # ÇIKIŞ / GERİ KONTROLÜ
+    if "Back" in text or "Geri" in text or "Назад" in text or "Menu" in text or "Menü" in text:
+        state.playing_xox.pop(user_id, None)
+        await games_menu(update, context)
+        return
         
-        # Oyun başladı mesajı
-        diff_names = {
-            "tr": {"easy": "Kolay", "medium": "Orta", "hard": "Zor"},
-            "en": {"easy": "Easy", "medium": "Medium", "hard": "Hard"},
-            "ru": {"easy": "Легко", "medium": "Средне", "hard": "Сложно"}
+    # ZORLUK SEÇİMİ (Henüz oyun başlamadıysa)
+    if not game_state["active"]:
+        diff_map = {
+            "🟢 Kolay": "easy", "🟢 Easy": "easy", "🟢 Легко": "easy",
+            "🟡 Orta": "medium", "🟡 Medium": "medium", "🟡 Средне": "medium",
+            "🔴 Zor": "hard", "🔴 Hard": "hard", "🔴 Сложно": "hard"
         }
-        diff_name = diff_names.get(lang, diff_names["en"]).get(difficulty, difficulty)
         
-        await query.edit_message_text(
-            f"{TEXTS['xox_welcome'][lang]}\n\n📊 {diff_name}",
-            reply_markup=get_xox_board_markup(board)
-        )
+        selected_diff = None
+        for key, val in diff_map.items():
+            if key in text:
+                selected_diff = val
+                break
+        
+        if selected_diff:
+            game_state["difficulty"] = selected_diff
+            game_state["active"] = True
+            await update.message.reply_text(
+                f"{TEXTS['xox_welcome'][lang]}",
+                reply_markup=get_xox_board_reply_markup(game_state["board"])
+            )
+        else:
+            await update.message.reply_text(TEXTS["xox_invalid_move"][lang])
         return
-    
+
     # OYUN HAMLESİ
-    if not query.data.startswith("xox_move_"): 
-        return
+    # Gelen text: 1️⃣, 2️⃣... vs.
+    mapping = {"1️⃣": 0, "2️⃣": 1, "3️⃣": 2, "4️⃣": 3, "5️⃣": 4, "6️⃣": 5, "7️⃣": 6, "8️⃣": 7, "9️⃣": 8}
     
-    move_index = int(query.data.split("_")[2])
-    game_state = state.playing_xox.get(user_id)
+    move_index = mapping.get(text)
     
-    if not game_state:
-        await query.answer(TEXTS["xox_invalid_move"][lang], show_alert=True)
+    if move_index is None:
+        await update.message.reply_text(TEXTS["xox_invalid_move"][lang])
         return
         
     board = game_state["board"]
-    difficulty = game_state.get("difficulty", "easy")
     
-    # Geçersiz hamle (dolu kutu)
+    # Dolu kare kontrolü
     if board[move_index] != " ":
-        await query.answer(TEXTS["xox_invalid_move"][lang], show_alert=True)
+        await update.message.reply_text(TEXTS["xox_invalid_move"][lang])
         return
-
+        
     # KULLANICI HAMLESİ (X)
     board[move_index] = "X"
     winner = check_winner(board)
     
     if winner:
-        await finish_xox_game(query, board, winner, lang, user_id, difficulty)
+        await finish_get_xox_game(update, board, winner, lang, user_id, game_state["difficulty"])
         return
-
-    # BOT HAMLESİ (O) - Zorluk seviyesine göre
-    bot_move = bot_make_move(board, difficulty)
+        
+    # BOT HAMLESİ (O)
+    bot_move = bot_make_move(board, game_state["difficulty"])
     if bot_move is not None:
         board[bot_move] = "O"
         winner = check_winner(board)
         if winner:
-            await finish_xox_game(query, board, winner, lang, user_id, difficulty)
+            await finish_get_xox_game(update, board, winner, lang, user_id, game_state["difficulty"])
             return
             
-    # OYUN DEVAM EDİYOR (Tahtayı güncelle)
-    await query.edit_message_reply_markup(reply_markup=get_xox_board_markup(board))
+    # OYUN DEVAM
+    await update.message.reply_text(
+        TEXTS["xox_bot_moved"][lang] if "xox_bot_moved" in TEXTS else "Bot played.",
+        reply_markup=get_xox_board_reply_markup(board)
+    )
 
-async def finish_xox_game(query, board, winner, lang, user_id, difficulty):
-    """Oyunu bitir ve sonucu yaz"""
-    await query.edit_message_reply_markup(reply_markup=get_xox_board_markup(board))
-    
+async def finish_get_xox_game(update, board, winner, lang, user_id, difficulty):
+    """Oyunu bitir"""
     msg = ""
     if winner == "X": msg = TEXTS["xox_win"][lang]
     elif winner == "O": msg = TEXTS["xox_lose"][lang]
     else: msg = TEXTS["xox_draw"][lang]
     
-    await query.message.reply_text(msg)
+    await update.message.reply_text(
+        msg,
+        reply_markup=get_xox_board_reply_markup(board)
+    )
     
     # LOGLAMA
     await asyncio.to_thread(db.log_xox_game, user_id, winner, difficulty)
     
-    state.playing_xox.pop(user_id, None) # Oyunu hafızadan sil
+    # 2 Saniye bekle sonra menüye dön
+    await asyncio.sleep(2)
+    state.playing_xox.pop(user_id, None)
+    await games_menu(update, context=None) # context=None olabilir çünkü games_menu context kullanmıyor (user_id update'den alınıyor)
+    # NOT: games_menu update.effective_user.id kullanıyor, bu yüzden update objesi geçerli olmalı.
+
 
 # --- DİĞER OYUNLAR ---
 @rate_limit("games")

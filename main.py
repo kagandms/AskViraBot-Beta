@@ -60,6 +60,12 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     # 2. State Kontrolleri
+    if user_id in state.metro_browsing:
+        await metro.handle_metro_message(update, context)
+        return
+    if user_id in state.playing_xox:
+        await games.handle_xox_message(update, context)
+        return
     if user_id in state.waiting_for_new_note_input:
         await notes.handle_new_note_input(update, context)
         return
@@ -262,12 +268,12 @@ def main():
         # Callbacks
         CallbackQueryHandler(notes.delete_note_callback, pattern=r"^(delete_note_\d+|notes_prev_page|notes_next_page|delete_notes_back_inline)$"),
         CallbackQueryHandler(notes.handle_edit_note_callback, pattern=r"^(edit_note_\d+|notes_back_inline)$"),
-        CallbackQueryHandler(games.xox_callback, pattern=r"^xox_(move_\d+|diff_(easy|medium|hard))$"),
-        CallbackQueryHandler(tools.weather_callback_query, pattern=r"^weather_"),
+        # XOX removed (Reply Keyboard)
+        # Weather removed (Reply Keyboard)
         CallbackQueryHandler(tools.handle_social_media_callbacks, pattern=r"^(back_to_main_menu)$"),
         CallbackQueryHandler(reminders.delete_reminder_callback, pattern=r"^(delete_rem_\d+|reminders_back_inline)$"),
         CallbackQueryHandler(admin.admin_callback, pattern=r"^admin_"),
-        CallbackQueryHandler(metro.metro_callback_query, pattern=r"^metro_"),
+        # Metro removed (Reply Keyboard)
         
         # Messages
         MessageHandler(filters.TEXT & (~filters.COMMAND) | filters.Document.ALL | filters.PHOTO, handle_buttons),
