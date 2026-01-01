@@ -466,6 +466,38 @@ TEXTS = {
         "tr": "❌ AI servisi şu an kullanılamıyor. Lütfen daha sonra tekrar deneyin.",
         "en": "❌ AI service is currently unavailable. Please try again later.",
         "ru": "❌ Сервис AI временно недоступен. Попробуйте позже."
+    },
+    
+    # --- METRO İSTANBUL ---
+    "metro_menu_prompt": {
+        "tr": "🚇 Metro İstanbul\n\nBir hat seçin:",
+        "en": "🚇 Metro Istanbul\n\nSelect a line:",
+        "ru": "🚇 Метро Стамбул\n\nВыберите линию:"
+    },
+    "metro_select_station": {
+        "tr": "🚇 {line}\n\nBir istasyon seçin:",
+        "en": "🚇 {line}\n\nSelect a station:",
+        "ru": "🚇 {line}\n\nВыберите станцию:"
+    },
+    "metro_select_direction": {
+        "tr": "📍 Yön seçin:",
+        "en": "📍 Select direction:",
+        "ru": "📍 Выберите направление:"
+    },
+    "metro_departures_header": {
+        "tr": "🚇 *{line} - {station}*\n📍 {direction} Yönü\n\n_Yaklaşan seferler:_",
+        "en": "🚇 *{line} - {station}*\n📍 Direction: {direction}\n\n_Upcoming departures:_",
+        "ru": "🚇 *{line} - {station}*\n📍 Направление: {direction}\n\n_Ближайшие отправления:_"
+    },
+    "metro_no_departures": {
+        "tr": "⚠️ Bu yön için yaklaşan sefer bulunamadı.",
+        "en": "⚠️ No upcoming departures found for this direction.",
+        "ru": "⚠️ Ближайших отправлений в этом направлении не найдено."
+    },
+    "metro_api_error": {
+        "tr": "❌ Metro verisi alınamadı. Lütfen tekrar deneyin.",
+        "en": "❌ Could not fetch metro data. Please try again.",
+        "ru": "❌ Не удалось получить данные метро. Попробуйте снова."
     }
 }
 
@@ -477,9 +509,9 @@ MAIN_BUTTONS = {
 }
 
 TOOLS_BUTTONS = {
-    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu", "📥 Video İndir"], ["🔙 Geri"]],
-    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather", "📥 Video Download"], ["🔙 Back"]],
-    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода", "📥 Скачать Видео"], ["🔙 Назад"]]
+    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu", "📥 Video İndir"], ["🚇 Metro", "🔙 Geri"]],
+    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather", "📥 Video Download"], ["🚇 Metro", "🔙 Back"]],
+    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода", "📥 Скачать Видео"], ["🚇 Метро", "🔙 Назад"]]
 }
 
 # --- VIDEO DOWNLOADER MENÜSÜ ---
@@ -621,4 +653,7 @@ BUTTON_MAPPINGS = {
     
     # ADMIN PANEL
     "admin_panel_button": {"🔒 yönetim", "🔒 admin", "🔒 управление"},
+    
+    # METRO
+    "metro_main_button": {"🚇 metro", "🚇 метро"},
 }

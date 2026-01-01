@@ -13,7 +13,7 @@ from utils import get_main_keyboard_markup
 from rate_limiter import is_rate_limited, get_remaining_cooldown
 
 # Handler'ları içe aktar
-from handlers import general, notes, reminders, games, tools, admin, ai_chat
+from handlers import general, notes, reminders, games, tools, admin, ai_chat, metro
 
 # --- LOGLAMA YAPILANDIRMASI ---
 logging.basicConfig(
@@ -201,6 +201,10 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await ai_chat.end_ai_chat(update, context)
     elif text in BUTTON_MAPPINGS.get("ai_back_to_menu", set()):
         await general.menu_command(update, context)
+    
+    # METRO
+    elif text in BUTTON_MAPPINGS.get("metro_main_button", set()):
+        await metro.metro_menu_command(update, context)
 
     # DİL
     elif text in {"🇹🇷 türkçe", "🇬🇧 english", "🇷🇺 русский"}:
@@ -259,6 +263,7 @@ def main():
         CallbackQueryHandler(tools.handle_social_media_callbacks, pattern=r"^(back_to_main_menu)$"),
         CallbackQueryHandler(reminders.delete_reminder_callback, pattern=r"^(delete_rem_\d+|reminders_back_inline)$"),
         CallbackQueryHandler(admin.admin_callback, pattern=r"^admin_"),
+        CallbackQueryHandler(metro.metro_callback_query, pattern=r"^metro_"),
         
         # Messages
         MessageHandler(filters.TEXT & (~filters.COMMAND) | filters.Document.ALL | filters.PHOTO, handle_buttons),
