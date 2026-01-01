@@ -422,6 +422,11 @@ TEXTS = {
         "en": "🤖 *AI Assistant*\n\nYour AI-powered chat assistant.\nAsk questions, get help!\n\n📊 Daily quota: {remaining}/{limit}",
         "ru": "🤖 *AI Ассистент*\n\nВаш чат-ассистент на базе ИИ.\nЗадавайте вопросы, получайте помощь!\n\n📊 Дневной лимит: {remaining}/{limit}"
     },
+    "ai_menu_prompt_admin": {
+        "tr": "🤖 *AI Asistan (Admin)*\n\nYapay zeka destekli sohbet asistanınız.\n\n⚡️ *Durum: ♾️ Sınırsız Mod*",
+        "en": "🤖 *AI Assistant (Admin)*\n\nYour AI-powered chat assistant.\n\n⚡️ *Status: ♾️ Unlimited Mode*",
+        "ru": "🤖 *AI Ассистент (Admin)*\n\nВаш чат-ассистент на базе ИИ.\n\n⚡️ *Статус: ♾️ Безлимит*"
+    },
     "ai_chat_started": {
         "tr": "🧠 AI sohbet modu başladı!\n\nBana her şeyi sorabilirsin. Bitirmek için aşağıdaki butonu kullan.",
         "en": "🧠 AI chat mode started!\n\nYou can ask me anything. Use the button below to end.",

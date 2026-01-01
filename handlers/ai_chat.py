@@ -89,8 +89,7 @@ async def ai_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Adminler için "Sınırsız" göster
     if user_id in ADMIN_IDS:
-        limit_text = TEXTS["ai_unlimited_text"][lang]
-        msg = TEXTS["ai_menu_prompt"][lang].format(remaining=remaining, limit=limit_text)
+        msg = TEXTS["ai_menu_prompt_admin"][lang]
     else:
         msg = TEXTS["ai_menu_prompt"][lang].format(remaining=remaining, limit=AI_DAILY_LIMIT)
     
@@ -205,11 +204,11 @@ Kullanıcının dilinde yanıt ver."""
         
         # Kalan hak bilgisi ekle
         if user_id in ADMIN_IDS:
-            status_text = TEXTS["ai_unlimited_text"][lang]
+            footer = TEXTS["ai_unlimited_text"][lang]
         else:
             status_text = f"{new_remaining}/{AI_DAILY_LIMIT}"
+            footer = TEXTS["ai_remaining_footer"][lang].format(status=status_text)
             
-        footer = TEXTS["ai_remaining_footer"][lang].format(status=status_text)
         await update.message.reply_text(
             f"{ai_response}\n\n{footer}",
             reply_markup=get_ai_chat_keyboard(lang)
