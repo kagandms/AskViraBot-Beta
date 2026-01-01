@@ -6,6 +6,7 @@ Provides real-time metro departure times using IBB Metro Istanbul API
 import asyncio
 import logging
 from datetime import datetime
+import pytz
 import requests
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
@@ -15,6 +16,9 @@ from utils import get_tools_keyboard_markup
 from rate_limiter import rate_limit
 
 logger = logging.getLogger(__name__)
+
+# Istanbul timezone
+ISTANBUL_TZ = pytz.timezone('Europe/Istanbul')
 
 # API Base URL
 METRO_API_BASE = "https://api.ibb.gov.tr/MetroIstanbul/api/MetroMobile/V2"
@@ -63,7 +67,7 @@ async def fetch_directions_by_line(line_id: int):
 async def fetch_timetable(station_id: int, direction_id: int):
     """Fetch departure times for a station and direction"""
     try:
-        now = datetime.now().strftime("%Y-%m-%dT%H:%M:%S+03:00")
+        now = datetime.now(ISTANBUL_TZ).strftime("%Y-%m-%dT%H:%M:%S+03:00")
         payload = {
             "BoardingStationId": station_id,
             "DirectionId": direction_id,
@@ -102,11 +106,20 @@ async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
         )
         return
     
-    # Filter to show only main metro lines (not funicular, tram etc)
-    # and create keyboard
+    # Filter to show only metro lines (M1A, M1B, M2, M3, etc.)
+    # Exclude trams (T), funiculars (F), cable cars (TF), marmaray
+    metro_lines = [line for line in lines if line.get("Name", "").startswith("M")]
+    
+    if not metro_lines:
+        await update.message.reply_text(
+            TEXTS["metro_api_error"][lang],
+            reply_markup=get_tools_keyboard_markup(lang)
+        )
+        return
+    
     keyboard = []
     row = []
-    for line in lines:
+    for line in metro_lines:
         line_name = line.get("Name", "")
         line_id = line.get("Id")
         if line_name and line_id:
@@ -266,8 +279,8 @@ async def metro_direction_callback(update: Update, context: ContextTypes.DEFAULT
         await query.message.edit_text(TEXTS["metro_no_departures"][lang])
         return
     
-    # Calculate minutes until each departure
-    now = datetime.now()
+    # Calculate minutes until each departure using Istanbul timezone
+    now = datetime.now(ISTANBUL_TZ)
     departure_lines = []
     
     for time_str in times[:6]:  # Show next 6 departures
@@ -324,9 +337,12 @@ async def metro_back_callback(update: Update, context: ContextTypes.DEFAULT_TYPE
         await query.message.edit_text(TEXTS["metro_api_error"][lang])
         return
     
+    # Filter to show only metro lines (M1A, M1B, M2, M3, etc.)
+    metro_lines = [line for line in lines if line.get("Name", "").startswith("M")]
+    
     keyboard = []
     row = []
-    for line in lines:
+    for line in metro_lines:
         line_name = line.get("Name", "")
         line_id = line.get("Id")
         if line_name and line_id:
