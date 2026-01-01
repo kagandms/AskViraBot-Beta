@@ -15,5 +15,7 @@ services:
         sync: false
       - key: ADMIN_IDS
         sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
       - key: TIMEZONE
         value: Europe/Istanbul
