@@ -198,11 +198,12 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
                 await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=prompt_msg_id)
             except Exception:
                 pass
-        # Ana menüye dön
-        lang = await asyncio.to_thread(db.get_user_lang, user_id)
+        # Admin menüsüne dön (Ana menü yerine)
+        state.admin_menu_active.add(user_id)
         await update.message.reply_text(
-            "🏠 Ana menüye döndünüz.",
-            reply_markup=get_main_keyboard_markup(lang, user_id)
+            "🔧 *Admin Paneli*\n\nBir işlem seçin:",
+            reply_markup=get_admin_keyboard(),
+            parse_mode="Markdown"
         )
         return True
     

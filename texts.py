@@ -363,6 +363,11 @@ TEXTS = {
         "en": "This box is taken or game is over.",
         "ru": "Эта клетка занята или игра окончена."
     },
+    "xox_bot_moved": {
+        "tr": "🤖 Bot hamle yaptı! Sıra sende.",
+        "en": "🤖 Bot played! Your turn.",
+        "ru": "🤖 Бот сделал ход! Ваша очередь."
+    },
     
     # --- VIDEO DOWNLOADER ---
     "video_downloader_menu_prompt": {
