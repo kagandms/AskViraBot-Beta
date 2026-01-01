@@ -607,4 +607,5 @@ BUTTON_MAPPINGS = {
     "ai_main_button": {"🤖 ai asistan", "🤖 ai assistant", "🤖 ai ассистент"},
     "ai_start_chat": {"🧠 sohbete başla", "🧠 start chat", "🧠 начать чат"},
     "ai_end_chat": {"🔚 sohbeti bitir", "🔚 end chat", "🔚 завершить чат"},
+    "ai_back_to_menu": {"🔙 ana menü", "🔙 main menu", "🔙 главное меню"},
 }

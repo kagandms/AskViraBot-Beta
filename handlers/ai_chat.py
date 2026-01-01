@@ -164,7 +164,19 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             lambda: model.generate_content(full_prompt)
         )
         
-        ai_response = response.text
+        # Response kontrolü - bazen .text hata verebilir
+        ai_response = None
+        try:
+            ai_response = response.text
+        except ValueError:
+            # Blocked content veya empty response durumu
+            if response.prompt_feedback:
+                ai_response = "⚠️ Bu soruya yanıt veremiyorum."
+            else:
+                ai_response = "⚠️ Yanıt alınamadı, lütfen tekrar deneyin."
+        
+        if not ai_response:
+            ai_response = "⚠️ Boş yanıt alındı, lütfen farklı bir soru sorun."
         
         # Sayacı artır
         increment_usage(user_id)

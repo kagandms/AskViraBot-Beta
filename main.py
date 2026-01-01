@@ -195,6 +195,8 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await ai_chat.start_ai_chat(update, context)
     elif text in BUTTON_MAPPINGS.get("ai_end_chat", set()):
         await ai_chat.end_ai_chat(update, context)
+    elif text in BUTTON_MAPPINGS.get("ai_back_to_menu", set()):
+        await general.menu_command(update, context)
 
     # DİL
     elif text in {"🇹🇷 türkçe", "🇬🇧 english", "🇷🇺 русский"}:
