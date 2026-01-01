@@ -15,6 +15,8 @@ TIMEZONE = os.getenv("TIMEZONE", "Europe/Istanbul")  # Varsayilan: Turkiye
 # --- API ANAHTARLARI ---
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 OPENWEATHERMAP_API_KEY = os.getenv("OPENWEATHERMAP_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+AI_DAILY_LIMIT = 30  # Kullanıcı başına günlük AI mesaj limiti
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 

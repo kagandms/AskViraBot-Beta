@@ -23,6 +23,11 @@ playing_xox = {}                 # XOX durumu (İlerisi için hazırlık)
 waiting_for_video_link = {}      # Link bekliyor {user_id: {"platform": str, "format": str}}
 waiting_for_format_selection = {}  # Format seçimi bekliyor {user_id: platform}
 
+# --- AI CHAT DURUMLARI ---
+ai_chat_active = set()           # AI sohbet modunda {user_id}
+ai_daily_usage = {}              # Günlük kullanım {user_id: count}
+ai_last_reset_date = None        # Son sıfırlama tarihi
+
 def clear_user_states(user_id):
     """Kullanıcının tüm aktif durumlarını temizler."""
     playing_tkm.discard(user_id)
@@ -46,3 +51,6 @@ def clear_user_states(user_id):
     # Video downloader
     waiting_for_video_link.pop(user_id, None)
     waiting_for_format_selection.pop(user_id, None)
+    
+    # AI Chat
+    ai_chat_active.discard(user_id)

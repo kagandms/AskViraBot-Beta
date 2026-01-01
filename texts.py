@@ -414,15 +414,56 @@ TEXTS = {
         "tr": "✅ Ses dosyası başarıyla indirildi!",
         "en": "✅ Audio downloaded successfully!",
         "ru": "✅ Аудио успешно загружено!"
+    },
+    
+    # --- AI ASISTAN ---
+    "ai_menu_prompt": {
+        "tr": "🤖 *AI Asistan*\n\nYapay zeka destekli sohbet asistanınız.\nSorularınızı sorun, yardım isteyin!\n\n📊 Günlük hakkınız: {remaining}/{limit}",
+        "en": "🤖 *AI Assistant*\n\nYour AI-powered chat assistant.\nAsk questions, get help!\n\n📊 Daily quota: {remaining}/{limit}",
+        "ru": "🤖 *AI Ассистент*\n\nВаш чат-ассистент на базе ИИ.\nЗадавайте вопросы, получайте помощь!\n\n📊 Дневной лимит: {remaining}/{limit}"
+    },
+    "ai_chat_started": {
+        "tr": "🧠 AI sohbet modu başladı!\n\nBana her şeyi sorabilirsin. Bitirmek için aşağıdaki butonu kullan.",
+        "en": "🧠 AI chat mode started!\n\nYou can ask me anything. Use the button below to end.",
+        "ru": "🧠 Режим AI чата начат!\n\nВы можете спросить меня о чём угодно. Используйте кнопку ниже, чтобы завершить."
+    },
+    "ai_chat_ended": {
+        "tr": "👋 AI sohbeti sonlandırıldı. Ana menüye döndünüz.",
+        "en": "👋 AI chat ended. You're back to main menu.",
+        "ru": "👋 AI чат завершён. Вы вернулись в главное меню."
+    },
+    "ai_thinking": {
+        "tr": "🤔 Düşünüyorum...",
+        "en": "🤔 Thinking...",
+        "ru": "🤔 Думаю..."
+    },
+    "ai_limit_reached": {
+        "tr": "⚠️ Günlük AI mesaj limitinize ulaştınız (30/30).\nYarın tekrar deneyebilirsiniz!",
+        "en": "⚠️ You've reached your daily AI message limit (30/30).\nTry again tomorrow!",
+        "ru": "⚠️ Вы достигли дневного лимита AI сообщений (30/30).\nПопробуйте завтра!"
+    },
+    "ai_remaining_footer": {
+        "tr": "💬 Kalan: {remaining}/30",
+        "en": "💬 Remaining: {remaining}/30",
+        "ru": "💬 Осталось: {remaining}/30"
+    },
+    "ai_error": {
+        "tr": "❌ AI yanıt verirken bir hata oluştu. Lütfen tekrar deneyin.",
+        "en": "❌ An error occurred while AI was responding. Please try again.",
+        "ru": "❌ Произошла ошибка при ответе AI. Пожалуйста, попробуйте снова."
+    },
+    "ai_api_error": {
+        "tr": "❌ AI servisi şu an kullanılamıyor. Lütfen daha sonra tekrar deneyin.",
+        "en": "❌ AI service is currently unavailable. Please try again later.",
+        "ru": "❌ Сервис AI временно недоступен. Попробуйте позже."
     }
 }
 
-# --- YENİLENMİŞ ANA MENÜ (Araçlar buraya dağıtıldı, Oyunlar ayrıldı) ---
-# --- YENİLENMİŞ ANA MENÜ (Araçlar buraya dağıtıldı, Oyunlar ayrıldı) ---
+# --- YENİLENMİŞ ANA MENÜ (AI Asistan eklendi) ---
 MAIN_BUTTONS = {
-    "tr": [["🛠 Araçlar", "🎮 Oyun Odası"], ["🌐 Dil Değiştir", "👨‍💻 Geliştirici"]],
-    "en": [["🛠 Tools", "🎮 Game Room"], ["🌐 Change Language", "👨‍💻 Developer"]],
-    "ru": [["🛠 Инструменты", "🎮 Игровая Комната"], ["🌐 Сменить Язык", "👨‍💻 Разработчик"]]
+    "tr": [["🛠 Araçlar", "🎮 Oyun Odası"], ["🌐 Dil Değiştir", "👨‍💻 Geliştirici"], ["🤖 AI Asistan"]],
+    "en": [["🛠 Tools", "🎮 Game Room"], ["🌐 Change Language", "👨‍💻 Developer"], ["🤖 AI Assistant"]],
+    "ru": [["🛠 Инструменты", "🎮 Игровая Комната"], ["🌐 Сменить Язык", "👨‍💻 Разработчик"], ["🤖 AI Ассистент"]]
 }
 
 TOOLS_BUTTONS = {
@@ -561,4 +602,9 @@ BUTTON_MAPPINGS = {
     "format_video": {"🎥 video (mp4)"},
     "format_audio": {"🎵 ses (mp3)", "🎵 audio (mp3)", "🎵 аудио (mp3)"},
     "back_to_platform": {"🔙 platform seçimi", "🔙 platform selection", "🔙 выбор платформы"},
+    
+    # AI ASISTAN
+    "ai_main_button": {"🤖 ai asistan", "🤖 ai assistant", "🤖 ai ассистент"},
+    "ai_start_chat": {"🧠 sohbete başla", "🧠 start chat", "🧠 начать чат"},
+    "ai_end_chat": {"🔚 sohbeti bitir", "🔚 end chat", "🔚 завершить чат"},
 }

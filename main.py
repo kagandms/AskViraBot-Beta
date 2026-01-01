@@ -13,7 +13,7 @@ from utils import get_main_keyboard_markup
 from rate_limiter import is_rate_limited, get_remaining_cooldown
 
 # Handler'ları içe aktar
-from handlers import general, notes, reminders, games, tools, admin
+from handlers import general, notes, reminders, games, tools, admin, ai_chat
 
 # --- LOGLAMA YAPILANDIRMASI ---
 logging.basicConfig(
@@ -84,6 +84,9 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if user_id in state.waiting_for_video_link:
         await tools.download_and_send_media(update, context)
+        return
+    if user_id in state.ai_chat_active:
+        await ai_chat.handle_ai_message(update, context)
         return
 
     # EĞER HİÇBİR STATE'E GİRMEDİYSE VE METİN YOKSA (Beklenmeyen Dosya)
@@ -184,6 +187,14 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await reminders.show_reminders_command(update, context)
     elif text in BUTTON_MAPPINGS.get("delete_reminder_button", set()):
         await reminders.delete_reminder_menu(update, context)
+    
+    # AI ASISTAN
+    elif text in BUTTON_MAPPINGS.get("ai_main_button", set()):
+        await ai_chat.ai_menu(update, context)
+    elif text in BUTTON_MAPPINGS.get("ai_start_chat", set()):
+        await ai_chat.start_ai_chat(update, context)
+    elif text in BUTTON_MAPPINGS.get("ai_end_chat", set()):
+        await ai_chat.end_ai_chat(update, context)
 
     # DİL
     elif text in {"🇹🇷 türkçe", "🇬🇧 english", "🇷🇺 русский"}:
