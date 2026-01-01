@@ -372,7 +372,7 @@ async def metro_direction_callback(update: Update, context: ContextTypes.DEFAULT
                 departure_lines.append(f"🚇 {time_str} (şimdi)")
             else:
                 departure_lines.append(f"🕒 {time_str} ({minutes_until} dk)")
-        except:
+        except ValueError:
             departure_lines.append(f"🕒 {time_str}")
     
     if not departure_lines:

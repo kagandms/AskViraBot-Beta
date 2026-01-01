@@ -216,10 +216,14 @@ async def on_startup(application):
     logger.info("Bot başlatılıyor... Bekleyen hatırlatıcılar kontrol ediliyor.")
     await reminders.start_pending_reminders(application)
 
+async def on_shutdown(application):
+    logger.info("Bot kapatılıyor... HTTP session temizleniyor.")
+    await metro.close_http_session()
+
 def main():
     keep_alive()
 
-    app = ApplicationBuilder().token(BOT_TOKEN).post_init(on_startup).build()
+    app = ApplicationBuilder().token(BOT_TOKEN).post_init(on_startup).post_shutdown(on_shutdown).build()
 
     # Handler Listesi
     handlers_list = [

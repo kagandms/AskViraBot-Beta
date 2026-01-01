@@ -12,7 +12,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     await update.message.reply_text(TEXTS["start"][lang])
-    await update.message.reply_text(TEXTS["start"][lang])
 
 async def tools_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id

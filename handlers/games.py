@@ -285,8 +285,9 @@ async def tkm_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(TEXTS["tkm_welcome"][lang], reply_markup=ReplyKeyboardMarkup(buttons, resize_keyboard=True))
 
 async def tkm_play(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    lang = "en"  # Fallback dil
     try:
-        user_id = update.effective_user.id
         # DB İŞLEMİ: Asenkron
         lang = await asyncio.to_thread(db.get_user_lang, user_id)
         user_move_raw = update.message.text.lower().strip()

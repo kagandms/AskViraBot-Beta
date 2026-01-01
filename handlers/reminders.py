@@ -32,17 +32,24 @@ async def show_reminders_command(update: Update, context: ContextTypes.DEFAULT_T
 
     message = TEXTS["reminders_header"][lang]
     now = datetime.now(pytz.utc)
+    
+    # Çeviri metinleri
+    remaining_text = {"tr": "Kalan", "en": "Remaining", "ru": "Осталось"}
+    expired_text = {"tr": "Süresi Doldu", "en": "Expired", "ru": "Истёк"}
+    error_text = {"tr": "Hata", "en": "Error", "ru": "Ошибка"}
+    unknown_text = {"tr": "Bilinmeyen", "en": "Unknown", "ru": "Неизвестно"}
+    
     for i, reminder in enumerate(user_reminders):
         try:
             target_time = datetime.fromisoformat(reminder["time"])
             remaining_seconds = (target_time - now).total_seconds()
             time_formatted = target_time.astimezone(pytz.timezone(TIMEZONE)).strftime('%Y-%m-%d %H:%M')
             if remaining_seconds > 0:
-                message += f"{i+1}. {time_formatted} - {reminder['message']} (Kalan: {format_remaining_time(remaining_seconds, lang)})\n"
+                message += f"{i+1}. {time_formatted} - {reminder['message']} ({remaining_text.get(lang, 'Remaining')}: {format_remaining_time(remaining_seconds, lang)})\n"
             else:
-                message += f"{i+1}. {time_formatted} - {reminder['message']} (Süresi Doldu)\n"
+                message += f"{i+1}. {time_formatted} - {reminder['message']} ({expired_text.get(lang, 'Expired')})\n"
         except Exception as e:
-            message += f"{i+1}. [Hata] - {reminder.get('message', 'Bilinmeyen')}\n"
+            message += f"{i+1}. [{error_text.get(lang, 'Error')}] - {reminder.get('message', unknown_text.get(lang, 'Unknown'))}\n"
     await update.message.reply_text(message, reply_markup=get_reminder_keyboard_markup(lang))
 
 async def prompt_reminder_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -88,31 +95,31 @@ async def process_reminder_input(update: Update, context: ContextTypes.DEFAULT_T
         time_str = target.strftime('%Y-%m-%d %H:%M')
         
         reminder_data = {"user_id": user_id, "chat_id": update.effective_chat.id, "time": target.astimezone(pytz.utc).isoformat(), "message": message}
-        # DB İŞLEMİ: Asenkron
-        await asyncio.to_thread(db.add_reminder_db, reminder_data)
+        # DB İŞLEMİ: Asenkron - Eklenen kaydın ID'sini al
+        reminder_id = await asyncio.to_thread(db.add_reminder_db, reminder_data)
         
         await update.message.reply_text(
             TEXTS["reminder_set"][lang].format(time_str=time_str, message=message, remaining_time=remaining_time_str),
             reply_markup=get_reminder_keyboard_markup(lang)
         )
         state.clear_user_states(user_id)
-        asyncio.create_task(reminder_task(context.application, update.effective_chat.id, message, remaining_seconds, reminder_data))
+        # ID'yi direkt olarak task'a geçir
+        asyncio.create_task(reminder_task(context.application, update.effective_chat.id, message, remaining_seconds, reminder_id))
 
     except Exception as e:
         await update.message.reply_text(TEXTS["error_occurred"][lang] + str(e), reply_markup=get_reminder_keyboard_markup(lang))
         state.clear_user_states(user_id)
 
-async def reminder_task(application, chat_id, message, wait_seconds, reminder_data):
-
+async def reminder_task(application, chat_id, message, wait_seconds, reminder_id):
+    """Belirtilen süre sonunda hatırlatıcı mesajı gönderir ve DB'den siler."""
     logger = logging.getLogger(__name__)
     
-    reminder_id = reminder_data.get('id')
     await asyncio.sleep(wait_seconds)
     try:
-         await application.bot.send_message(chat_id=chat_id, text=f"🔔 Reminder: {message}")
-         if reminder_id: 
-             # DB İŞLEMİ: Asenkron
-             await asyncio.to_thread(db.remove_reminder_db, reminder_id)
+        await application.bot.send_message(chat_id=chat_id, text=f"🔔 Reminder: {message}")
+        # Hatırlatıcıyı veritabanından sil
+        if reminder_id:
+            await asyncio.to_thread(db.remove_reminder_db, reminder_id)
     except Exception as e:
         logger.error(f"Hatırlatıcı gönderilemedi (chat_id: {chat_id}): {e}")
 

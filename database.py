@@ -128,7 +128,8 @@ def get_all_reminders_db():
         return []
 
 def add_reminder_db(reminder_data):
-    if not supabase: return
+    """Hatırlatıcı ekler ve eklenen kaydın ID'sini döner."""
+    if not supabase: return None
     try:
         data_to_insert = {
             "user_id": str(reminder_data["user_id"]),
@@ -136,9 +137,14 @@ def add_reminder_db(reminder_data):
             "message": reminder_data["message"],
             "time": reminder_data["time"]
         }
-        supabase.table("reminders").insert(data_to_insert).execute()
+        response = supabase.table("reminders").insert(data_to_insert).execute()
+        # Eklenen kaydın ID'sini döndür
+        if response.data and len(response.data) > 0:
+            return response.data[0].get("id")
+        return None
     except Exception as e:
         logger.error(f"Hatırlatıcı ekleme hatası: {e}")
+        return None
 
 def remove_reminder_db(reminder_id):
     if not supabase: return
