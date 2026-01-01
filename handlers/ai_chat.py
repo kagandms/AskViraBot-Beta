@@ -12,7 +12,7 @@ from openai import OpenAI
 
 import database as db
 import state
-from config import OPENROUTER_API_KEY, AI_DAILY_LIMIT
+from config import OPENROUTER_API_KEY, AI_DAILY_LIMIT, ADMIN_IDS
 from texts import TEXTS, BUTTON_MAPPINGS
 from utils import get_main_keyboard_markup
 from rate_limiter import rate_limit
@@ -68,7 +68,9 @@ def get_user_remaining_quota(user_id: int) -> int:
     """Kullanıcının kalan günlük mesaj hakkı"""
     check_and_reset_daily_limits()
     used = state.ai_daily_usage.get(user_id, 0)
-    return max(0, AI_DAILY_LIMIT - used)
+    # Admin kullanıcılara 999 limit
+    limit = 999 if user_id in ADMIN_IDS else AI_DAILY_LIMIT
+    return max(0, limit - used)
 
 def increment_usage(user_id: int):
     """Kullanıcının günlük sayacını artır"""
