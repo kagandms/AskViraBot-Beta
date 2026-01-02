@@ -35,7 +35,9 @@ async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYP
 
     # Metin varsa al, yoksa boş string (Dosya/Fotoğraf durumları için)
     text_raw = update.message.text if update.message.text else ""
-    text = text_raw.lower().strip()
+    # Türkçe İ/i karakterlerini doğru işlemek için turkish_lower kullanılır
+    from texts import turkish_lower
+    text = turkish_lower(text_raw).strip()
     user_id = update.effective_user.id
     
     # Genel Rate Limit Kontrolü

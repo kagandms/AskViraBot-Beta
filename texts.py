@@ -579,89 +579,98 @@ REMINDER_BUTTONS = {
     "ru": [["➕ Добавить Напоминание"], ["📋 Показать Напоминания"], ["🗑️ Удалить Напоминание"], ["🔙 Меню Инструментов"]]
 }
 
-# BUTTON MAPPINGS (Karar Çarkı Silindi)
-BUTTON_MAPPINGS = {
+# --- TÜRKÇE LOWERCASE HELPER ---
+# Python'un .lower() fonksiyonu Türkçe İ karakterini doğru dönüştürmez
+# "İ".lower() = "i̇" (noktalı i + combining dot) olur, "i" olması lazım
+def turkish_lower(text: str) -> str:
+    """Türkçe karakterleri doğru şekilde lowercase yapar"""
+    return text.replace("İ", "i").replace("I", "ı").lower()
+
+# --- OTOMATİK BUTTON MAPPING ÜRETİCİ ---
+def generate_mappings_from_buttons(*button_dicts):
+    """
+    Verilen buton sözlüklerinden otomatik lowercase mapping üretir.
+    Tüm dillerdeki buton metinlerini toplar ve lowercase versiyonlarını döndürür.
+    """
+    all_buttons = set()
+    for btn_dict in button_dicts:
+        for lang, rows in btn_dict.items():
+            for row in rows:
+                for button_text in row:
+                    all_buttons.add(turkish_lower(button_text))
+    return all_buttons
+
+# --- OTOMATİK ÜRETİLEN MAPPINGS ---
+# Bu mappings, yukarıdaki BUTTONS sözlüklerinden otomatik üretilir
+AUTO_MAPPINGS = {
+    # Ana menü butonları
+    "tools_main_button": generate_mappings_from_buttons({"tr": [["🛠 Araçlar"]], "en": [["🛠 Tools"]], "ru": [["🛠 Инструменты"]]}),
+    "games_main_button": generate_mappings_from_buttons({"tr": [["🎮 Oyun Odası"]], "en": [["🎮 Game Room"]], "ru": [["🎮 Игровая Комната"]]}),
+    "notes_main_button": generate_mappings_from_buttons({"tr": [["📝 Notlar"]], "en": [["📝 Notes"]], "ru": [["📝 Заметки"]]}),
+    "language": generate_mappings_from_buttons({"tr": [["🌐 Dil Değiştir"]], "en": [["🌐 Change Language"]], "ru": [["🌐 Сменить Язык"]]}),
+    "developer_main_button": generate_mappings_from_buttons({"tr": [["👨‍💻 Geliştirici"]], "en": [["👨‍💻 Developer"]], "ru": [["👨‍💻 Разработчик"]]}),
+    "ai_main_button": generate_mappings_from_buttons({"tr": [["🤖 AI Asistan (Beta)"]], "en": [["🤖 AI Assistant (Beta)"]], "ru": [["🤖 AI Ассистент (Бета)"]]}),
+    "help_button": generate_mappings_from_buttons({"tr": [["❓ Nasıl Kullanılır?"]], "en": [["❓ How to Use?"]], "ru": [["❓ Как использовать?"]]}),
+    
+    # Araçlar menüsü
+    "reminder": generate_mappings_from_buttons({"tr": [["⏰ Hatırlatıcı"]], "en": [["⏰ Reminder"]], "ru": [["⏰ Напоминание"]]}),
+    "qrcode_button": generate_mappings_from_buttons({"tr": [["📷 QR Kod"]], "en": [["📷 QR Code"]], "ru": [["📷 QR-код"]]}),
+    "pdf_converter_main_button": generate_mappings_from_buttons({"tr": [["📄 PDF Dönüştürücü"]], "en": [["📄 PDF Converter"]], "ru": [["📄 Конвертер PDF"]]}),
+    "weather_main_button": generate_mappings_from_buttons({"tr": [["☀️ Hava Durumu"]], "en": [["☀️ Weather"]], "ru": [["☀️ Погода"]]}),
+    "video_downloader_main_button": generate_mappings_from_buttons({"tr": [["📥 Video İndir"]], "en": [["📥 Video Download"]], "ru": [["📥 Скачать Видео"]]}),
+    "metro_main_button": generate_mappings_from_buttons({"tr": [["🚇 Metro"]], "en": [["🚇 Metro"]], "ru": [["🚇 Метро"]]}),
+    
+    # Oyunlar menüsü
+    "xox_game": generate_mappings_from_buttons({"tr": [["❌⭕ XOX"]], "en": [["❌⭕ XOX"]], "ru": [["❌⭕ XOX"]]}),
+    "dice": generate_mappings_from_buttons({"tr": [["🎲 Zar"]], "en": [["🎲 Dice"]], "ru": [["🎲 Кубик"]]}),
+    "coinflip": generate_mappings_from_buttons({"tr": [["🪙 Yazı Tura"]], "en": [["🪙 Coinflip"]], "ru": [["🪙 Монета"]]}),
+    "tkm_main": generate_mappings_from_buttons({"tr": [["🪨📄✂️ T-K-M"]], "en": [["🪨📄✂️ R-P-S"]], "ru": [["🪨📄✂️ К-Б-Н"]]}),
+    
+    # Notlar menüsü
+    "add_note_button": generate_mappings_from_buttons({"tr": [["➕ Not Ekle"]], "en": [["➕ Add Note"]], "ru": [["➕ Добавить"]]}),
+    "edit_note_button": generate_mappings_from_buttons({"tr": [["✏️ Not Düzenle"]], "en": [["✏️ Edit Note"]], "ru": [["✏️ Изменить"]]}),
+    "show_all_notes_button": generate_mappings_from_buttons({"tr": [["📋 Tüm Notları Göster"]], "en": [["📋 Show All Notes"]], "ru": [["📋 Показать Все"]]}),
+    "delete_note_button": generate_mappings_from_buttons({"tr": [["🗑️ Not Sil"]], "en": [["🗑️ Delete Note"]], "ru": [["🗑️ Удалить"]]}),
+    "select_delete_note_button": generate_mappings_from_buttons({"tr": [["✍️ Not Seçerek Sil"]], "en": [["✍️ Select Note to Delete"]], "ru": [["✍️ Удалить По Номеру"]]}),
+    
+    # TKM butonları
+    "tkm_rock": generate_mappings_from_buttons({"tr": [["🪨 Taş"]], "en": [["🪨 Rock"]], "ru": [["🪨 Камень"]]}),
+    "tkm_paper": generate_mappings_from_buttons({"tr": [["📄 Kağıt"]], "en": [["📄 Paper"]], "ru": [["📄 Бумага"]]}),
+    "tkm_scissors": generate_mappings_from_buttons({"tr": [["✂️ Makas"]], "en": [["✂️ Scissors"]], "ru": [["✂️ Ножницы"]]}),
+    
+    # PDF menüsü
+    "text_to_pdf_button": generate_mappings_from_buttons({"tr": [["📝 Metinden PDF'e"]], "en": [["📝 Text to PDF"]], "ru": [["📝 Текст в PDF"]]}),
+    "image_to_pdf_button": generate_mappings_from_buttons({"tr": [["🖼️ Resimden PDF'e"]], "en": [["🖼️ Image to PDF"]], "ru": [["🖼️ Изображение в PDF"]]}),
+    "document_to_pdf_button": generate_mappings_from_buttons({"tr": [["📄 Belgeden PDF'e"]], "en": [["📄 Document to PDF"]], "ru": [["📄 Документ в PDF"]]}),
+    
+    # Hatırlatıcı menüsü
+    "add_reminder_button": generate_mappings_from_buttons({"tr": [["➕ Hatırlatıcı Ekle"]], "en": [["➕ Add Reminder"]], "ru": [["➕ Добавить Напоминание"]]}),
+    "show_reminders_button": generate_mappings_from_buttons({"tr": [["📋 Hatırlatıcıları Göster"]], "en": [["📋 Show Reminders"]], "ru": [["📋 Показать Напоминания"]]}),
+    "delete_reminder_button": generate_mappings_from_buttons({"tr": [["🗑️ Hatırlatıcı Sil"]], "en": [["🗑️ Delete Reminder"]], "ru": [["🗑️ Удалить Напоминание"]]}),
+    
+    # Video downloader
+    "video_platform_tiktok": generate_mappings_from_buttons({"all": [["📱 TikTok"]]}),
+    "video_platform_twitter": generate_mappings_from_buttons({"all": [["🐦 Twitter/X"]]}),
+    "video_platform_instagram": generate_mappings_from_buttons({"all": [["📸 Instagram"]]}),
+    "format_video": generate_mappings_from_buttons({"all": [["🎥 Video (MP4)"]]}),
+    "format_audio": generate_mappings_from_buttons({"tr": [["🎵 Ses (MP3)"]], "en": [["🎵 Audio (MP3)"]], "ru": [["🎵 Аудио (MP3)"]]}),
+    "back_to_platform": generate_mappings_from_buttons({"tr": [["🔙 Platform Seçimi"]], "en": [["🔙 Platform Selection"]], "ru": [["🔙 Выбор Платформы"]]}),
+    
+    # AI Asistan
+    "ai_start_chat": generate_mappings_from_buttons({"tr": [["🧠 Sohbete Başla"]], "en": [["🧠 Start Chat"]], "ru": [["🧠 Начать Чат"]]}),
+    "ai_end_chat": generate_mappings_from_buttons({"tr": [["🔚 Sohbeti Bitir"]], "en": [["🔚 End Chat"]], "ru": [["🔚 Завершить Чат"]]}),
+    "ai_back_to_menu": generate_mappings_from_buttons({"tr": [["🔙 Ana Menü"]], "en": [["🔙 Main Menu"]], "ru": [["🔙 Главное Меню"]]}),
+}
+
+# --- MANUEL MAPPINGS (Özel durumlar için) ---
+# Bazı butonlar birden fazla varyant gerektirdiği için manuel tutulur
+MANUAL_MAPPINGS = {
     "menu": {"🏠 menüye dön", "🏠 back to menu", "🏠 назад в меню", "🔙 geri", "🔙 back", "🔙 назад"},
     "back_to_tools": {"🔙 araçlar menüsü", "🔙 tools menu", "🔙 меню инструментов"},
     "back_to_games": {"🔙 oyun odası", "🔙 game room", "🔙 игровая комната"},
-    
-    # ANA MENÜ KATEGORİLERİ
-    "notes_main_button": {"📝 notlar", "📝 notes", "📝 заметки"},
-    "games_main_button": {"🎮 oyun odası", "🎮 game room", "🎮 игровая комната"},
-    "tools_main_button": {"🛠 araçlar", "🛠 tools", "🛠 инструменты"},
-    
-    # ARAÇLAR
-    "qrcode_button": {"📷 qr kod", "📷 qr code", "📷 qr-код", "📷 qr kod oluştur"},
-    "pdf_converter_main_button": {"📄 pdf dönüştürücü", "📄 pdf converter", "📄 конвертер pdf", "📄 pdf çevirici"},
-    "weather_main_button": {"☀️ hava durumu", "☀️ weather", "☀️ погода"},
-    "reminder": {"⏰ hatırlatıcı", "⏰ reminder", "⏰ напоминание"},
-    "language": {"🌐 dil değiştir", "🌐 change language", "🌐 сменить язык"},
-    # Developer butonu için genişletilmiş liste (Emoji farklılıklarını önlemek için)
-    "developer_main_button": {
-        "👨‍💻 geliştirici", "👨‍💻 developer", "👨‍💻 разработчик",
-        "geliştirici", "developer", "разработчик", 
-        "👨‍💻 geliştirici", "👨‍💻developer"
-    },
-    
-    # OYUNLAR MENÜSÜ
-    "xox_game": {"❌⭕ xox", "❌⭕ tic-tac-toe", "❌⭕ крестики-нолики"},
-    "dice": {"🎲 zar", "🎲 dice", "🎲 кубик"},
-    "coinflip": {"🪙 yazı tura", "🪙 coinflip", "🪙 монета"},
-    # TKM için hem buton metnini hem de eski tanımları ekledik
-    "tkm_main": {
-        "t-k-m 🪨📄✂️", "r-p-s 🪨📄✂️", "к-б-н 🪨📄✂️", # Eski ihtimaller
-        "🪨📄✂️ t-k-m", "🪨📄✂️ r-p-s", "🪨📄✂️ к-б-н", # YENİ: Butondaki doğru sıralama
-        "taş kağıt makas", "rock paper scissors", "tkm", "rps" # Yedekler
-    },
-    
-    # NOTLAR MENÜSÜ
-    "add_note_button": {"➕ not ekle", "➕ add note", "➕ добавить", "➕ добавить заметку"},
-    "edit_note_button": {"✏️ not düzenle", "✏️ edit note", "✏️ изменить"},
-    
-    # DÜZELTME 1: Rusça "Tüm notları göster" butonunun doğru eşleşmesi eklendi
-    "show_all_notes_button": {
-        "📋 tüm notları göster", "📋 show all notes", "📋 показать все заметки", "📋 notları göster",
-        "📋 показать все" # Rusça butondaki tam metin eklendi
-    },
-    
-    "delete_note_button": {"🗑️ not sil", "🗑️ delete note", "🗑️ удалить заметку", "🗑️ удалить"},
-    
-    # Diğerleri
-    "select_delete_note_button": {"✍️ not seçerek sil", "✍️ select note to delete", "✍️ удалить по номеру"},
-    "play_again": {"🔁 tekrar oyna", "🔁 play again", "🔁 сыграть снова"},
-    "tkm_rock": {"🪨 taş", "🪨 rock", "🪨 камень"},
-    "tkm_paper": {"📄 kağıt", "📄 paper", "📄 бумага"},
-    "tkm_scissors": {"✂️ makas", "✂️ scissors", "✂️ ножницы"},
-    "text_to_pdf_button": {"📝 metinden pdf'e", "📝 text to pdf", "📝 текст в pdf"},
-    "image_to_pdf_button": {"🖼️ resimden pdf'e", "🖼️ image to pdf", "🖼️ изображение в pdf"},
-    "document_to_pdf_button": {"📄 belgeden pdf'e", "📄 document to pdf", "📄 документ в pdf"},
-    "add_reminder_button": {"➕ hatırlatıcı ekle", "➕ add reminder", "➕ добавить напоминание"},
-    "show_reminders_button": {"📋 hatırlatıcıları göster", "📋 show reminders", "📋 показать напоминания"},
-    "delete_reminder_button": {"🗑️ hatırlatıcı sil", "🗑️ delete reminder", "🗑️ удалить напоминание"},
-    
-    # VIDEO DOWNLOADER
-    "video_downloader_main_button": {"📥 video indir", "📥 video i̇ndir", "📥 video download", "📥 скачать видео"},
-    "video_platform_tiktok": {"📱 tiktok"},
-    "video_platform_twitter": {"🐦 twitter/x"},
-    "video_platform_instagram": {"📸 instagram"},
-    
-    # FORMAT SELECTION
-    "format_video": {"🎥 video (mp4)"},
-    "format_audio": {"🎵 ses (mp3)", "🎵 audio (mp3)", "🎵 аудио (mp3)"},
-    "back_to_platform": {"🔙 platform seçimi", "🔙 platform selection", "🔙 выбор платформы"},
-    
-    # AI ASISTAN
-    "ai_main_button": {"🤖 ai asistan (beta)", "🤖 ai assistant (beta)", "🤖 ai ассистент (бета)"},
-    "ai_start_chat": {"🧠 sohbete başla", "🧠 start chat", "🧠 начать чат"},
-    "ai_end_chat": {"🔚 sohbeti bitir", "🔚 end chat", "🔚 завершить чат"},
-    "ai_back_to_menu": {"🔙 ana menü", "🔙 main menu", "🔙 главное меню"},
-    
-    # ADMIN PANEL
     "admin_panel_button": {"🔒 yönetim", "🔒 admin", "🔒 управление"},
-    
-    # METRO
-    "metro_main_button": {"🚇 metro", "🚇 метро"},
-    
-    # HELP / NASIL KULLANILIR
-    "help_button": {"❓ nasıl kullanılır?", "❓ how to use?", "❓ как использовать?"},
 }
+
+# --- BİRLEŞTİRİLMİŞ BUTTON_MAPPINGS ---
+# Otomatik ve manuel mappings birleştirilir
+BUTTON_MAPPINGS = {**AUTO_MAPPINGS, **MANUAL_MAPPINGS}
