@@ -172,11 +172,11 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     }
     thinking_msg = await update.message.reply_text(thinking_texts.get(lang, thinking_texts["en"])[0])
     
-    # Mesaj döngüsü arka planda
+    # Mesaj döngüsü arka planda (2 sn aralıklarla)
     async def update_thinking_message():
         texts = thinking_texts.get(lang, thinking_texts["en"])
         for i in range(1, len(texts)):
-            await asyncio.sleep(1.5)
+            await asyncio.sleep(2)  # 2 saniye aralıklarla güncelle
             try:
                 await thinking_msg.edit_text(texts[i])
             except Exception:

@@ -7,9 +7,9 @@ SOCIAL_MEDIA_LINKS = {
 }
 
 CITY_NAMES_TRANSLATED = {
-    "tr": {"Istanbul": "İstanbul", "Moscow": "Moskova", "London": "Londra", "New York": "New York", "Beijing": "Pekin", "Ankara": "Ankara", "Saint Petersburg": "St. Petersburg", "Paris": "Paris", "Berlin": "Berlin"}, 
-    "en": {"Istanbul": "Istanbul", "Moscow": "Moscow", "London": "London", "New York": "New York", "Beijing": "Beijing", "Ankara": "Ankara", "Saint Petersburg": "St. Petersburg", "Paris": "Paris", "Berlin": "Berlin"}, 
-    "ru": {"Istanbul": "Стамбул", "Moscow": "Москва", "London": "Лондон", "New York": "Нью-Йорк", "Beijing": "Пекин", "Ankara": "Анкара", "Saint Petersburg": "Санкт-Петербург", "Paris": "Париж", "Berlin": "Берлин"} 
+    "tr": {"Istanbul": "🇹🇷 İstanbul", "Moscow": "🇷🇺 Moskova", "London": "🇬🇧 Londra", "New York": "🇺🇸 New York", "Beijing": "🇨🇳 Pekin", "Ankara": "🇹🇷 Ankara", "Saint Petersburg": "🇷🇺 St. Petersburg", "Paris": "🇫🇷 Paris", "Berlin": "🇩🇪 Berlin"}, 
+    "en": {"Istanbul": "🇹🇷 Istanbul", "Moscow": "🇷🇺 Moscow", "London": "🇬🇧 London", "New York": "🇺🇸 New York", "Beijing": "🇨🇳 Beijing", "Ankara": "🇹🇷 Ankara", "Saint Petersburg": "🇷🇺 St. Petersburg", "Paris": "🇫🇷 Paris", "Berlin": "🇩🇪 Berlin"}, 
+    "ru": {"Istanbul": "🇹🇷 Стамбул", "Moscow": "🇷🇺 Москва", "London": "🇬🇧 Лондон", "New York": "🇺🇸 Нью-Йорк", "Beijing": "🇨🇳 Пекин", "Ankara": "🇹🇷 Анкара", "Saint Petersburg": "🇷🇺 Санкт-Петербург", "Paris": "🇫🇷 Париж", "Berlin": "🇩🇪 Берлин"} 
 }
 
 TEXTS = {
@@ -534,9 +534,9 @@ MAIN_BUTTONS = {
 }
 
 TOOLS_BUTTONS = {
-    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu", "📥 Video İndir"], ["🚇 Metro Saatleri", "🔙 Geri"]],
-    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather", "📥 Video Download"], ["🚇 Metro Times", "🔙 Back"]],
-    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода", "📥 Скачать Видео"], ["🚇 Расписание Метро", "🔙 Назад"]]
+    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu", "📥 Video İndir"], ["🚇 Canlı Metro", "🔙 Geri"]],
+    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather", "📥 Video Download"], ["🚇 Live Metro", "🔙 Back"]],
+    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода", "📥 Скачать Видео"], ["🚇 Метро Онлайн", "🔙 Назад"]]
 }
 
 # --- VIDEO DOWNLOADER MENÜSÜ ---
@@ -638,7 +638,7 @@ AUTO_MAPPINGS = {
     "pdf_converter_main_button": generate_mappings_from_buttons({"tr": [["📄 PDF Dönüştürücü"]], "en": [["📄 PDF Converter"]], "ru": [["📄 Конвертер PDF"]]}),
     "weather_main_button": generate_mappings_from_buttons({"tr": [["☀️ Hava Durumu"]], "en": [["☀️ Weather"]], "ru": [["☀️ Погода"]]}),
     "video_downloader_main_button": generate_mappings_from_buttons({"tr": [["📥 Video İndir"]], "en": [["📥 Video Download"]], "ru": [["📥 Скачать Видео"]]}),
-    "metro_main_button": generate_mappings_from_buttons({"tr": [["🚇 Metro Saatleri"]], "en": [["🚇 Metro Times"]], "ru": [["🚇 Расписание Метро"]]}),
+    "metro_main_button": generate_mappings_from_buttons({"tr": [["🚇 Canlı Metro"]], "en": [["🚇 Live Metro"]], "ru": [["🚇 Метро Онлайн"]]}),
     
     # Oyunlar menüsü
     "xox_game": generate_mappings_from_buttons({"tr": [["❌⭕ XOX"]], "en": [["❌⭕ XOX"]], "ru": [["❌⭕ XOX"]]}),
