@@ -508,9 +508,9 @@ TEXTS = {
 
 # --- YENİLENMİŞ ANA MENÜ (AI Asistan eklendi) ---
 MAIN_BUTTONS = {
-    "tr": [["🛠 Araçlar", "🎮 Oyun Odası"], ["🌐 Dil Değiştir", "👨‍💻 Geliştirici"], ["🤖 AI Asistan (Beta)"]],
-    "en": [["🛠 Tools", "🎮 Game Room"], ["🌐 Change Language", "👨‍💻 Developer"], ["🤖 AI Assistant (Beta)"]],
-    "ru": [["🛠 Инструменты", "🎮 Игровая Комната"], ["🌐 Сменить Язык", "👨‍💻 Разработчик"], ["🤖 AI Ассистент (Бета)"]]
+    "tr": [["🛠 Araçlar", "🎮 Oyun Odası"], ["🌐 Dil Değiştir", "👨‍💻 Geliştirici"], ["🤖 AI Asistan (Beta)", "❓ Nasıl Kullanılır?"]],
+    "en": [["🛠 Tools", "🎮 Game Room"], ["🌐 Change Language", "👨‍💻 Developer"], ["🤖 AI Assistant (Beta)", "❓ How to Use?"]],
+    "ru": [["🛠 Инструменты", "🎮 Игровая Комната"], ["🌐 Сменить Язык", "👨‍💻 Разработчик"], ["🤖 AI Ассистент (Бета)", "❓ Как использовать?"]]
 }
 
 TOOLS_BUTTONS = {
@@ -661,4 +661,7 @@ BUTTON_MAPPINGS = {
     
     # METRO
     "metro_main_button": {"🚇 metro", "🚇 метро"},
+    
+    # HELP / NASIL KULLANILIR
+    "help_button": {"❓ nasıl kullanılır?", "❓ how to use?", "❓ как использовать?"},
 }

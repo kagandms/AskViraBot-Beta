@@ -68,89 +68,160 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
     help_texts = {
-        "tr": """📚 *DruzhikBot Yardım*
+        "tr": """📚 *DruzhikBot Nasıl Kullanılır?*
 
-*📝 Notlar*
-• /addnote - Yeni not ekle
-• /mynotes - Notlarını görüntüle
+🏠 *Ana Menü*
+Tüm özelliklere menü butonlarından kolayca ulaşabilirsin!
 
-*⏰ Hatırlatıcılar*
-• /remind - Hatırlatıcı kur
-  Örnek: `/remind 14:30 toplantı`
+━━━━━━━━━━━━━━━━━━━━
 
-*🎮 Oyunlar*
-• /xox - XOX oyna (3 zorluk seviyesi)
-• /dice - Zar at
-• /coinflip - Yazı tura at
-• /tkm - Taş Kağıt Makas
+📝 *Notlar*
+• ➕ Not Ekle – Yeni not kaydet
+• 📋 Notları Göster – Tüm notlarını listele
+• ✏️ Not Düzenle – Mevcut notu güncelle
+• 🗑️ Not Sil – İstemediğin notu kaldır
 
-*🛠 Araçlar*
-• PDF Çevirici - Metin/dosyayı PDF'e dönüştür
-• QR Kod - QR kod oluştur
-• Hava Durumu - Şehir hava durumu
+━━━━━━━━━━━━━━━━━━━━
 
-*⚙️ Ayarlar*
-• /tr /en /ru - Dil değiştir
-• /menu - Ana menü
+⏰ *Hatırlatıcılar*
+• Belirli saat ve tarihte hatırlatma kur
+• Örnek: `14:30 toplantı` veya `10:00 2025-12-31 yılbaşı`
 
-*💡 İpucu:* Menü butonlarını kullanarak tüm özelliklere erişebilirsin!""",
+━━━━━━━━━━━━━━━━━━━━
 
-        "en": """📚 *DruzhikBot Help*
+🎮 *Oyun Odası*
+• ❌⭕ XOX – 3 zorluk seviyesi (Kolay/Orta/Zor)
+• 🎲 Zar – Rastgele zar at
+• 🪙 Yazı Tura – Şansını dene
+• 🪨📄✂️ Taş-Kağıt-Makas – Bota karşı oyna
 
-*📝 Notes*
-• /addnote - Add a new note
-• /mynotes - View your notes
+━━━━━━━━━━━━━━━━━━━━
 
-*⏰ Reminders*
-• /remind - Set a reminder
-  Example: `/remind 14:30 meeting`
+🛠 *Araçlar*
+• 📷 QR Kod – Metin/link'ten QR oluştur
+• 📄 PDF Dönüştürücü – Metin, resim veya belgeyi PDF yap
+• ☀️ Hava Durumu – Şehir hava durumu
+• 📥 Video İndir – TikTok, Twitter/X, Instagram
+• 🚇 Metro – İstanbul metro sefer saatleri
 
-*🎮 Games*
-• /xox - Play XOX (3 difficulty levels)
-• /dice - Roll a dice
-• /coinflip - Flip a coin
-• /tkm - Rock Paper Scissors
+━━━━━━━━━━━━━━━━━━━━
 
-*🛠 Tools*
-• PDF Converter - Convert text/file to PDF
-• QR Code - Generate QR codes
-• Weather - City weather info
+🤖 *AI Asistan (Beta)*
+• Yapay zeka destekli sohbet
+• Günlük 30 mesaj hakkı
+• Her türlü soruyu sorabilirsin!
 
-*⚙️ Settings*
-• /tr /en /ru - Change language
-• /menu - Main menu
+━━━━━━━━━━━━━━━━━━━━
 
-*💡 Tip:* Use menu buttons to access all features!""",
+⚙️ *Ayarlar*
+• 🌐 Dil Değiştir – TR / EN / RU
 
-        "ru": """📚 *Помощь DruzhikBot*
+💡 *İpucu:* Menü butonlarını kullanarak daha hızlı gezinebilirsin!""",
 
-*📝 Заметки*
-• /addnote - Добавить заметку
-• /mynotes - Просмотреть заметки
+        "en": """📚 *DruzhikBot – How to Use?*
 
-*⏰ Напоминания*
-• /remind - Установить напоминание
-  Пример: `/remind 14:30 встреча`
+🏠 *Main Menu*
+Access all features easily through the menu buttons!
 
-*🎮 Игры*
-• /xox - Играть в XOX (3 уровня сложности)
-• /dice - Бросить кубик
-• /coinflip - Подбросить монету
-• /tkm - Камень Ножницы Бумага
+━━━━━━━━━━━━━━━━━━━━
 
-*🛠 Инструменты*
-• PDF Конвертер - Конвертировать в PDF
-• QR Код - Создать QR код
-• Погода - Погода в городе
+📝 *Notes*
+• ➕ Add Note – Save a new note
+• 📋 Show Notes – List all your notes
+• ✏️ Edit Note – Update an existing note
+• 🗑️ Delete Note – Remove unwanted notes
 
-*⚙️ Настройки*
-• /tr /en /ru - Сменить язык
-• /menu - Главное меню
+━━━━━━━━━━━━━━━━━━━━
 
-*💡 Совет:* Используйте кнопки меню для доступа ко всем функциям!"""
+⏰ *Reminders*
+• Set reminders for specific time and date
+• Example: `14:30 meeting` or `10:00 2025-12-31 new year`
+
+━━━━━━━━━━━━━━━━━━━━
+
+🎮 *Game Room*
+• ❌⭕ XOX – 3 difficulty levels (Easy/Medium/Hard)
+• 🎲 Dice – Roll a random dice
+• 🪙 Coinflip – Test your luck
+• 🪨📄✂️ Rock-Paper-Scissors – Play against the bot
+
+━━━━━━━━━━━━━━━━━━━━
+
+🛠 *Tools*
+• 📷 QR Code – Generate QR from text/link
+• 📄 PDF Converter – Convert text, image or document to PDF
+• ☀️ Weather – City weather info
+• 📥 Video Download – TikTok, Twitter/X, Instagram
+• 🚇 Metro – Istanbul metro schedules
+
+━━━━━━━━━━━━━━━━━━━━
+
+🤖 *AI Assistant (Beta)*
+• AI-powered chat assistant
+• 30 messages per day
+• Ask anything you want!
+
+━━━━━━━━━━━━━━━━━━━━
+
+⚙️ *Settings*
+• 🌐 Change Language – TR / EN / RU
+
+💡 *Tip:* Use menu buttons for faster navigation!""",
+
+        "ru": """📚 *DruzhikBot – Как использовать?*
+
+🏠 *Главное меню*
+Все функции доступны через кнопки меню!
+
+━━━━━━━━━━━━━━━━━━━━
+
+📝 *Заметки*
+• ➕ Добавить – Сохранить новую заметку
+• 📋 Показать – Список всех заметок
+• ✏️ Изменить – Обновить заметку
+• 🗑️ Удалить – Удалить ненужные заметки
+
+━━━━━━━━━━━━━━━━━━━━
+
+⏰ *Напоминания*
+• Установите напоминание на конкретное время
+• Пример: `14:30 встреча` или `10:00 2025-12-31 новый год`
+
+━━━━━━━━━━━━━━━━━━━━
+
+🎮 *Игровая комната*
+• ❌⭕ XOX – 3 уровня сложности (Легко/Средне/Сложно)
+• 🎲 Кубик – Бросить случайный кубик
+• 🪙 Монета – Испытай удачу
+• 🪨📄✂️ Камень-Ножницы-Бумага – Играй против бота
+
+━━━━━━━━━━━━━━━━━━━━
+
+🛠 *Инструменты*
+• 📷 QR-код – Создать QR из текста/ссылки
+• 📄 PDF Конвертер – Конвертировать в PDF
+• ☀️ Погода – Погода в городе
+• 📥 Скачать видео – TikTok, Twitter/X, Instagram
+• 🚇 Метро – Расписание метро Стамбула
+
+━━━━━━━━━━━━━━━━━━━━
+
+🤖 *AI Ассистент (Бета)*
+• Чат с искусственным интеллектом
+• 30 сообщений в день
+• Спрашивай что угодно!
+
+━━━━━━━━━━━━━━━━━━━━
+
+⚙️ *Настройки*
+• 🌐 Сменить язык – TR / EN / RU
+
+💡 *Совет:* Используйте кнопки меню для быстрой навигации!"""
     }
     
+    from utils import get_main_keyboard_markup
     await update.message.reply_text(
         help_texts.get(lang, help_texts["en"]),
-        parse_mode="Markdown"
+        parse_mode="Markdown",
+        reply_markup=get_main_keyboard_markup(lang, user_id)
     )

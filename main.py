@@ -141,6 +141,10 @@ async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYP
     # Admin Panel butonu (sadece adminler için)
     elif text in BUTTON_MAPPINGS.get("admin_panel_button", set()):
         await admin.admin_command(update, context)
+    
+    # Nasıl Kullanılır? butonu
+    elif text in BUTTON_MAPPINGS.get("help_button", set()):
+        await general.help_command(update, context)
 
     # NOTLAR MENÜSÜ
     elif text in BUTTON_MAPPINGS.get("add_note_button", set()):
