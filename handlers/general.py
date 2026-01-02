@@ -90,7 +90,7 @@ Tüm özelliklere menü butonlarından kolayca ulaşabilirsin!
 ━━━━━━━━━━━━━━━━━━━━
 
 🎮 *Oyun Odası*
-• ❌⭕ XOX – 3 zorluk seviyesi (Kolay/Orta/Zor)
+• ❌⭕ XOX – 3 zorluk seviyesi
 • 🎲 Zar – Rastgele zar at
 • 🪙 Yazı Tura – Şansını dene
 • 🪨📄✂️ Taş-Kağıt-Makas – Bota karşı oyna
@@ -100,9 +100,9 @@ Tüm özelliklere menü butonlarından kolayca ulaşabilirsin!
 🛠 *Araçlar*
 • 📷 QR Kod – Metin/link'ten QR oluştur
 • 📄 PDF Dönüştürücü – Metin, resim veya belgeyi PDF yap
-• ☀️ Hava Durumu – Şehir hava durumu
+• ☀️ Hava Durumu – 9 şehir + *5 günlük tahmin*
 • 📥 Video İndir – TikTok, Twitter/X, Instagram
-• 🚇 Metro – İstanbul metro sefer saatleri
+• 🚇 Metro Saatleri – İstanbul metro sefer saatleri
 
 ━━━━━━━━━━━━━━━━━━━━
 
@@ -140,7 +140,7 @@ Access all features easily through the menu buttons!
 ━━━━━━━━━━━━━━━━━━━━
 
 🎮 *Game Room*
-• ❌⭕ XOX – 3 difficulty levels (Easy/Medium/Hard)
+• ❌⭕ XOX – 3 difficulty levels
 • 🎲 Dice – Roll a random dice
 • 🪙 Coinflip – Test your luck
 • 🪨📄✂️ Rock-Paper-Scissors – Play against the bot
@@ -150,9 +150,9 @@ Access all features easily through the menu buttons!
 🛠 *Tools*
 • 📷 QR Code – Generate QR from text/link
 • 📄 PDF Converter – Convert text, image or document to PDF
-• ☀️ Weather – City weather info
+• ☀️ Weather – 9 cities + *5-day forecast*
 • 📥 Video Download – TikTok, Twitter/X, Instagram
-• 🚇 Metro – Istanbul metro schedules
+• 🚇 Metro Times – Istanbul metro schedules
 
 ━━━━━━━━━━━━━━━━━━━━
 
@@ -190,7 +190,7 @@ Access all features easily through the menu buttons!
 ━━━━━━━━━━━━━━━━━━━━
 
 🎮 *Игровая комната*
-• ❌⭕ XOX – 3 уровня сложности (Легко/Средне/Сложно)
+• ❌⭕ XOX – 3 уровня сложности
 • 🎲 Кубик – Бросить случайный кубик
 • 🪙 Монета – Испытай удачу
 • 🪨📄✂️ Камень-Ножницы-Бумага – Играй против бота
@@ -200,9 +200,9 @@ Access all features easily through the menu buttons!
 🛠 *Инструменты*
 • 📷 QR-код – Создать QR из текста/ссылки
 • 📄 PDF Конвертер – Конвертировать в PDF
-• ☀️ Погода – Погода в городе
+• ☀️ Погода – 9 городов + *5-дневный прогноз*
 • 📥 Скачать видео – TikTok, Twitter/X, Instagram
-• 🚇 Метро – Расписание метро Стамбула
+• 🚇 Расписание метро – Метро Стамбула
 
 ━━━━━━━━━━━━━━━━━━━━
 

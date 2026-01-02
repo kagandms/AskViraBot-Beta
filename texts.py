@@ -7,9 +7,9 @@ SOCIAL_MEDIA_LINKS = {
 }
 
 CITY_NAMES_TRANSLATED = {
-    "tr": {"Istanbul": "Istanbul", "Moscow": "Moskova", "London": "Londra", "New York": "New York", "Beijing": "Pekin"}, 
-    "en": {"Istanbul": "Istanbul", "Moscow": "Moscow", "London": "London", "New York": "New York", "Beijing": "Beijing"}, 
-    "ru": {"Istanbul": "Стамбул", "Moscow": "Москва", "London": "Лондон", "New York": "Нью-Йорк", "Beijing": "Пекин"} 
+    "tr": {"Istanbul": "İstanbul", "Moscow": "Moskova", "London": "Londra", "New York": "New York", "Beijing": "Pekin", "Ankara": "Ankara", "Saint Petersburg": "St. Petersburg", "Paris": "Paris", "Berlin": "Berlin"}, 
+    "en": {"Istanbul": "Istanbul", "Moscow": "Moscow", "London": "London", "New York": "New York", "Beijing": "Beijing", "Ankara": "Ankara", "Saint Petersburg": "St. Petersburg", "Paris": "Paris", "Berlin": "Berlin"}, 
+    "ru": {"Istanbul": "Стамбул", "Moscow": "Москва", "London": "Лондон", "New York": "Нью-Йорк", "Beijing": "Пекин", "Ankara": "Анкара", "Saint Petersburg": "Санкт-Петербург", "Paris": "Париж", "Berlin": "Берлин"} 
 }
 
 TEXTS = {
@@ -495,19 +495,19 @@ TEXTS = {
     
     # --- METRO İSTANBUL ---
     "metro_menu_prompt": {
-        "tr": "🚇 Metro İstanbul\n\nBir hat seçin:\n\n_ℹ️ Veriler İBB'den alınmaktadır. Gerçek zamanlı sapmalar olabilir._",
-        "en": "🚇 Metro Istanbul\n\nSelect a line:\n\n_ℹ️ Data sourced from IBB. Real-time deviations may occur._",
-        "ru": "🚇 Метро Стамбул\n\nВыберите линию:\n\n_ℹ️ Данные получены из IBB. Возможны отклонения._"
+        "tr": "🚇 *Metro İstanbul*\n\n🚆 Hangi hatta seyahat edeceksiniz?\n\n_ℹ️ Veriler İBB'den alınmaktadır._",
+        "en": "🚇 *Metro Istanbul*\n\nWhich line will you travel on?\n\n_ℹ️ Data sourced from IBB._",
+        "ru": "🚇 *Метро Стамбул*\n\nНа какой линии вы будете ехать?\n\n_ℹ️ Данные из IBB._"
     },
     "metro_select_station": {
-        "tr": "🚇 {line}\n\nBir istasyon seçin:",
-        "en": "🚇 {line}\n\nSelect a station:",
-        "ru": "🚇 {line}\n\nВыберите станцию:"
+        "tr": "🚇 *{line}*\n\n📍 Hangi istasyonu kullanacaksınız?",
+        "en": "🚇 *{line}*\n\n📍 Which station will you use?",
+        "ru": "🚇 *{line}*\n\n📍 Какую станцию вы будете использовать?"
     },
     "metro_select_direction": {
-        "tr": "📍 Yön seçin:",
-        "en": "📍 Select direction:",
-        "ru": "📍 Выберите направление:"
+        "tr": "➡️ Gideceğiniz yönü seçin:",
+        "en": "➡️ Select your destination direction:",
+        "ru": "➡️ Выберите направление:"
     },
     "metro_departures_header": {
         "tr": "🚇 *{line} - {station}*\n📍 {direction} Yönü\n\n_Yaklaşan seferler:_",
@@ -534,9 +534,9 @@ MAIN_BUTTONS = {
 }
 
 TOOLS_BUTTONS = {
-    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu", "📥 Video İndir"], ["🚇 Metro", "🔙 Geri"]],
-    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather", "📥 Video Download"], ["🚇 Metro", "🔙 Back"]],
-    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода", "📥 Скачать Видео"], ["🚇 Метро", "🔙 Назад"]]
+    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu", "📥 Video İndir"], ["🚇 Metro Saatleri", "🔙 Geri"]],
+    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather", "📥 Video Download"], ["🚇 Metro Times", "🔙 Back"]],
+    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода", "📥 Скачать Видео"], ["🚇 Расписание Метро", "🔙 Назад"]]
 }
 
 # --- VIDEO DOWNLOADER MENÜSÜ ---
@@ -638,7 +638,7 @@ AUTO_MAPPINGS = {
     "pdf_converter_main_button": generate_mappings_from_buttons({"tr": [["📄 PDF Dönüştürücü"]], "en": [["📄 PDF Converter"]], "ru": [["📄 Конвертер PDF"]]}),
     "weather_main_button": generate_mappings_from_buttons({"tr": [["☀️ Hava Durumu"]], "en": [["☀️ Weather"]], "ru": [["☀️ Погода"]]}),
     "video_downloader_main_button": generate_mappings_from_buttons({"tr": [["📥 Video İndir"]], "en": [["📥 Video Download"]], "ru": [["📥 Скачать Видео"]]}),
-    "metro_main_button": generate_mappings_from_buttons({"tr": [["🚇 Metro"]], "en": [["🚇 Metro"]], "ru": [["🚇 Метро"]]}),
+    "metro_main_button": generate_mappings_from_buttons({"tr": [["🚇 Metro Saatleri"]], "en": [["🚇 Metro Times"]], "ru": [["🚇 Расписание Метро"]]}),
     
     # Oyunlar menüsü
     "xox_game": generate_mappings_from_buttons({"tr": [["❌⭕ XOX"]], "en": [["❌⭕ XOX"]], "ru": [["❌⭕ XOX"]]}),

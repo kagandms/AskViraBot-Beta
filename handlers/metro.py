@@ -170,7 +170,18 @@ async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     state.metro_browsing.add(user_id)
     state.metro_selection[user_id] = {} # Boş seçim
     
+    # Loading mesajı
+    loading_texts = {"tr": "⏳ Hatlar yükleniyor...", "en": "⏳ Loading lines...", "ru": "⏳ Загрузка линий..."}
+    loading_msg = await update.message.reply_text(loading_texts.get(lang, loading_texts["en"]))
+    
     lines = await fetch_lines()
+    
+    # Loading mesajını sil
+    try:
+        await loading_msg.delete()
+    except Exception:
+        pass
+    
     if not lines:
         await update.message.reply_text(TEXTS["metro_api_error"][lang])
         return
@@ -327,7 +338,17 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
 # --- HELPER FUNCTIONS FOR REPLY FLOW ---
 
 async def show_stations(update, context, line_id, line_name, lang):
+    # Loading mesajı
+    loading_texts = {"tr": "⏳ İstasyonlar yükleniyor...", "en": "⏳ Loading stations...", "ru": "⏳ Загрузка станций..."}
+    loading_msg = await update.message.reply_text(loading_texts.get(lang, loading_texts["en"]))
+    
     stations = await fetch_stations_by_line(line_id)
+    
+    try:
+        await loading_msg.delete()
+    except Exception:
+        pass
+    
     if not stations:
         await update.message.reply_text(TEXTS["metro_api_error"][lang])
         return
@@ -353,7 +374,17 @@ async def show_stations(update, context, line_id, line_name, lang):
     )
 
 async def show_directions(update, context, line_id, station_id, lang):
+    # Loading mesajı
+    loading_texts = {"tr": "⏳ Yönler yükleniyor...", "en": "⏳ Loading directions...", "ru": "⏳ Загрузка направлений..."}
+    loading_msg = await update.message.reply_text(loading_texts.get(lang, loading_texts["en"]))
+    
     directions = await fetch_directions_by_line(line_id)
+    
+    try:
+        await loading_msg.delete()
+    except Exception:
+        pass
+    
     if not directions:
         await update.message.reply_text(TEXTS["metro_api_error"][lang])
         return
@@ -373,7 +404,16 @@ async def show_directions(update, context, line_id, station_id, lang):
     )
 
 async def show_timetable(update, context, station_id, direction_id, direction_name, lang):
+    # Loading mesajı
+    loading_texts = {"tr": "⏳ Sefer saatleri yükleniyor...", "en": "⏳ Loading departure times...", "ru": "⏳ Загрузка расписания..."}
+    loading_msg = await update.message.reply_text(loading_texts.get(lang, loading_texts["en"]))
+    
     timetable_data = await fetch_timetable(station_id, direction_id)
+    
+    try:
+        await loading_msg.delete()
+    except Exception:
+        pass
     
     if not timetable_data:
         await update.message.reply_text(TEXTS["metro_no_departures"][lang])

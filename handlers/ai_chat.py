@@ -164,8 +164,25 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return True
     
-    # "Düşünüyor" mesajı
-    thinking_msg = await update.message.reply_text(TEXTS["ai_thinking"][lang])
+    # "Düşünüyor" mesajı - döngülü güncelleme
+    thinking_texts = {
+        "tr": ["🤔 Düşünüyorum...", "💭 İsteğiniz işleniyor...", "⏳ Az kaldı..."],
+        "en": ["🤔 Thinking...", "💭 Processing your request...", "⏳ Almost there..."],
+        "ru": ["🤔 Думаю...", "💭 Обрабатываю запрос...", "⏳ Почти готово..."]
+    }
+    thinking_msg = await update.message.reply_text(thinking_texts.get(lang, thinking_texts["en"])[0])
+    
+    # Mesaj döngüsü arka planda
+    async def update_thinking_message():
+        texts = thinking_texts.get(lang, thinking_texts["en"])
+        for i in range(1, len(texts)):
+            await asyncio.sleep(1.5)
+            try:
+                await thinking_msg.edit_text(texts[i])
+            except Exception:
+                break
+    
+    update_task = asyncio.create_task(update_thinking_message())
     
     try:
         # OpenRouter API çağrısı
@@ -186,6 +203,9 @@ Kullanıcının dilinde yanıt ver."""
             )
         
         response = await asyncio.to_thread(call_openrouter)
+        
+        # Döngüyü durdur
+        update_task.cancel()
         
         # Response kontrolü
         ai_response = None

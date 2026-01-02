@@ -524,6 +524,13 @@ async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT
     # Geri butonu
     if "geri" in text or "back" in text or "назад" in text:
         state.developer_menu_active.discard(user_id)
+        # Önceki link mesajını temizle
+        if "developer_last_link_msg" in context.user_data:
+            try:
+                await context.user_data["developer_last_link_msg"].delete()
+            except Exception:
+                pass
+            del context.user_data["developer_last_link_msg"]
         from handlers.general import menu_command
         await menu_command(update, context)
         return True
@@ -540,7 +547,16 @@ async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT
         link = SOCIAL_MEDIA_LINKS["linkedin"]
     
     if link:
-        await update.message.reply_text(f"🔗 {link}", reply_markup=get_developer_keyboard(lang))
+        # Önceki link mesajını sil
+        if "developer_last_link_msg" in context.user_data:
+            try:
+                await context.user_data["developer_last_link_msg"].delete()
+            except Exception:
+                pass
+        
+        # Yeni mesajı gönder ve kaydet
+        msg = await update.message.reply_text(f"🔗 {link}", reply_markup=get_developer_keyboard(lang))
+        context.user_data["developer_last_link_msg"] = msg
         return True
     
     return False
