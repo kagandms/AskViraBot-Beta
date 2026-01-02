@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from telegram import Update, ReplyKeyboardMarkup
+from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters, CallbackQueryHandler
 
 # Modülleri içe aktar
@@ -8,7 +8,7 @@ from config import BOT_TOKEN
 from keep_alive import keep_alive
 import database as db
 import state
-from texts import TEXTS, BUTTON_MAPPINGS
+from texts import TEXTS
 from utils import get_main_keyboard_markup
 from rate_limiter import is_rate_limited, get_remaining_cooldown
 
@@ -114,122 +114,35 @@ async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYP
         await update.message.reply_text(msg_warn.get(lang, msg_warn["en"]))
         return
 
-    # 3. Buton Eşleşmeleri
+    # 3. Dinamik Buton Yönlendirme (Router Pattern)
+    from texts import BUTTON_MAPPINGS
+    from router import BUTTON_HANDLERS, VIDEO_PLATFORM_HANDLERS, FORMAT_HANDLERS, LANGUAGE_BUTTONS
     
-    # ANA MENÜ
-    if text in BUTTON_MAPPINGS.get("menu", set()):
-        await general.menu_command(update, context)
-    elif text in BUTTON_MAPPINGS.get("tools_main_button", set()):
-        await general.tools_menu_command(update, context)
-    # YENİ: Araçlar Alt Menülerinden Geri Dönüş
-    elif text in BUTTON_MAPPINGS.get("back_to_tools", set()):
-        await general.tools_menu_command(update, context)
-    elif text in BUTTON_MAPPINGS.get("notes_main_button", set()):
-        await notes.notes_menu(update, context)
-    elif text in BUTTON_MAPPINGS.get("games_main_button", set()):
-        await games.games_menu(update, context)
-    elif text in BUTTON_MAPPINGS.get("reminder", set()):
-        await reminders.reminder_menu(update, context)
-    elif text in BUTTON_MAPPINGS.get("language", set()):
-        language_keyboard = ReplyKeyboardMarkup([["🇹🇷 Türkçe", "🇬🇧 English", "🇷🇺 Русский"]], resize_keyboard=True)
-        await update.message.reply_text("Lütfen bir dil seçin:", reply_markup=language_keyboard)
-        
-    # Geliştirici butonu
-    elif text in BUTTON_MAPPINGS.get("developer_main_button", set()):
-        await tools.show_developer_info(update, context)
+    # Standart buton eşleşmeleri
+    for mapping_key, handler in BUTTON_HANDLERS:
+        if text in BUTTON_MAPPINGS.get(mapping_key, set()):
+            await handler(update, context)
+            return
     
-    # Admin Panel butonu (sadece adminler için)
-    elif text in BUTTON_MAPPINGS.get("admin_panel_button", set()):
-        await admin.admin_command(update, context)
+    # Video platform butonları (parametre gerektiren)
+    for mapping_key, (platform, handler) in VIDEO_PLATFORM_HANDLERS.items():
+        if text in BUTTON_MAPPINGS.get(mapping_key, set()):
+            await handler(update, context, platform)
+            return
     
-    # Nasıl Kullanılır? butonu
-    elif text in BUTTON_MAPPINGS.get("help_button", set()):
-        await general.help_command(update, context)
-
-    # NOTLAR MENÜSÜ
-    elif text in BUTTON_MAPPINGS.get("add_note_button", set()):
-        await notes.prompt_new_note(update, context)
-    elif text in BUTTON_MAPPINGS.get("edit_note_button", set()):
-        await notes.edit_notes_menu(update, context)
-    elif text in BUTTON_MAPPINGS.get("show_all_notes_button", set()):
-        await notes.shownotes_command(update, context)
-    elif text in BUTTON_MAPPINGS.get("delete_note_button", set()):
-        await notes.deletenotes_menu(update, context)
-    elif text in BUTTON_MAPPINGS.get("select_delete_note_button", set()):
-        await notes.select_note_to_delete_prompt(update, context)
-
-    # OYUNLAR MENÜSÜ
-    elif text in BUTTON_MAPPINGS.get("xox_game", set()):
-        await games.xox_start(update, context)
-    elif text in BUTTON_MAPPINGS.get("dice", set()):
-        await games.dice_command(update, context)
-    elif text in BUTTON_MAPPINGS.get("coinflip", set()):
-        await games.coinflip_command(update, context)
-        
-    # TKM (Taş Kağıt Makas)
-    elif text in BUTTON_MAPPINGS.get("tkm_main", set()):
-        await games.tkm_start(update, context)
-
-    # ARAÇLAR
-    elif text in BUTTON_MAPPINGS.get("time", set()):
-        await tools.time_command(update, context)
-    elif text in BUTTON_MAPPINGS.get("qrcode_button", set()):
-        await tools.qrcode_command(update, context)
-    elif text in BUTTON_MAPPINGS.get("pdf_converter_main_button", set()):
-        await tools.pdf_converter_menu(update, context)
-    elif text in BUTTON_MAPPINGS.get("weather_main_button", set()):
-        await tools.weather_command(update, context)
+    # Format seçim butonları (parametre gerektiren)
+    for mapping_key, (format_type, handler) in FORMAT_HANDLERS.items():
+        if text in BUTTON_MAPPINGS.get(mapping_key, set()):
+            await handler(update, context, format_type)
+            return
     
-    # PDF SUB-MENÜ
-    elif text in BUTTON_MAPPINGS.get("text_to_pdf_button", set()):
-        await tools.prompt_text_for_pdf(update, context)
-    elif text in BUTTON_MAPPINGS.get("image_to_pdf_button", set()) or text in BUTTON_MAPPINGS.get("document_to_pdf_button", set()):
-        await tools.prompt_file_for_pdf(update, context)
-    
-    # VIDEO DOWNLOADER
-    elif text in BUTTON_MAPPINGS.get("video_downloader_main_button", set()):
-        await tools.video_downloader_menu(update, context)
-    elif text in BUTTON_MAPPINGS.get("video_platform_tiktok", set()):
-        await tools.set_video_platform(update, context, "tiktok")
-    elif text in BUTTON_MAPPINGS.get("video_platform_twitter", set()):
-        await tools.set_video_platform(update, context, "twitter")
-    elif text in BUTTON_MAPPINGS.get("video_platform_instagram", set()):
-        await tools.set_video_platform(update, context, "instagram")
-    elif text in BUTTON_MAPPINGS.get("format_video", set()):
-        await tools.set_download_format(update, context, "video")
-    elif text in BUTTON_MAPPINGS.get("format_audio", set()):
-        await tools.set_download_format(update, context, "audio")
-    elif text in BUTTON_MAPPINGS.get("back_to_platform", set()):
-        await tools.video_downloader_menu(update, context)
-
-    # HATIRLATICI MENÜSÜ
-    elif text in BUTTON_MAPPINGS.get("add_reminder_button", set()):
-        await reminders.prompt_reminder_input(update, context)
-    elif text in BUTTON_MAPPINGS.get("show_reminders_button", set()):
-        await reminders.show_reminders_command(update, context)
-    elif text in BUTTON_MAPPINGS.get("delete_reminder_button", set()):
-        await reminders.delete_reminder_menu(update, context)
-    
-    # AI ASISTAN
-    elif text in BUTTON_MAPPINGS.get("ai_main_button", set()):
-        await ai_chat.ai_menu(update, context)
-    elif text in BUTTON_MAPPINGS.get("ai_start_chat", set()):
-        await ai_chat.start_ai_chat(update, context)
-    elif text in BUTTON_MAPPINGS.get("ai_end_chat", set()):
-        await ai_chat.end_ai_chat(update, context)
-    elif text in BUTTON_MAPPINGS.get("ai_back_to_menu", set()):
-        await general.menu_command(update, context)
-    
-    # METRO
-    elif text in BUTTON_MAPPINGS.get("metro_main_button", set()):
-        await metro.metro_menu_command(update, context)
-
-    # DİL
-    elif text in {"🇹🇷 türkçe", "🇬🇧 english", "🇷🇺 русский"}:
+    # Dil butonları
+    if text in LANGUAGE_BUTTONS:
         await general.set_language(update, context)
-
-    else:
-        await unknown_command(update, context)
+        return
+    
+    # Hiçbir buton eşleşmedi
+    await unknown_command(update, context)
 
 async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
