@@ -2,10 +2,11 @@ from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMa
 # TOOLS_BUTTONS eklendi
 from texts import MAIN_BUTTONS, NOTES_BUTTONS, DELETE_NOTES_BUTTONS, INPUT_BACK_BUTTONS, PDF_CONVERTER_BUTTONS, SOCIAL_MEDIA_LINKS, REMINDER_BUTTONS, TEXTS, GAMES_BUTTONS, TOOLS_BUTTONS, CITY_NAMES_TRANSLATED
 from config import ADMIN_IDS
+from typing import Optional
 
 # --- KLAVYE OLUŞTURUCULAR ---
 
-def get_main_keyboard_markup(lang, user_id=None):
+def get_main_keyboard_markup(lang: str, user_id: Optional[int] = None) -> ReplyKeyboardMarkup:
     # Ana menü klavyesi
     buttons = [row[:] for row in MAIN_BUTTONS.get(lang, MAIN_BUTTONS["en"])]  # Deep copy
     
@@ -16,34 +17,34 @@ def get_main_keyboard_markup(lang, user_id=None):
     
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
-def get_games_keyboard_markup(lang):
+def get_games_keyboard_markup(lang: str) -> ReplyKeyboardMarkup:
     # Oyunlar menüsü klavyesi (YENİ EKLENEN)
     buttons = GAMES_BUTTONS.get(lang, GAMES_BUTTONS["en"])
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
-def get_notes_keyboard_markup(lang):
+def get_notes_keyboard_markup(lang: str) -> ReplyKeyboardMarkup:
     # Notlar menüsü klavyesi
     buttons = NOTES_BUTTONS.get(lang, NOTES_BUTTONS["en"])
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
-def get_tools_keyboard_markup(lang):
+def get_tools_keyboard_markup(lang: str) -> ReplyKeyboardMarkup:
     # Araçlar menüsü klavyesi
     buttons = TOOLS_BUTTONS.get(lang, TOOLS_BUTTONS["en"])
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
-def get_delete_notes_keyboard_markup(lang):
+def get_delete_notes_keyboard_markup(lang: str) -> ReplyKeyboardMarkup:
     buttons = DELETE_NOTES_BUTTONS.get(lang, DELETE_NOTES_BUTTONS["en"])
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
-def get_input_back_keyboard_markup(lang):
+def get_input_back_keyboard_markup(lang: str) -> ReplyKeyboardMarkup:
     buttons = INPUT_BACK_BUTTONS.get(lang, INPUT_BACK_BUTTONS["en"])
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
-def get_pdf_converter_keyboard_markup(lang):
+def get_pdf_converter_keyboard_markup(lang: str) -> ReplyKeyboardMarkup:
     buttons = PDF_CONVERTER_BUTTONS.get(lang, PDF_CONVERTER_BUTTONS["en"])
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
-def get_social_media_keyboard(lang):
+def get_social_media_keyboard(lang: str) -> InlineKeyboardMarkup:
     keyboard = [
         [InlineKeyboardButton(TEXTS["my_website"][lang], url=SOCIAL_MEDIA_LINKS["website"])], 
         [InlineKeyboardButton("📸 Instagram", url=SOCIAL_MEDIA_LINKS["instagram"])],
@@ -53,11 +54,11 @@ def get_social_media_keyboard(lang):
     ]
     return InlineKeyboardMarkup(keyboard)
 
-def get_reminder_keyboard_markup(lang):
+def get_reminder_keyboard_markup(lang: str) -> ReplyKeyboardMarkup:
     buttons = REMINDER_BUTTONS.get(lang, REMINDER_BUTTONS["en"])
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
-def get_weather_cities_keyboard(lang):
+def get_weather_cities_keyboard(lang: str) -> ReplyKeyboardMarkup:
     # Hava durumu şehir seçimi için Reply Keyboard
     cities_dict = CITY_NAMES_TRANSLATED.get(lang, CITY_NAMES_TRANSLATED["en"])
     # Dictionary values (şehir isimleri) alınıyor

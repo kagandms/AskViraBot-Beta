@@ -1,14 +1,14 @@
 import logging
+from typing import Optional, Any
 from config import supabase
 
 # Loglama ayarı: Bu modül için bir logger oluşturuyoruz
 logger = logging.getLogger(__name__)
-
 # --- KULLANICI İŞLEMLERİ ---
 # Dil önbelleği (Cache) - DB yükünü azaltmak için
-_user_lang_cache = {}
+_user_lang_cache: dict[str, str] = {}
 
-def get_user_lang(user_id):
+def get_user_lang(user_id: int | str) -> str:
     user_id = str(user_id)
     # 1. Önce cache'e bak
     if user_id in _user_lang_cache:
@@ -30,7 +30,7 @@ def get_user_lang(user_id):
         logger.error(f"Dil getirme hatası (User: {user_id}): {e}")
         return "en"
 
-def set_user_lang_db(user_id, lang):
+def set_user_lang_db(user_id: int | str, lang: str) -> None:
     user_id = str(user_id)
     # 1. Cache'i güncelle
     _user_lang_cache[user_id] = lang
@@ -44,7 +44,7 @@ def set_user_lang_db(user_id, lang):
         logger.error(f"Dil kaydetme hatası (User: {user_id}, Lang: {lang}): {e}")
 
 # --- NOT İŞLEMLERİ (CORE) ---
-def get_user_notes(user_id):
+def get_user_notes(user_id: int | str) -> list[dict[str, Any]]:
     """Veritabanından notları ham (dict) formatında çeker."""
     if not supabase: return []
     try:
@@ -54,7 +54,7 @@ def get_user_notes(user_id):
         logger.error(f"Notları getirme hatası (User: {user_id}): {e}")
         return []
 
-def add_user_note(user_id, note_content):
+def add_user_note(user_id: int | str, note_content: str) -> None:
     if not supabase: return
     try:
         data = {"user_id": str(user_id), "content": note_content}
@@ -62,7 +62,7 @@ def add_user_note(user_id, note_content):
     except Exception as e:
         logger.error(f"Not ekleme hatası (User: {user_id}): {e}")
 
-def update_user_note(note_id, new_content):
+def update_user_note(note_id: int, new_content: str) -> bool:
     if not supabase: return False
     try:
         supabase.table("notes").update({"content": new_content}).eq("id", note_id).execute()
@@ -71,7 +71,7 @@ def update_user_note(note_id, new_content):
         logger.error(f"Not güncelleme hatası (ID: {note_id}): {e}")
         return False
 
-def delete_user_note_by_id(note_id):
+def delete_user_note_by_id(note_id: int) -> bool:
     if not supabase: return False
     try:
         supabase.table("notes").delete().eq("id", note_id).execute()
@@ -83,16 +83,16 @@ def delete_user_note_by_id(note_id):
 # --- NOT İŞLEMLERİ (UYUMLULUK KATMANI / WRAPPERS) ---
 # handlers/notes.py dosyasının beklediği fonksiyonlar
 
-def get_notes(user_id):
+def get_notes(user_id: int | str) -> list[str]:
     """Sadece not içeriklerini string listesi olarak döndürür."""
     raw_notes = get_user_notes(user_id)
     return [note['content'] for note in raw_notes]
 
-def add_note(user_id, content):
+def add_note(user_id: int | str, content: str) -> None:
     """add_user_note fonksiyonuna yönlendirir."""
     add_user_note(user_id, content)
 
-def delete_note(user_id, note_number):
+def delete_note(user_id: int | str, note_number: int) -> bool:
     """
     Sıra numarasına (1, 2, 3...) göre not siler.
     Önce listeyi çeker, sıra numarasını ID'ye çevirir ve siler.
@@ -106,7 +106,7 @@ def delete_note(user_id, note_number):
         return delete_user_note_by_id(note_id)
     return False
 
-def update_note(user_id, note_index, new_content):
+def update_note(user_id: int | str, note_index: int, new_content: str) -> bool:
     """
     Liste indeksine (0, 1, 2...) göre not günceller.
     """
@@ -118,7 +118,7 @@ def update_note(user_id, note_index, new_content):
     return False
 
 # --- HATIRLATICI İŞLEMLERİ ---
-def get_all_reminders_db():
+def get_all_reminders_db() -> list[dict[str, Any]]:
     if not supabase: return []
     try:
         response = supabase.table("reminders").select("*").execute()
@@ -127,7 +127,7 @@ def get_all_reminders_db():
         logger.error(f"Hatırlatıcıları çekme hatası: {e}")
         return []
 
-def add_reminder_db(reminder_data):
+def add_reminder_db(reminder_data: dict[str, Any]) -> Optional[int]:
     """Hatırlatıcı ekler ve eklenen kaydın ID'sini döner."""
     if not supabase: return None
     try:
@@ -146,14 +146,14 @@ def add_reminder_db(reminder_data):
         logger.error(f"Hatırlatıcı ekleme hatası: {e}")
         return None
 
-def remove_reminder_db(reminder_id):
+def remove_reminder_db(reminder_id: int) -> None:
     if not supabase: return
     try:
         supabase.table("reminders").delete().eq("id", reminder_id).execute()
     except Exception as e:
         logger.error(f"Hatırlatıcı silme hatası: {e}")
 # --- ADMIN FONKSİYONLARI ---
-def get_all_users_count():
+def get_all_users_count() -> int:
     """Toplam kullanıcı sayısını döner"""
     if not supabase: return 0
     try:
@@ -163,7 +163,7 @@ def get_all_users_count():
         logger.error(f"Kullanıcı sayısı hatası: {e}")
         return 0
 
-def get_all_notes_count():
+def get_all_notes_count() -> int:
     """Toplam not sayısını döner"""
     if not supabase: return 0
     try:
@@ -173,7 +173,7 @@ def get_all_notes_count():
         logger.error(f"Not sayısı hatası: {e}")
         return 0
 
-def get_all_reminders_count():
+def get_all_reminders_count() -> int:
     """Toplam hatırlatıcı sayısını döner"""
     if not supabase: return 0
     try:
@@ -183,7 +183,7 @@ def get_all_reminders_count():
         logger.error(f"Hatırlatıcı sayısı hatası: {e}")
         return 0
 
-def get_all_user_ids():
+def get_all_user_ids() -> list[int]:
     """Tüm kullanıcı ID'lerini döner (broadcast için)"""
     if not supabase: return []
     try:
@@ -193,7 +193,7 @@ def get_all_user_ids():
         logger.error(f"Kullanıcı listesi hatası: {e}")
         return []
 
-def get_recent_users(limit=10):
+def get_recent_users(limit: int = 10) -> list[dict[str, Any]]:
     """Son eklenen kullanıcıları döner"""
     if not supabase: return []
     try:
@@ -204,7 +204,7 @@ def get_recent_users(limit=10):
         return []
 
 # --- AKTİVİTE LOGLAMA (YENİ) ---
-def log_qr_usage(user_id, content):
+def log_qr_usage(user_id: int | str, content: str) -> None:
     """QR kod oluşturma işlemini loglar."""
     if not supabase: return
     try:
@@ -213,7 +213,7 @@ def log_qr_usage(user_id, content):
     except Exception as e:
         logger.error(f"QR log hatası (User: {user_id}): {e}")
 
-def log_pdf_usage(user_id, pdf_type):
+def log_pdf_usage(user_id: int | str, pdf_type: str) -> None:
     """PDF dönüştürme işlemini loglar (text, image, document)."""
     if not supabase: return
     try:
@@ -222,7 +222,7 @@ def log_pdf_usage(user_id, pdf_type):
     except Exception as e:
         logger.error(f"PDF log hatası (User: {user_id}): {e}")
 
-def log_xox_game(user_id, winner, difficulty):
+def log_xox_game(user_id: int | str, winner: str, difficulty: str) -> None:
     """XOX oyun sonucunu loglar."""
     if not supabase: return
     try:
@@ -231,7 +231,7 @@ def log_xox_game(user_id, winner, difficulty):
     except Exception as e:
         logger.error(f"XOX log hatası (User: {user_id}): {e}")
 
-def log_tkm_game(user_id, user_move, bot_move, result):
+def log_tkm_game(user_id: int | str, user_move: str, bot_move: str, result: str) -> None:
     """TKM oyun sonucunu loglar."""
     if not supabase: return
     try:
@@ -245,7 +245,7 @@ def log_tkm_game(user_id, user_move, bot_move, result):
     except Exception as e:
         logger.error(f"TKM log hatası (User: {user_id}): {e}")
 
-def log_coinflip(user_id, result):
+def log_coinflip(user_id: int | str, result: str) -> None:
     """Yazı Tura sonucunu loglar."""
     if not supabase: return
     try:
@@ -254,7 +254,7 @@ def log_coinflip(user_id, result):
     except Exception as e:
         logger.error(f"Coinflip log hatası (User: {user_id}): {e}")
 
-def log_dice_roll(user_id, result):
+def log_dice_roll(user_id: int | str, result: int) -> None:
     """Zar atma sonucunu loglar."""
     if not supabase: return
     try:
