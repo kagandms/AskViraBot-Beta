@@ -210,6 +210,7 @@ def main():
         CallbackQueryHandler(tools.handle_social_media_callbacks, pattern=r"^(back_to_main_menu)$"),
         CallbackQueryHandler(reminders.delete_reminder_callback, pattern=r"^(delete_rem_\d+|reminders_back_inline)$"),
         CallbackQueryHandler(admin.admin_callback, pattern=r"^admin_"),
+        CallbackQueryHandler(tools.weather_callback_query, pattern=r"^forecast_"),
         # Metro removed (Reply Keyboard)
         
         # Messages
