@@ -514,12 +514,11 @@ async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_
     download_format = download_info.get("format", "video")
     url = update.message.text.strip()
     
-    # Geri butonu kontrolü
+    # Geri butonu kontrolü - Platform seçim menüsüne dön
     url_lower = url.lower()
-    if url_lower in BUTTON_MAPPINGS["menu"] or "geri" in url_lower or "back" in url_lower or "назад" in url_lower:
-        from handlers.general import tools_menu_command
+    if url_lower in BUTTON_MAPPINGS.get("menu", set()) or url_lower in BUTTON_MAPPINGS.get("back_to_platform", set()) or "geri" in url_lower or "back" in url_lower or "назад" in url_lower:
         state.waiting_for_video_link.pop(user_id, None)
-        await tools_menu_command(update, context)
+        await video_downloader_menu(update, context)
         return True
     
     # Platform-specific URL validation

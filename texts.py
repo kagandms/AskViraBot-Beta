@@ -652,7 +652,7 @@ AUTO_MAPPINGS = {
     "video_platform_tiktok": generate_mappings_from_buttons({"all": [["📱 TikTok"]]}),
     "video_platform_twitter": generate_mappings_from_buttons({"all": [["🐦 Twitter/X"]]}),
     "video_platform_instagram": generate_mappings_from_buttons({"all": [["📸 Instagram"]]}),
-    "format_video": generate_mappings_from_buttons({"all": [["🎥 Video (MP4)"]]}),
+    "format_video": generate_mappings_from_buttons({"tr": [["🎥 Video (MP4)"]], "en": [["🎥 Video (MP4)"]], "ru": [["🎥 Видео (MP4)"]]}),
     "format_audio": generate_mappings_from_buttons({"tr": [["🎵 Ses (MP3)"]], "en": [["🎵 Audio (MP3)"]], "ru": [["🎵 Аудио (MP3)"]]}),
     "back_to_platform": generate_mappings_from_buttons({"tr": [["🔙 Platform Seçimi"]], "en": [["🔙 Platform Selection"]], "ru": [["🔙 Выбор Платформы"]]}),
     
