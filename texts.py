@@ -276,6 +276,26 @@ TEXTS = {
         "en": "🏙️ Select the city for which you want to get the weather:",
         "ru": "🏙️ Выберите город, для которого вы хотите узнать погоду:"
     },
+    "weather_forecast_button": {
+        "tr": "📅 5 Günlük Tahmin",
+        "en": "📅 5-Day Forecast",
+        "ru": "📅 Прогноз на 5 дней"
+    },
+    "weather_forecast_title": {
+        "tr": "📅 *{city} - 5 Günlük Tahmin*",
+        "en": "📅 *{city} - 5-Day Forecast*",
+        "ru": "📅 *{city} - Прогноз на 5 дней*"
+    },
+    "weather_day_format": {
+        "tr": "*{day}:* {icon} {max_temp}°C / {min_temp}°C ({desc})",
+        "en": "*{day}:* {icon} {max_temp}°C / {min_temp}°C ({desc})",
+        "ru": "*{day}:* {icon} {max_temp}°C / {min_temp}°C ({desc})"
+    },
+    "weather_back_to_current": {
+        "tr": "🔄 Şu Anki Durum",
+        "en": "🔄 Current Weather",
+        "ru": "🔄 Текущая Погода"
+    },
     "developer_info_prompt": { 
         "tr": "👨‍💻 Sosyal medya hesaplarıma aşağıdaki bağlantılardan ulaşabilirsiniz:",
         "en": "👨‍💻 You can reach my social media accounts via the links below:",
