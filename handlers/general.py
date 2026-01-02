@@ -102,7 +102,7 @@ Tüm özelliklere menü butonlarından kolayca ulaşabilirsin!
 • 📄 PDF Dönüştürücü – Metin, resim veya belgeyi PDF yap
 • ☀️ Hava Durumu – 9 şehir + *5 günlük tahmin*
 • 📥 Video İndir – TikTok, Twitter/X, Instagram
-• 🚇 Canlı Metro – İstanbul metro sefer saatleri
+• 🚇 Canlı Metro İstanbul – Gerçek zamanlı sefer saatleri
 
 ━━━━━━━━━━━━━━━━━━━━
 
@@ -152,7 +152,7 @@ Access all features easily through the menu buttons!
 • 📄 PDF Converter – Convert text, image or document to PDF
 • ☀️ Weather – 9 cities + *5-day forecast*
 • 📥 Video Download – TikTok, Twitter/X, Instagram
-• 🚇 Live Metro – Istanbul metro schedules
+• 🚇 Live Metro Istanbul – Real-time departure schedules
 
 ━━━━━━━━━━━━━━━━━━━━
 
@@ -202,7 +202,7 @@ Access all features easily through the menu buttons!
 • 📄 PDF Конвертер – Конвертировать в PDF
 • ☀️ Погода – 9 городов + *5-дневный прогноз*
 • 📥 Скачать видео – TikTok, Twitter/X, Instagram
-• 🚇 Метро Онлайн – Расписание метро Стамбула
+• 🚇 Метро Стамбул Онлайн – Расписание в реальном времени
 
 ━━━━━━━━━━━━━━━━━━━━
 

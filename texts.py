@@ -366,12 +366,12 @@ TEXTS = {
     "xox_win": {
         "tr": "🎉 Tebrikler! Sen kazandın!",
         "en": "🎉 Congratulations! You won!",
-        "ru": "🎉 Поздравляю! Ты выиграл!"
+        "ru": "🎉 Поздравляю! Ты выиграл(а)!"
     },
     "xox_lose": {
         "tr": "🤖 Ben kazandım! Bir dahaki sefere...",
         "en": "🤖 I won! Maybe next time...",
-        "ru": "🤖 Я выиграл! В следующий раз..."
+        "ru": "🤖 Я выиграл(а)! В следующий раз..."
     },
     "xox_draw": {
         "tr": "🤝 Berabere!",
@@ -534,9 +534,9 @@ MAIN_BUTTONS = {
 }
 
 TOOLS_BUTTONS = {
-    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu", "📥 Video İndir"], ["🚇 Canlı Metro", "🔙 Geri"]],
-    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather", "📥 Video Download"], ["🚇 Live Metro", "🔙 Back"]],
-    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода", "📥 Скачать Видео"], ["🚇 Метро Онлайн", "🔙 Назад"]]
+    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu", "📥 Video İndir"], ["🚇 Canlı Metro İstanbul", "🔙 Geri"]],
+    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather", "📥 Video Download"], ["🚇 Live Metro Istanbul", "🔙 Back"]],
+    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода", "📥 Скачать Видео"], ["🚇 Метро Стамбул Онлайн", "🔙 Назад"]]
 }
 
 # --- VIDEO DOWNLOADER MENÜSÜ ---
@@ -638,7 +638,7 @@ AUTO_MAPPINGS = {
     "pdf_converter_main_button": generate_mappings_from_buttons({"tr": [["📄 PDF Dönüştürücü"]], "en": [["📄 PDF Converter"]], "ru": [["📄 Конвертер PDF"]]}),
     "weather_main_button": generate_mappings_from_buttons({"tr": [["☀️ Hava Durumu"]], "en": [["☀️ Weather"]], "ru": [["☀️ Погода"]]}),
     "video_downloader_main_button": generate_mappings_from_buttons({"tr": [["📥 Video İndir"]], "en": [["📥 Video Download"]], "ru": [["📥 Скачать Видео"]]}),
-    "metro_main_button": generate_mappings_from_buttons({"tr": [["🚇 Canlı Metro"]], "en": [["🚇 Live Metro"]], "ru": [["🚇 Метро Онлайн"]]}),
+    "metro_main_button": generate_mappings_from_buttons({"tr": [["🚇 Canlı Metro İstanbul"]], "en": [["🚇 Live Metro Istanbul"]], "ru": [["🚇 Метро Стамбул Онлайн"]]}),
     
     # Oyunlar menüsü
     "xox_game": generate_mappings_from_buttons({"tr": [["❌⭕ XOX"]], "en": [["❌⭕ XOX"]], "ru": [["❌⭕ XOX"]]}),
