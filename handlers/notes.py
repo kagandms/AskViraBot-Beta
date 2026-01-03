@@ -157,8 +157,10 @@ async def deletenotes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     
     if update.callback_query:
         await update.callback_query.edit_message_text(TEXTS["prompt_select_note_to_delete"][lang], reply_markup=reply_markup)
+        # ID is already stored or known (it's the callback message)
     else:
-        await update.message.reply_text(TEXTS["prompt_select_note_to_delete"][lang], reply_markup=reply_markup)
+        sent_msg = await update.message.reply_text(TEXTS["prompt_select_note_to_delete"][lang], reply_markup=reply_markup)
+        context.user_data['show_notes_msg_id'] = sent_msg.message_id
 
 async def select_note_to_delete_prompt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
@@ -249,7 +251,8 @@ async def edit_notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if update.callback_query:
         await update.callback_query.edit_message_text(TEXTS["edit_notes_menu_prompt"][lang], reply_markup=reply_markup)
     else:
-        await update.message.reply_text(TEXTS["edit_notes_menu_prompt"][lang], reply_markup=reply_markup)
+        sent_msg = await update.message.reply_text(TEXTS["edit_notes_menu_prompt"][lang], reply_markup=reply_markup)
+        context.user_data['show_notes_msg_id'] = sent_msg.message_id
 
 async def handle_edit_note_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
