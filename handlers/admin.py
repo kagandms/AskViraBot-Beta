@@ -38,6 +38,10 @@ async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     await state.clear_user_states(user_id)
     await state.set_state(user_id, state.ADMIN_MENU_ACTIVE)
     
+    # Debug log
+    import logging
+    logging.info(f"Admin panel opened for user {user_id}, state set to: {state.ADMIN_MENU_ACTIVE}")
+    
     await update.message.reply_text(
         "🔧 *Admin Paneli*\n\nBir işlem seçin:",
         reply_markup=get_admin_keyboard(),
