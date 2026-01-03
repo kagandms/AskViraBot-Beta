@@ -293,6 +293,18 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         await show_favorites(update, context, lang)
         return
 
+    # 2.8 FAVORİLER MENÜSÜ GERİ BUTONU (Özel case)
+    # Bu buton "Show Favorites List" içinden geliyor, ana favori menüsüne dönmeli
+    fav_back_keywords = ["🔙 favoriler menüsü", "🔙 favorites menu", "🔙 меню избранного"]
+    if any(kw in text.lower() for kw in fav_back_keywords):
+        await show_favorites(update, context, lang)
+        return
+
+    # 2.9 SİLME BUTONU KONTROLÜ (🗑️ FAV...)
+    if text.startswith("🗑️ FAV"):
+        await delete_favorite(update, context, text, lang, user_id)
+        return
+
     # 3. İLERİ YÖNLÜ SEÇİMLER
     
     # A) HAT SEÇİMİ (Henüz hat seçilmemişse)
@@ -580,20 +592,80 @@ async def show_favorites_list(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 async def show_favorites_edit_menu(update: Update, context: ContextTypes.DEFAULT_TYPE, lang: str) -> None:
     """Favorileri SİLME butonlarıyla listeler."""
-    # Burayı şimdilik 'show_favorites'in eski hali gibi yapabiliriz ama silme odaklı
-    # Veya basitçe 'Silmek için bir numara seçin' diyebiliriz.
-    # Şimdilik kullanıcıya bilgi verelim (Faz 10'da silme eklenecekse burası placeholder)
+    user_id = update.effective_user.id
+    favorites = await asyncio.to_thread(db.get_metro_favorites, user_id)
     
-    # Kullanıcı isteği "Düzenle" menüsüydü, muhtemelen silme kastediliyor.
-    # Şimdilik "Yapım aşamasında" diyip geri dönebiliriz veya basit silme ekleyebiliriz.
-    # Kullanıcı "eskimiş favorileri sildiğin yer" dedi. Demek ki SİLME istiyor.
+    if not favorites:
+        no_fav_texts = {
+            "tr": "📂 Listeniz boş. Silinecek bir şey yok.",
+            "en": "📂 List is empty. Nothing to delete.",
+            "ru": "📂 Список пуст. Нечего удалять."
+        }
+        await update.message.reply_text(no_fav_texts.get(lang, no_fav_texts["en"]))
+        await show_favorites(update, context, lang)
+        return
+
+    keyboard = []
+    # Header
+    msg_lines = []
+    header = {"tr": "🗑️ *Favori Silme*\nSilmek istediğiniz favoriye tıklayın:\n", 
+              "en": "🗑️ *Delete Favorite*\nClick the favorite you want to delete:\n",
+              "ru": "🗑️ *Удаление*\nНажмите, чтобы удалить:\n"}
+    msg_lines.append(header.get(lang, header["en"]))
     
-    # Hızlıca silme mantığı ekleyelim (DB fonksiyonu zaten var: remove_metro_favorite)
-    # Ancak UI tarafında "Sil: 1", "Sil: 2" gibi butonlar mı koysak?
+    for i, fav in enumerate(favorites[:6], 1): # Max 6
+        station = fav.get("station_name", "?")
+        direction = fav.get("direction_name", "?")
+        
+        # Buton metni: "🗑️ FAV1: Yenikapı -> Hacıosman"
+        btn_text = f"🗑️ FAV{i}: {station} -> {direction}"
+        if len(btn_text) > 30: 
+            btn_text = f"🗑️ FAV{i}: {station[:10]}.. -> {direction[:10]}.."
+            
+        keyboard.append([btn_text])
+        msg_lines.append(f"{i}. 🚇 {fav.get('line_name')} | {station} → {direction}")
+        
+    back_texts = {"tr": "🔙 Favoriler Menüsü", "en": "🔙 Favorites Menu", "ru": "🔙 Меню Избранного"}
+    keyboard.append([back_texts.get(lang, back_texts["en"])])
     
-    await update.message.reply_text("⏳ Bu özellik yakında eklenecek.\n(Favori silme özelliği)", 
-                                    reply_markup=None)
-    await show_favorites(update, context, lang)
+    await update.message.reply_text(
+        "\n".join(msg_lines),
+        reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True),
+        parse_mode="Markdown"
+    )
+
+async def delete_favorite(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str, lang: str, user_id: int) -> None:
+    """Seçilen favoriyi siler."""
+    favorites = await asyncio.to_thread(db.get_metro_favorites, user_id)
+    
+    try:
+        # "🗑️ FAV1:" formatından numara çıkar
+        fav_num = int(text.split("FAV")[1].split(":")[0].strip())
+        fav_index = fav_num - 1
+        
+        if fav_index < 0 or fav_index >= len(favorites):
+            raise ValueError
+            
+        fav = favorites[fav_index]
+        
+        # DB'den sil
+        success = await asyncio.to_thread(
+            db.remove_metro_favorite, 
+            user_id, 
+            fav["station_id"], 
+            fav["direction_id"]
+        )
+        
+        if success:
+            del_texts = {"tr": "✅ Favori silindi!", "en": "✅ Favorite deleted!", "ru": "✅ Удалено!"}
+            await update.message.reply_text(del_texts.get(lang, del_texts["en"]))
+            # Listeyi yenile
+            await show_favorites_edit_menu(update, context, lang)
+        else:
+            await update.message.reply_text("❌ Silinirken bir hata oluştu.")
+            
+    except (ValueError, IndexError, KeyError):
+        await update.message.reply_text("⚠️ Geçersiz seçim.")
 
 
 async def save_to_favorites(update: Update, context: ContextTypes.DEFAULT_TYPE, lang: str, user_id: int) -> None:
