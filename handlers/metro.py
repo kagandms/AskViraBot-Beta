@@ -269,9 +269,21 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         await tools_menu_command(update, context)
         return
 
-    # 2. GERİ BUOTNU MANTIĞI - Tüm geri butonlarını kontrol et
+    # 1.5 ÖZEL GERİ BUTONLARI (is_back_button'dan ÖNCE kontrol edilmeli)
+    # Favoriler Menüsü geri butonu
+    fav_back_keywords = ["🔙 favoriler menüsü", "🔙 favorites menu", "🔙 меню избранного"]
+    if any(kw in text_lower for kw in fav_back_keywords):
+        await show_favorites(update, context, lang)
+        return
+    
+    # Metro Menüsü geri butonu (Favoriler ana menüsünden)
+    if any(kw in text_lower for kw in ["🔙 metro menüsü", "🔙 metro menu", "🔙 меню метро"]):
+        await metro_menu_command(update, context)
+        return
+
+    # 2. GERİ BUTONU MANTIĞI - Genel geri kontrolleri
     if is_back_button(text):
-        # Eğer İstasyon seçiliyse -> Yön seçimi iptal, İstasyonlara dön (Aslında Yönü iptal edip İstasyon listesini tekrar gösteriyoruz, yani Hat seçili duruma dönüyoruz)
+        # Eğer İstasyon seçiliyse -> Yön seçimi iptal, İstasyonlara dön
         # SIRA: Hat Seçimi -> İstasyon Seçimi -> Yön Seçimi
         
         if "station" in current_selection:
@@ -312,10 +324,7 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         await save_to_favorites(update, context, lang, user_id)
         return
 
-    # 2.55 METRO MENÜSÜ GERİ BUTONU (Favoriler ana menüsünden gelir -> Hat Listesine dön)
-    if any(kw in text_lower for kw in ["🔙 metro menüsü", "🔙 metro menu", "🔙 меню метро"]):
-        await metro_menu_command(update, context)
-        return
+    # (metro menüsü geri butonu artık yukarıda 1.5'te kontrol ediliyor)
 
     # 2.6 FAVORİLER MENÜSÜ BUTONLARI (Alt menü butonları)
     # "Favori İstasyonlar" butonu
@@ -332,12 +341,7 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         await show_favorites(update, context, lang)
         return
 
-    # 2.8 FAVORİLER MENÜSÜ GERİ BUTONU (Özel case)
-    # Bu buton "Show Favorites List" içinden geliyor, ana favori menüsüne dönmeli
-    fav_back_keywords = ["🔙 favoriler menüsü", "🔙 favorites menu", "🔙 меню избранного"]
-    if any(kw in text_lower for kw in fav_back_keywords):
-        await show_favorites(update, context, lang)
-        return
+    # (fav_back_keywords artık yukarıda 1.5'te kontrol ediliyor)
 
     # 2.9 SİLME BUTONU KONTROLÜ (🗑️ FAV...)
     if text.startswith("🗑️ FAV"):
