@@ -6,7 +6,7 @@ from telegram.ext import ContextTypes
 import database as db
 import state
 from texts import TEXTS, TKM_BUTTONS, BUTTON_MAPPINGS, GAMES_BUTTONS
-from utils import get_games_keyboard_markup
+from utils import get_games_keyboard_markup, is_back_button
 from rate_limiter import rate_limit
 
 # --- OYUNLAR MENÜSÜ ---

@@ -4,7 +4,7 @@ from telegram.ext import ContextTypes
 import database as db
 import state
 from texts import TEXTS, BUTTON_MAPPINGS
-from utils import get_notes_keyboard_markup, get_input_back_keyboard_markup
+from utils import get_notes_keyboard_markup, get_input_back_keyboard_markup, is_back_button
 
 # --- NOTLAR MENÜSÜ ---
 async def notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
