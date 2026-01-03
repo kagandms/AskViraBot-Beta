@@ -1,10 +1,15 @@
 # texts/__init__.py
 # Bu dosya geriye dönük uyumluluk için texts modülünden tüm sembolleri export eder
 
-from .strings import (
-    TEXTS,
+from .common import (
     SOCIAL_MEDIA_LINKS,
     CITY_NAMES_TRANSLATED,
+    turkish_lower,
+    generate_mappings_from_buttons,
+)
+
+from .strings import (
+    TEXTS,
     MAIN_BUTTONS,
     TOOLS_BUTTONS,
     VIDEO_DOWNLOADER_BUTTONS,
@@ -16,8 +21,6 @@ from .strings import (
     PDF_CONVERTER_BUTTONS,
     INPUT_BACK_BUTTONS,
     REMINDER_BUTTONS,
-    turkish_lower,
-    generate_mappings_from_buttons,
     AUTO_MAPPINGS,
     MANUAL_MAPPINGS,
     BUTTON_MAPPINGS,
