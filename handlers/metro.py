@@ -278,7 +278,9 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
 
     # 2.2 FAVORİ KULLANIMI (En üstte kontrol edilmeli)
     # ⭐ FAV... butonuna basıldığında
-    if text_lower.startswith("⭐ fav"):
+    # DİKKAT: text_lower kullanma! "Favoriye Ekle" ile çakışıyor.
+    # O yüzden direkt "⭐ FAV" (Büyük harf) kontrolü yapıyoruz.
+    if text.startswith("⭐ FAV"):
         await use_favorite(update, context, text, lang, user_id)
         return
 
@@ -316,7 +318,7 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         return
 
     # 2.9 SİLME BUTONU KONTROLÜ (🗑️ FAV...)
-    if text_lower.startswith("🗑️ fav"):
+    if text.startswith("🗑️ FAV"):
         await delete_favorite(update, context, text, lang, user_id)
         return
 
@@ -649,6 +651,7 @@ async def show_favorites_edit_menu(update: Update, context: ContextTypes.DEFAULT
 async def delete_favorite(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str, lang: str, user_id: int) -> None:
     """Seçilen favoriyi siler."""
     favorites = await asyncio.to_thread(db.get_metro_favorites, user_id)
+    fav_index = -1
     
     try:
         # "🗑️ FAV1:" formatından numara çıkar
@@ -723,6 +726,7 @@ async def save_to_favorites(update: Update, context: ContextTypes.DEFAULT_TYPE, 
 async def use_favorite(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str, lang: str, user_id: int) -> None:
     """Favoriden hızlı erişim - DİREKT SEFER SAATLERİNİ gösterir."""
     favorites = await asyncio.to_thread(db.get_metro_favorites, user_id)
+    fav_index = -1
     
     # FAV numarasını çıkar (⭐ FAV1: ...)
     try:
