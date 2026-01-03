@@ -52,8 +52,9 @@ async def generate_and_send_qr(update: Update, context: ContextTypes.DEFAULT_TYP
 
     # --- GERİ TUŞU KONTROLÜ (EKLENEN KISIM) ---
     data_lower = data.lower().strip()
-    # Eğer gelen veri "Geri" butonu veya benzeri ise menüye dön
-    if data_lower in BUTTON_MAPPINGS["menu"] or "geri" in data_lower or "back" in data_lower or "назад" in data_lower:
+    # Eğer gelen veri geri butonu ise menüye dön
+    back_keywords = ["geri", "back", "назад", "araçlar menüsü", "tools menu", "меню инструментов"]
+    if data_lower in BUTTON_MAPPINGS["menu"] or data_lower in BUTTON_MAPPINGS.get("back_to_tools", set()) or any(kw in data_lower for kw in back_keywords):
         from handlers.general import tools_menu_command
         state.waiting_for_qr_data.discard(user_id)
         await tools_menu_command(update, context)
@@ -128,7 +129,8 @@ async def handle_pdf_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mode = context.user_data.get('pdf_mode')
     
     text_content = update.message.text.lower() if update.message.text else ""
-    if text_content in BUTTON_MAPPINGS["menu"] or "geri" in text_content or "back" in text_content:
+    back_keywords = ["geri", "back", "назад", "araçlar menüsü", "tools menu", "меню инструментов"]
+    if text_content in BUTTON_MAPPINGS["menu"] or text_content in BUTTON_MAPPINGS.get("back_to_tools", set()) or any(kw in text_content for kw in back_keywords):
         from handlers.general import tools_menu_command
         state.waiting_for_pdf_conversion_input.discard(user_id)
         await tools_menu_command(update, context)
@@ -297,8 +299,9 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
 
     # --- GERİ TUŞU KONTROLÜ (EKLENEN KISIM) ---
     city_name_lower = city_name.lower().strip()
-    # "Geri" butonuna basıldığında gelen metni kontrol ediyoruz
-    if city_name_lower in BUTTON_MAPPINGS["menu"] or "geri" in city_name_lower or "back" in city_name_lower or "назад" in city_name_lower:
+    # Geri butonu kontrolü - tüm varyasyonları içerir
+    back_keywords = ["geri", "back", "назад", "araçlar menüsü", "tools menu", "меню инструментов"]
+    if city_name_lower in BUTTON_MAPPINGS["menu"] or city_name_lower in BUTTON_MAPPINGS.get("back_to_tools", set()) or any(kw in city_name_lower for kw in back_keywords):
         from handlers.general import tools_menu_command
         state.waiting_for_weather_city.discard(user_id)
         # Menüye dön
