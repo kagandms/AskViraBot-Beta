@@ -23,6 +23,7 @@ BUTTON_HANDLERS = [
     ("tools_main_button", general.tools_menu_command),
     ("back_to_tools", general.tools_menu_command),
     ("back_to_games", games.games_menu),
+    ("back_to_notes", notes.notes_menu),
     ("notes_main_button", notes.notes_menu),
     ("games_main_button", games.games_menu),
     ("reminder", reminders.reminder_menu),

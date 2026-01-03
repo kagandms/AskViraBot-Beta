@@ -534,9 +534,9 @@ MAIN_BUTTONS = {
 }
 
 TOOLS_BUTTONS = {
-    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu", "📥 Video İndir"], ["🚇 Canlı Metro İstanbul", "🔙 Geri"]],
-    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather", "📥 Video Download"], ["🚇 Live Metro Istanbul", "🔙 Back"]],
-    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода", "📥 Скачать Видео"], ["🚇 Метро Стамбул", "🔙 Назад"]]
+    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu", "📥 Video İndir"], ["🚇 Canlı Metro İstanbul", "🔙 Ana Menü"]],
+    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather", "📥 Video Download"], ["🚇 Live Metro Istanbul", "🔙 Main Menu"]],
+    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода", "📥 Скачать Видео"], ["🚇 Метро Стамбул", "🔙 Главное Меню"]]
 }
 
 # --- VIDEO DOWNLOADER MENÜSÜ ---
@@ -556,9 +556,9 @@ FORMAT_SELECTION_BUTTONS = {
 # --- YENİ OYUN MENÜSÜ ---
 # Karar çarkı kaldırıldı, düzen 2x2 yapıldı
 GAMES_BUTTONS = {
-    "tr": [["❌⭕ XOX", "🎲 Zar"], ["🪙 Yazı Tura", "🪨📄✂️ T-K-M"], ["🔙 Geri"]],
-    "en": [["❌⭕ XOX", "🎲 Dice"], ["🪙 Coinflip", "🪨📄✂️ R-P-S"], ["🔙 Back"]],
-    "ru": [["❌⭕ XOX", "🎲 Кубик"], ["🪙 Монета", "🪨📄✂️ К-Б-Н"], ["🔙 Назад"]]
+    "tr": [["❌⭕ XOX", "🎲 Zar"], ["🪙 Yazı Tura", "🪨📄✂️ T-K-M"], ["🔙 Ana Menü"]],
+    "en": [["❌⭕ XOX", "🎲 Dice"], ["🪙 Coinflip", "🪨📄✂️ R-P-S"], ["🔙 Main Menu"]],
+    "ru": [["❌⭕ XOX", "🎲 Кубик"], ["🪙 Монета", "🪨📄✂️ К-Б-Н"], ["🔙 Главное Меню"]]
 }
 
 # --- NOTLAR MENÜSÜ ---
@@ -570,9 +570,9 @@ NOTES_BUTTONS = {
 }
 
 DELETE_NOTES_BUTTONS = {
-    "tr": [["✍️ Not Seçerek Sil"], ["🔙 Araçlar Menüsü"]],
-    "en": [["✍️ Select Note to Delete"], ["🔙 Tools Menu"]],
-    "ru": [["✍️ Удалить По Номеру"], ["🔙 Меню Инструментов"]]
+    "tr": [["✍️ Not Seçerek Sil"], ["🔙 Notlar Menüsü"]],
+    "en": [["✍️ Select Note to Delete"], ["🔙 Notes Menu"]],
+    "ru": [["✍️ Удалить По Номеру"], ["🔙 Меню Заметок"]]
 }
 
 TKM_BUTTONS = {
@@ -685,9 +685,10 @@ AUTO_MAPPINGS = {
 # --- MANUEL MAPPINGS (Özel durumlar için) ---
 # Bazı butonlar birden fazla varyant gerektirdiği için manuel tutulur
 MANUAL_MAPPINGS = {
-    "menu": {"🏠 menüye dön", "🏠 back to menu", "🏠 назад в меню", "🔙 geri", "🔙 back", "🔙 назад"},
+    "menu": {"🏠 menüye dön", "🏠 back to menu", "🏠 назад в меню", "🔙 geri", "🔙 back", "🔙 назад", "🔙 ana menü", "🔙 main menu", "🔙 главное меню"},
     "back_to_tools": {"🔙 araçlar menüsü", "🔙 tools menu", "🔙 меню инструментов"},
     "back_to_games": {"🔙 oyun odası", "🔙 game room", "🔙 игровая комната"},
+    "back_to_notes": {"🔙 notlar menüsü", "🔙 notes menu", "🔙 меню заметок"},
     "admin_panel_button": {"🔒 yönetim", "🔒 admin", "🔒 управление"},
 }
 
