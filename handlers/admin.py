@@ -55,6 +55,9 @@ async def handle_admin_message(update: Update, context: ContextTypes.DEFAULT_TYP
         return False
     
     text = update.message.text.strip()
+    # Debug log
+    from main import logger
+    logger.info(f"Admin Action: User {user_id} sent '{text}'")
     
     # Geri butonu
     if is_back_button(text):
@@ -296,6 +299,11 @@ async def show_stats_reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         notes = await asyncio.to_thread(db.get_all_notes_count)
         reminders = await asyncio.to_thread(db.get_all_reminders_count)
         
+        # AI kullanım istatistikleri (Veritabanından) - show_stats ile aynı
+        from datetime import date
+        today_str = date.today().isoformat()
+        ai_stats = await asyncio.to_thread(db.get_ai_total_stats, today_str)
+        
         tz = pytz.timezone(TIMEZONE)
         now = datetime.now(tz).strftime("%d.%m.%Y %H:%M")
         
@@ -304,6 +312,10 @@ async def show_stats_reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 👥 Toplam Kullanıcı: *{users}*
 📝 Toplam Not: *{notes}*
 ⏰ Aktif Hatırlatıcı: *{reminders}*
+
+🤖 *AI Kullanımı (Bugün)*
+💬 Mesaj: *{ai_stats['total_messages']}*
+👤 Aktif Kullanıcı: *{ai_stats['unique_users']}*
 
 🕐 Güncelleme: {now}
 """
