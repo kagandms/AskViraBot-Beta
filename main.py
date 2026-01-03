@@ -16,11 +16,9 @@ from handlers import general, notes, reminders, games, tools, admin, ai_chat, me
 from keep_alive import keep_alive
 
 # --- LOGLAMA YAPILANDIRMASI ---
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
-logger = logging.getLogger(__name__)
+from logger import setup_logging, get_logger
+setup_logging()
+logger = get_logger(__name__)
 
 async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
