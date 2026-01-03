@@ -515,6 +515,11 @@ TEXTS = {
         "tr": "❌ Metro verisi alınamadı. Lütfen tekrar deneyin.",
         "en": "❌ Could not fetch metro data. Please try again.",
         "ru": "❌ Не удалось получить данные метро. Попробуйте снова."
+    },
+    "invalid_selection": {
+        "tr": "⚠️ Geçersiz seçim. Lütfen menüden bir seçenek belirleyin.",
+        "en": "⚠️ Invalid selection. Please select an option from the menu.",
+        "ru": "⚠️ Неверный выбор. Пожалуйста, выберите опцию из меню."
     }
 }
 
