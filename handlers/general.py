@@ -10,7 +10,7 @@ from utils import get_main_keyboard_markup
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Bot başlatma komutu."""
     user_id = update.effective_user.id
-    state.clear_user_states(user_id)
+    await state.clear_user_states(user_id)
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     await update.message.reply_text(TEXTS["start"][lang])
@@ -33,7 +33,7 @@ async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
-    state.clear_user_states(user_id)
+    await state.clear_user_states(user_id)
     
     # Eğer callback query (buton) üzerinden geldiyse
     if update.callback_query:

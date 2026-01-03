@@ -13,7 +13,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKe
 from telegram.ext import ContextTypes
 import database as db
 from texts import TEXTS
-from utils import get_tools_keyboard_markup
+from utils import get_tools_keyboard_markup, is_back_button
 from rate_limiter import rate_limit
 import state
 
@@ -190,9 +190,8 @@ async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
     # State başlat
-    state.clear_user_states(user_id)
-    state.metro_browsing.add(user_id)
-    state.metro_selection[user_id] = {} # Boş seçim
+    await state.clear_user_states(user_id)
+    await state.set_state(user_id, state.METRO_BROWSING, {}) # Boş seçim
     
     # Loading mesajı
     loading_texts = {"tr": "⏳ Hatlar yükleniyor...", "en": "⏳ Loading lines...", "ru": "⏳ Загрузка линий..."}
@@ -247,7 +246,7 @@ async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
 async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Metro menüsü içindeki metin etkileşimlerini yönetir"""
     user_id = update.effective_user.id
-    if user_id not in state.metro_browsing:
+    if not await state.check_state(user_id, state.METRO_BROWSING):
         return
         
     text = update.message.text
@@ -261,20 +260,18 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
     back_keywords = BUTTON_MAPPINGS.get("back_to_tools", set()) | {"🔙 araçlar menüsü", "🔙 tools menu", "🔙 меню инструментов", "geri", "back", "назад"}
     menu_keywords = BUTTON_MAPPINGS.get("menu", [])
     
-    current_selection = state.metro_selection.get(user_id, {})
+    # Get current selection from DB state data
+    current_selection = await state.get_data(user_id) or {}
     
     # 1. MENÜYE DÖNÜŞ (Eğer ana menü komutu geldiyse)
     if text_lower in menu_keywords:
         from handlers.general import tools_menu_command
-        state.metro_browsing.discard(user_id)
-        state.metro_selection.pop(user_id, None)
+        await state.clear_user_states(user_id)
         await tools_menu_command(update, context)
         return
 
     # 2. GERİ BUOTNU MANTIĞI - Tüm geri butonlarını kontrol et
-    all_back_keywords = back_keywords | {"🔙 hat listesi", "🔙 line list", "🔙 список линий", 
-                                         "🔙 istasyon listesi", "🔙 station list", "🔙 список станций"}
-    if text_lower in all_back_keywords or any(kw in text_lower for kw in ["geri", "back", "назад", "hat listesi", "istasyon listesi", "araçlar menüsü", "tools menu"]):
+    if is_back_button(text):
         # Eğer İstasyon seçiliyse -> Yön seçimi iptal, İstasyonlara dön (Aslında Yönü iptal edip İstasyon listesini tekrar gösteriyoruz, yani Hat seçili duruma dönüyoruz)
         # SIRA: Hat Seçimi -> İstasyon Seçimi -> Yön Seçimi
         
@@ -282,6 +279,8 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
             # İstasyondan hatta dön
             current_selection.pop("station", None)
             current_selection.pop("station_name", None)
+            # Update state data
+            await state.set_state(user_id, state.METRO_BROWSING, current_selection)
             await show_stations(update, context, current_selection["line"], current_selection["line_name"], lang)
             return
             
@@ -289,19 +288,19 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
             # Hattan hat listesine dön
             current_selection.pop("line", None)
             current_selection.pop("line_name", None)
+            # Update state data
+            await state.set_state(user_id, state.METRO_BROWSING, current_selection)
             await metro_menu_command(update, context) # Hatları listele
             return
             
         else:
             # Metro'dan çık, Araçlar menüsüne dön
             from handlers.general import tools_menu_command
-            state.metro_browsing.discard(user_id)
-            state.metro_selection.pop(user_id, None)
+            await state.clear_user_states(user_id)
             await tools_menu_command(update, context)
             return
 
     # 2.2 FAVORİ KULLANIMI (En üstte kontrol edilmeli)
-    # ⭐ FAV... butonuna basıldığında
     # DİKKAT: text_lower kullanma! "Favoriye Ekle" ile çakışıyor.
     # O yüzden direkt "⭐ FAV" (Büyük harf) kontrolü yapıyoruz.
     if text.startswith("⭐ FAV"):
@@ -365,8 +364,11 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
                 break
         
         if selected_line:
-            state.metro_selection[user_id]["line"] = selected_line["Id"]
-            state.metro_selection[user_id]["line_name"] = selected_line["Name"]
+            # Update Selection and State Data
+            current_selection["line"] = selected_line["Id"]
+            current_selection["line_name"] = selected_line["Name"]
+            await state.set_state(user_id, state.METRO_BROWSING, current_selection)
+            
             await show_stations(update, context, selected_line["Id"], selected_line["Name"], lang)
         else:
             await update.message.reply_text(TEXTS["invalid_selection"][lang])
@@ -385,8 +387,11 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
                 break
         
         if selected_station:
-            state.metro_selection[user_id]["station"] = selected_station["Id"]
-            state.metro_selection[user_id]["station_name"] = selected_station.get("Description", "")
+            # Update Selection and State Data
+            current_selection["station"] = selected_station["Id"]
+            current_selection["station_name"] = selected_station.get("Description", "")
+            await state.set_state(user_id, state.METRO_BROWSING, current_selection)
+            
             await show_directions(update, context, current_selection["line"], selected_station["Id"], lang)
         else:
             await update.message.reply_text(TEXTS["invalid_selection"][lang])
@@ -407,6 +412,11 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
             break
             
     if selected_dir:
+        # Store direction in state for "Add to Favorites" button
+        current_selection["direction_id"] = selected_dir["DirectionId"]
+        current_selection["direction_name"] = selected_dir["DirectionName"]
+        await state.set_state(user_id, state.METRO_BROWSING, current_selection)
+
         await show_timetable(update, context, current_selection["station"], selected_dir["DirectionId"], selected_dir["DirectionName"], lang)
     else:
         # Eğer "Yenile" butonuna basıldıysa (bunu text olarak yakalamak zor olabilir,
@@ -530,10 +540,14 @@ async def show_timetable(update, context, station_id, direction_id, direction_na
     if not departure_lines:
         await update.message.reply_text(TEXTS["metro_no_departures"][lang])
         return
-        
+    
+    # Get current selection details safely
+    user_id = update.effective_user.id
+    current_selection = await state.get_data(user_id) or {}
+    
     header = TEXTS["metro_departures_header"][lang].format(
-        line=state.metro_selection[update.effective_user.id].get("line_name", ""),
-        station=state.metro_selection[update.effective_user.id].get("station_name", ""),
+        line=current_selection.get("line_name", ""),
+        station=current_selection.get("station_name", ""),
         direction=direction_name
     )
     
@@ -712,11 +726,26 @@ async def delete_favorite(update: Update, context: ContextTypes.DEFAULT_TYPE, te
 
 async def save_to_favorites(update: Update, context: ContextTypes.DEFAULT_TYPE, lang: str, user_id: int) -> None:
     """Mevcut seçimi favorilere kaydeder ve ANA MENÜYE yönlendirir."""
-    selection = state.metro_selection.get(user_id, {})
+    # 从 DB 获取 selection
+    selection = await state.get_data(user_id) or {}
     
     required_keys = ["line", "line_name", "station", "station_name", "direction_id", "direction_name"]
+    # We might not have direction stored in state if we just clicked it.
+    # WAIT: User clicks "Add to favorites". When does this happen?
+    # It happens AFTER showing timetable. But in handle_metro_message, we didn't save direction to state selection!
+    # I need to fix `handle_metro_message` to save direction when user clicks direction button.
+    # Actually, in `handle_metro_message`, when direction is clicked, I didn't save it. I should save it.
+    # But wait, `save_to_favorites` is called via button click. At that point, `selection` MUST have direction.
+    # See below fix.
+    
+    # If direction keys are missing, we can't save.
+    # Let me check where save_to_favorites is called. It is called from menu after timetable is shown.
+    # But currently `handle_metro_message` DOES NOT store direction_id/name into persistent state when direction is selected.
+    # I MUST FIX `handle_metro_message` first (see above logic).
+    
+    # Assuming I fixed handle_metro_message:
     if not all(k in selection for k in required_keys):
-        await update.message.reply_text("⚠️ Hata: Seçim bilgisi eksik.")
+        await update.message.reply_text("⚠️ Hata: Seçim bilgisi eksik (Yön seçilmedi).")
         return
     
     success = await asyncio.to_thread(
@@ -736,7 +765,7 @@ async def save_to_favorites(update: Update, context: ContextTypes.DEFAULT_TYPE, 
         await update.message.reply_text(success_texts.get(lang, success_texts["en"]))
         
         # Seçimi temizle ve Hat listesine (Ana Metro Menüsü) dön
-        state.metro_selection[user_id] = {} # Reset selection
+        await state.set_state(user_id, state.METRO_BROWSING, {}) # Reset selection
         await metro_menu_command(update, context)
         
     else:
@@ -766,7 +795,7 @@ async def use_favorite(update: Update, context: ContextTypes.DEFAULT_TYPE, text:
         fav = favorites[fav_index]
         
         # State güncelle (Böylece geri butonu çalışır)
-        state.metro_selection[user_id] = {
+        selection_data = {
             "line": fav["line_id"],
             "line_name": fav["line_name"],
             "station": fav["station_id"],
@@ -774,6 +803,7 @@ async def use_favorite(update: Update, context: ContextTypes.DEFAULT_TYPE, text:
             "direction_id": fav["direction_id"],
             "direction_name": fav["direction_name"]
         }
+        await state.set_state(user_id, state.METRO_BROWSING, selection_data)
         
         # Direkt saatleri göster (show_timetable)
         await show_timetable(
@@ -789,4 +819,3 @@ async def use_favorite(update: Update, context: ContextTypes.DEFAULT_TYPE, text:
     except (ValueError, IndexError, KeyError) as e:
         logger.error(f"Favori kullanım hatası: {e}")
         await update.message.reply_text("⚠️ Favori bilgisi alınamadı.")
-

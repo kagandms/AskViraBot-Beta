@@ -350,6 +350,45 @@ def increment_ai_usage(user_id: int | str, today_str: str) -> int:
         new_count = current + 1
         set_ai_daily_usage(user_id, today_str, new_count)
         return new_count
+
     except Exception as e:
         logger.error(f"AI kullanım artırma hatası (User: {user_id}): {e}")
         return 0
+
+# --- STATE MANAGEMENT (Durum Yönetimi) ---
+def set_user_state(user_id: int | str, state_name: str, state_data: dict = None) -> None:
+    """Kullanıcının durumunu ve verisini kaydeder/günceller."""
+    if not supabase: return
+    if state_data is None:
+        state_data = {}
+    
+    try:
+        data = {
+            "user_id": str(user_id),
+            "state_name": state_name,
+            "state_data": state_data,
+            "updated_at": "now()"
+        }
+        supabase.table("user_states").upsert(data).execute()
+    except Exception as e:
+        logger.error(f"Error setting state for {user_id}: {e}")
+
+def get_user_state(user_id: int | str) -> dict:
+    """Kullanıcının durumunu ve verisini getirir."""
+    if not supabase: return None
+    try:
+        response = supabase.table("user_states").select("*").eq("user_id", str(user_id)).execute()
+        if response.data:
+            return response.data[0]
+        return None
+    except Exception as e:
+        logger.error(f"Error getting state for {user_id}: {e}")
+        return None
+
+def clear_user_state(user_id: int | str) -> None:
+    """Kullanıcının durumunu temizler."""
+    if not supabase: return
+    try:
+        supabase.table("user_states").delete().eq("user_id", str(user_id)).execute()
+    except Exception as e:
+        logger.error(f"Error clearing state for {user_id}: {e}")

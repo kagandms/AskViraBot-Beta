@@ -15,8 +15,8 @@ async def reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
-    state.clear_user_states(user_id)
-    state.reminder_menu_active.add(user_id)
+    await state.clear_user_states(user_id)
+    await state.set_state(user_id, state.REMINDER_MENU_ACTIVE)
     await update.message.reply_text(TEXTS["reminder_menu_prompt"][lang], reply_markup=get_reminder_keyboard_markup(lang))
 
 async def show_reminders_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -56,8 +56,8 @@ async def prompt_reminder_input(update: Update, context: ContextTypes.DEFAULT_TY
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
-    state.clear_user_states(user_id)
-    state.waiting_for_reminder_input.add(user_id)
+    await state.clear_user_states(user_id)
+    await state.set_state(user_id, state.WAITING_FOR_REMINDER_INPUT)
     await update.message.reply_text(TEXTS["remind_prompt_input"][lang], reply_markup=get_input_back_keyboard_markup(lang))
 
 async def process_reminder_input(update: Update, context: ContextTypes.DEFAULT_TYPE, input_string: str = None):
@@ -67,7 +67,7 @@ async def process_reminder_input(update: Update, context: ContextTypes.DEFAULT_T
     text = input_string if input_string else update.message.text
 
     if text.lower() in BUTTON_MAPPINGS["menu"]:
-        state.clear_user_states(user_id)
+        await state.clear_user_states(user_id)
         await reminder_menu(update, context)
         return
 
@@ -102,13 +102,13 @@ async def process_reminder_input(update: Update, context: ContextTypes.DEFAULT_T
             TEXTS["reminder_set"][lang].format(time_str=time_str, message=message, remaining_time=remaining_time_str),
             reply_markup=get_reminder_keyboard_markup(lang)
         )
-        state.clear_user_states(user_id)
+        await state.clear_user_states(user_id)
         # ID'yi direkt olarak task'a geçir
         asyncio.create_task(reminder_task(context.application, update.effective_chat.id, message, remaining_seconds, reminder_id))
 
     except Exception as e:
         await update.message.reply_text(TEXTS["error_occurred"][lang] + str(e), reply_markup=get_reminder_keyboard_markup(lang))
-        state.clear_user_states(user_id)
+        await state.clear_user_states(user_id)
 
 async def reminder_task(application, chat_id, message, wait_seconds, reminder_id):
     """Belirtilen süre sonunda hatırlatıcı mesajı gönderir ve DB'den siler."""
@@ -133,11 +133,14 @@ async def delete_reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     if not user_reminders:
         msg = TEXTS["no_reminders"][lang]
         markup = get_reminder_keyboard_markup(lang)
-        state.clear_user_states(user_id)
+        await state.clear_user_states(user_id)
         if update.callback_query: await update.callback_query.edit_message_text(msg, reply_markup=markup)
         else: await update.message.reply_text(msg, reply_markup=markup)
         return
-    state.waiting_for_reminder_delete.add(user_id)
+    
+    await state.clear_user_states(user_id)
+    await state.set_state(user_id, state.WAITING_FOR_REMINDER_DELETE)
+    
     keyboard = []
     for i, reminder in enumerate(user_reminders):
         rem_id = reminder['id']
@@ -163,7 +166,7 @@ async def delete_reminder_callback(update: Update, context: ContextTypes.DEFAULT
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     await query.answer()
     if query.data == "reminders_back_inline":
-        state.clear_user_states(user_id)
+        await state.clear_user_states(user_id)
         await query.edit_message_text(TEXTS["reminder_menu_prompt"][lang], reply_markup=None)
         await context.bot.send_message(chat_id=query.message.chat_id, text=TEXTS["reminder_menu_prompt"][lang], reply_markup=get_reminder_keyboard_markup(lang))
         return

@@ -97,7 +97,7 @@ async def ai_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """AI asistan ana menüsü"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
-    state.clear_user_states(user_id)
+    await state.clear_user_states(user_id)
     
     remaining = await get_user_remaining_quota_async(user_id)
     
@@ -125,8 +125,8 @@ async def start_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         )
         return
     
-    state.clear_user_states(user_id)
-    state.ai_chat_active.add(user_id)
+    await state.clear_user_states(user_id)
+    await state.set_state(user_id, state.AI_CHAT_ACTIVE)
     
     await update.message.reply_text(
         TEXTS["ai_chat_started"][lang],
@@ -138,7 +138,7 @@ async def end_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
-    state.ai_chat_active.discard(user_id)
+    await state.clear_user_states(user_id)
     
     await update.message.reply_text(
         TEXTS["ai_chat_ended"][lang],
@@ -149,7 +149,7 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     """AI sohbet modundaki mesajları işle"""
     user_id = update.effective_user.id
     
-    if user_id not in state.ai_chat_active:
+    if not await state.check_state(user_id, state.AI_CHAT_ACTIVE):
         return False
     
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -163,7 +163,7 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     # Günlük limit kontrolü
     remaining = await get_user_remaining_quota_async(user_id)
     if remaining <= 0:
-        state.ai_chat_active.discard(user_id)
+        await state.clear_user_states(user_id)
         await update.message.reply_text(
             TEXTS["ai_limit_reached"][lang],
             reply_markup=get_main_keyboard_markup(lang)

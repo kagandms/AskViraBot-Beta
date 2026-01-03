@@ -8,7 +8,7 @@ import database as db
 import state
 from texts import TEXTS, BUTTON_MAPPINGS, CITY_NAMES_TRANSLATED
 from config import OPENWEATHERMAP_API_KEY
-from utils import get_weather_cities_keyboard, get_tools_keyboard_markup
+from utils import get_weather_cities_keyboard, get_tools_keyboard_markup, is_back_button
 from rate_limiter import rate_limit
 
 @rate_limit("heavy")
@@ -28,8 +28,8 @@ async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         city = ' '.join(context.args)
         await get_weather_data(update, context, city)
     else:
-        state.clear_user_states(user_id)
-        state.waiting_for_weather_city.add(user_id)
+        await state.clear_user_states(user_id)
+        await state.set_state(user_id, state.WAITING_FOR_WEATHER_CITY)
         
         await update.message.reply_text(
             TEXTS["weather_prompt_city"][lang],
@@ -50,10 +50,9 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
             break
 
     city_name_lower = city_name.lower().strip()
-    back_keywords = ["geri", "back", "назад", "araçlar menüsü", "tools menu", "меню инструментов"]
-    if city_name_lower in BUTTON_MAPPINGS["menu"] or city_name_lower in BUTTON_MAPPINGS.get("back_to_tools", set()) or any(kw in city_name_lower for kw in back_keywords):
+    if is_back_button(city_name_lower):
         from handlers.general import tools_menu_command
-        state.waiting_for_weather_city.discard(user_id)
+        await state.clear_user_states(user_id)
         await tools_menu_command(update, context)
         return
     
@@ -61,7 +60,7 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
     if not api_key:
         target_message = update.message if update.message else update.callback_query.message
         await target_message.reply_text("API Key eksik! (Config dosyasını kontrol edin)")
-        state.waiting_for_weather_city.discard(user_id)
+        await state.clear_user_states(user_id)
         return
 
     weather_lang = lang 

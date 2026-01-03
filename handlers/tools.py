@@ -8,7 +8,7 @@ from telegram.ext import ContextTypes
 import database as db
 import state
 from texts import TEXTS, BUTTON_MAPPINGS, SOCIAL_MEDIA_LINKS
-from utils import get_input_back_keyboard_markup, get_main_keyboard_markup, get_weather_cities_keyboard
+from utils import get_input_back_keyboard_markup, get_main_keyboard_markup, get_weather_cities_keyboard, is_back_button
 from rate_limiter import rate_limit
 
 # --- YARDIMCI FONKSİYONLAR ---
@@ -30,8 +30,8 @@ async def qrcode_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         data = ' '.join(context.args)
         await generate_and_send_qr(update, context, data)
     else:
-        state.clear_user_states(user_id)
-        state.waiting_for_qr_data.add(user_id)
+        await state.clear_user_states(user_id)
+        await state.set_state(user_id, state.WAITING_FOR_QR_DATA)
         await update.message.reply_text(
             TEXTS["qrcode_prompt_input"][lang],
             reply_markup=get_input_back_keyboard_markup(lang)
@@ -42,10 +42,9 @@ async def generate_and_send_qr(update: Update, context: ContextTypes.DEFAULT_TYP
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
 
     data_lower = data.lower().strip()
-    back_keywords = ["geri", "back", "назад", "araçlar menüsü", "tools menu", "меню инструментов"]
-    if data_lower in BUTTON_MAPPINGS["menu"] or data_lower in BUTTON_MAPPINGS.get("back_to_tools", set()) or any(kw in data_lower for kw in back_keywords):
+    if is_back_button(data):
         from handlers.general import tools_menu_command
-        state.waiting_for_qr_data.discard(user_id)
+        await state.clear_user_states(user_id)
         await tools_menu_command(update, context)
         return
 
@@ -67,7 +66,7 @@ async def generate_and_send_qr(update: Update, context: ContextTypes.DEFAULT_TYP
         if os.path.exists(file_path):
             os.remove(file_path)
     
-    state.waiting_for_qr_data.discard(user_id)
+    await state.clear_user_states(user_id)
 
 # --- GELİŞTİRİCİ ---
 def get_developer_keyboard(lang):
@@ -83,8 +82,8 @@ async def show_developer_info(update: Update, context: ContextTypes.DEFAULT_TYPE
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
-    state.clear_user_states(user_id)
-    state.developer_menu_active.add(user_id)
+    await state.clear_user_states(user_id)
+    await state.set_state(user_id, state.DEVELOPER_MENU_ACTIVE)
     
     dev_text = {
         "tr": "👨‍💻 *Geliştirici Bilgileri*\n\nSosyal medya hesaplarıma aşağıdaki bağlantılardan ulaşabilirsiniz:",
@@ -101,14 +100,14 @@ async def show_developer_info(update: Update, context: ContextTypes.DEFAULT_TYPE
 async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     
-    if user_id not in state.developer_menu_active:
+    if not await state.check_state(user_id, state.DEVELOPER_MENU_ACTIVE):
         return False
     
     text = update.message.text.lower()
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
-    if "geri" in text or "back" in text or "назад" in text:
-        state.developer_menu_active.discard(user_id)
+    if is_back_button(text):
+        await state.clear_user_states(user_id)
         if "developer_last_link_msg" in context.user_data:
             try:
                 await context.user_data["developer_last_link_msg"].delete()

@@ -82,6 +82,40 @@ def get_weather_cities_keyboard(lang: str) -> ReplyKeyboardMarkup:
     
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
+def is_back_button(text: str) -> bool:
+    """
+    Checks if the given text corresponds to a 'Back' or 'Main Menu' button 
+    in any supported language or context.
+    """
+    if not text:
+        return False
+        
+    from texts import turkish_lower, BUTTON_MAPPINGS
+    text_lower = turkish_lower(text)
+    
+    # Generic back keywords
+    generic_back = {"geri", "back", "назад", "iptal", "cancel", "отмена"}
+    
+    # Check against mapped back buttons from texts.py
+    mapped_back = BUTTON_MAPPINGS.get("back_to_main_menu", set()) | \
+                  BUTTON_MAPPINGS.get("back_to_tools", set()) | \
+                  BUTTON_MAPPINGS.get("back_to_games", set())
+                  
+    # Specific menu back buttons commonly used
+    specific_back = {
+        "🔙 ana menü", "🔙 main menu", "🔙 главное меню",
+        "🔙 araçlar menüsü", "🔙 tools menu", "🔙 меню инструментов",
+        "🔙 oyun odası", "🔙 game room", "🔙 игровая комната",
+        "🔙 hat listesi", "🔙 line list", "🔙 список линий",
+        "🔙 istasyon listesi", "🔙 station list", "🔙 список станций",
+        "🔙 favoriler menüsü", "🔙 favorites menu", "🔙 меню избранного"
+    }
+
+    return (text_lower in generic_back) or \
+           (text_lower in mapped_back) or \
+           (text_lower in specific_back) or \
+           any(k in text_lower for k in ["🔙"])
+
 def format_remaining_time(remaining_seconds: float, lang: str) -> str:
     days = int(remaining_seconds // (24 * 3600))
     remaining_seconds %= (24 * 3600)

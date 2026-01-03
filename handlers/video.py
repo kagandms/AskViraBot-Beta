@@ -7,7 +7,7 @@ from telegram.ext import ContextTypes
 import database as db
 import state
 from texts import TEXTS, VIDEO_DOWNLOADER_BUTTONS, FORMAT_SELECTION_BUTTONS, BUTTON_MAPPINGS
-from utils import get_input_back_keyboard_markup, get_tools_keyboard_markup
+from utils import get_input_back_keyboard_markup, get_tools_keyboard_markup, is_back_button
 from rate_limiter import rate_limit
 
 def get_video_downloader_keyboard_markup(lang):
@@ -22,7 +22,7 @@ def get_format_selection_keyboard_markup(lang):
 async def video_downloader_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
-    state.clear_user_states(user_id)
+    await state.clear_user_states(user_id)
     
     await update.message.reply_text(
         TEXTS["video_downloader_menu_prompt"][lang],
@@ -33,8 +33,9 @@ async def set_video_platform(update: Update, context: ContextTypes.DEFAULT_TYPE,
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
-    state.clear_user_states(user_id)
-    state.waiting_for_format_selection[user_id] = platform
+    await state.clear_user_states(user_id)
+    # Store platform in persistent state data
+    await state.set_state(user_id, state.WAITING_FOR_FORMAT_SELECTION, {"platform": platform})
     
     await update.message.reply_text(
         TEXTS["format_selection_prompt"][lang],
@@ -45,13 +46,17 @@ async def set_download_format(update: Update, context: ContextTypes.DEFAULT_TYPE
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
-    platform = state.waiting_for_format_selection.get(user_id)
+    # Retrieve platform from persistent state
+    state_data = await state.get_data(user_id)
+    platform = state_data.get("platform")
+    
     if not platform:
         await video_downloader_menu(update, context)
         return
     
-    state.waiting_for_format_selection.pop(user_id, None)
-    state.waiting_for_video_link[user_id] = {"platform": platform, "format": download_format}
+    # Update to next state with accumulated data
+    await state.clear_user_states(user_id)
+    await state.set_state(user_id, state.WAITING_FOR_VIDEO_LINK, {"platform": platform, "format": download_format})
     
     platform_names = {
         "tiktok": "TikTok",
@@ -69,7 +74,10 @@ async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
-    download_info = state.waiting_for_video_link.get(user_id)
+    if not await state.check_state(user_id, state.WAITING_FOR_VIDEO_LINK):
+        return False
+
+    download_info = await state.get_data(user_id)
     if not download_info:
         return False
     
@@ -78,8 +86,8 @@ async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_
     url = update.message.text.strip()
     
     url_lower = url.lower()
-    if url_lower in BUTTON_MAPPINGS.get("menu", set()) or url_lower in BUTTON_MAPPINGS.get("back_to_platform", set()) or "geri" in url_lower or "back" in url_lower or "назад" in url_lower:
-        state.waiting_for_video_link.pop(user_id, None)
+    if is_back_button(url_lower):
+        await state.clear_user_states(user_id)
         await video_downloader_menu(update, context)
         return True
     
@@ -181,7 +189,7 @@ async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_
         logging.getLogger(__name__).error(f"Media download error: {e}")
         
     finally:
-        state.waiting_for_video_link.pop(user_id, None)
+        await state.clear_user_states(user_id)
         if downloaded_file and os.path.exists(downloaded_file):
             os.remove(downloaded_file)
         for ext in ['.mp4', '.webm', '.mkv', '.mp4.part', '.mp3', '.m4a', '.opus']:

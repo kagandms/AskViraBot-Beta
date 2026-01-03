@@ -12,6 +12,7 @@ from rate_limiter import is_rate_limited, get_remaining_cooldown
 
 # Handler'ları içe aktar
 from handlers import general, notes, reminders, games, tools, admin, ai_chat, metro, pdf, video, weather
+from keep_alive import keep_alive
 
 # --- LOGLAMA YAPILANDIRMASI ---
 logging.basicConfig(
@@ -60,46 +61,46 @@ async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYP
         return
     
     # 2. State Kontrolleri
-    if user_id in state.metro_browsing:
+    if await state.check_state(user_id, state.METRO_BROWSING):
         await metro.handle_metro_message(update, context)
         return
-    if user_id in state.playing_xox:
+    if await state.check_state(user_id, state.PLAYING_XOX):
         await games.handle_xox_message(update, context)
         return
-    if user_id in state.admin_menu_active:
+    if await state.check_state(user_id, state.ADMIN_MENU_ACTIVE):
         handled = await admin.handle_admin_message(update, context)
         if handled:
             return
-    if user_id in state.developer_menu_active:
+    if await state.check_state(user_id, state.DEVELOPER_MENU_ACTIVE):
         handled = await tools.handle_developer_message(update, context)
         if handled:
             return
-    if user_id in state.waiting_for_new_note_input:
+    if await state.check_state(user_id, state.WAITING_FOR_NEW_NOTE_INPUT):
         await notes.handle_new_note_input(update, context)
         return
-    if user_id in state.waiting_for_edit_note_input:
+    if await state.check_state(user_id, state.WAITING_FOR_EDIT_NOTE_INPUT):
         await notes.handle_edit_note_input(update, context)
         return
-    if user_id in state.waiting_for_reminder_input:
+    if await state.check_state(user_id, state.WAITING_FOR_REMINDER_INPUT):
         await reminders.process_reminder_input(update, context)
         return
-    if user_id in state.waiting_for_qr_data:
+    if await state.check_state(user_id, state.WAITING_FOR_QR_DATA):
         await tools.generate_and_send_qr(update, context, text_raw)
         return
-    if user_id in state.playing_tkm:
+    if await state.check_state(user_id, state.PLAYING_TKM):
         await games.tkm_play(update, context)
         return
-    if user_id in state.waiting_for_pdf_conversion_input:
+    if await state.check_state(user_id, state.WAITING_FOR_PDF_CONVERSION_INPUT):
         if update.message.document or update.message.photo or update.message.text:
             await tools.handle_pdf_input(update, context)
         return
-    if user_id in state.waiting_for_weather_city:
+    if await state.check_state(user_id, state.WAITING_FOR_WEATHER_CITY):
         await tools.get_weather_data(update, context, text_raw)
         return
-    if user_id in state.waiting_for_video_link:
+    if await state.check_state(user_id, state.WAITING_FOR_VIDEO_LINK):
         await tools.download_and_send_media(update, context)
         return
-    if user_id in state.ai_chat_active:
+    if await state.check_state(user_id, state.AI_CHAT_ACTIVE):
         await ai_chat.handle_ai_message(update, context)
         return
 

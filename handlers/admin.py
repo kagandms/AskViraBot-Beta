@@ -9,7 +9,8 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKe
 from telegram.ext import ContextTypes
 import database as db
 from config import ADMIN_IDS, TIMEZONE
-from utils import get_main_keyboard_markup
+from config import ADMIN_IDS, TIMEZONE
+from utils import get_main_keyboard_markup, is_back_button
 import pytz
 import state
 
@@ -35,8 +36,8 @@ async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
     
     # State başlat
-    state.clear_user_states(user_id)
-    state.admin_menu_active.add(user_id)
+    await state.clear_user_states(user_id)
+    await state.set_state(user_id, state.ADMIN_MENU_ACTIVE)
     
     await update.message.reply_text(
         "🔧 *Admin Paneli*\n\nBir işlem seçin:",
@@ -48,7 +49,7 @@ async def handle_admin_message(update: Update, context: ContextTypes.DEFAULT_TYP
     """Admin paneli mesaj handler'ı (Reply Keyboard)"""
     user_id = update.effective_user.id
     
-    if user_id not in state.admin_menu_active:
+    if not await state.check_state(user_id, state.ADMIN_MENU_ACTIVE):
         return False
     
     if not is_admin(user_id):
@@ -57,8 +58,8 @@ async def handle_admin_message(update: Update, context: ContextTypes.DEFAULT_TYP
     text = update.message.text.strip()
     
     # Geri butonu
-    if "Geri" in text or "geri" in text.lower():
-        state.admin_menu_active.discard(user_id)
+    if is_back_button(text):
+        await state.clear_user_states(user_id)
         lang = await asyncio.to_thread(db.get_user_lang, user_id)
         await update.message.reply_text(
             "🏠 Ana menüye döndünüz.",
@@ -126,10 +127,10 @@ async def show_stats(query, context):
         notes = await asyncio.to_thread(db.get_all_notes_count)
         reminders = await asyncio.to_thread(db.get_all_reminders_count)
         
-        # AI kullanım istatistikleri
-        import state
-        total_ai_usage = sum(state.ai_daily_usage.values())
-        ai_active_users = len(state.ai_daily_usage)
+        # AI kullanım istatistikleri (Veritabanından)
+        # TODO: Implement granular daily usage if needed. For now showing total.
+        # total_ai_usage = sum(state.ai_daily_usage.values()) 
+        # ai_active_users = len(state.ai_daily_usage)
         
         tz = pytz.timezone(TIMEZONE)
         now = datetime.now(tz).strftime("%d.%m.%Y %H:%M")
@@ -139,10 +140,6 @@ async def show_stats(query, context):
 👥 Toplam Kullanıcı: *{users}*
 📝 Toplam Not: *{notes}*
 ⏰ Aktif Hatırlatıcı: *{reminders}*
-
-🧠 *AI Kullanımı (Son 24 Saat)*
-├ Toplam Kredi: *{total_ai_usage}*
-└ Kullanan Kişi: *{ai_active_users}*
 
 🕐 Güncelleme: {now}
 """
@@ -189,7 +186,7 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
     message = update.message.text.strip()
     
     # Geri butonuna basıldıysa iptal et
-    if message.lower() in ["🔙 admin paneli", "⬅️ geri", "geri", "back"]:
+    if is_back_button(message):
         context.user_data['admin_broadcast'] = False
         # Prompt mesajını sil
         prompt_msg_id = context.user_data.pop('broadcast_prompt_msg_id', None)
@@ -199,7 +196,8 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
             except Exception:
                 pass
         # Admin menüsüne dön (Ana menü yerine)
-        state.admin_menu_active.add(user_id)
+        await state.clear_user_states(user_id)
+        await state.set_state(user_id, state.ADMIN_MENU_ACTIVE)
         await update.message.reply_text(
             "🔧 *Admin Paneli*\n\nBir işlem seçin:",
             reply_markup=get_admin_keyboard(),
@@ -221,33 +219,39 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
     status_msg = await update.message.reply_text("📤 Duyuru gönderiliyor...")
     
     try:
-        # Tüm kullanıcıları al
+        # ASYNC BROADCAST TASK
+        async def broadcast_task(users, message_text):
+             sent = 0
+             failed = 0
+             for uid in users:
+                 try:
+                     await context.bot.send_message(
+                         chat_id=uid,
+                         text=f"📢 *Geliştirici Duyurusu*\n\n{message_text}\n\n_— DruzhikBot Geliştiricisi_",
+                         parse_mode="Markdown"
+                     )
+                     sent += 1
+                 except Exception:
+                     failed += 1
+                 await asyncio.sleep(0.05)
+             
+             try:
+                 await status_msg.edit_text(
+                    f"✅ *Duyuru Tamamlandı*\n\n"
+                    f"📤 Gönderilen: {sent}\n"
+                    f"❌ Başarısız: {failed}",
+                    parse_mode="Markdown",
+                    reply_markup=None
+                 )
+             except Exception:
+                 pass
+
         users = await asyncio.to_thread(db.get_all_user_ids)
+        asyncio.create_task(broadcast_task(users, message))
         
-        sent = 0
-        failed = 0
-        
-        for uid in users:
-            try:
-                await context.bot.send_message(
-                    chat_id=uid,
-                    text=f"📢 *Geliştirici Duyurusu*\n\n{message}\n\n_— DruzhikBot Geliştiricisi_",
-                    parse_mode="Markdown"
-                )
-                sent += 1
-            except Exception:
-                failed += 1
-            
-            # Rate limit için kısa bekleme
-            await asyncio.sleep(0.05)
-        
-        await status_msg.edit_text(
-            f"✅ *Duyuru Tamamlandı*\n\n"
-            f"📤 Gönderilen: {sent}\n"
-            f"❌ Başarısız: {failed}",
-            parse_mode="Markdown",
-            reply_markup=None
-        )
+        # Don't wait, return to menu immediately
+        await update.message.reply_text("⏳ Duyuru işlemi arka planda başlatıldı.")
+
         # Ana menüye dön
         lang = await asyncio.to_thread(db.get_user_lang, user_id)
         await update.message.reply_text("🏠 Ana menüye döndünüz.", reply_markup=get_main_keyboard_markup(lang, user_id))
@@ -289,9 +293,6 @@ async def show_stats_reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         notes = await asyncio.to_thread(db.get_all_notes_count)
         reminders = await asyncio.to_thread(db.get_all_reminders_count)
         
-        total_ai_usage = sum(state.ai_daily_usage.values())
-        ai_active_users = len(state.ai_daily_usage)
-        
         tz = pytz.timezone(TIMEZONE)
         now = datetime.now(tz).strftime("%d.%m.%Y %H:%M")
         
@@ -300,10 +301,6 @@ async def show_stats_reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 👥 Toplam Kullanıcı: *{users}*
 📝 Toplam Not: *{notes}*
 ⏰ Aktif Hatırlatıcı: *{reminders}*
-
-🧠 *AI Kullanımı (Son 24 Saat)*
-├ Toplam Kredi: *{total_ai_usage}*
-└ Kullanan Kişi: *{ai_active_users}*
 
 🕐 Güncelleme: {now}
 """
@@ -334,7 +331,7 @@ async def start_broadcast_reply(update: Update, context: ContextTypes.DEFAULT_TY
     """Duyuru gönderme modunu başlat (Reply Keyboard için)"""
     user_id = update.effective_user.id
     context.user_data['admin_broadcast'] = True
-    state.admin_menu_active.discard(user_id)  # Admin menüsünden çık
+    await state.clear_user_states(user_id)  # Admin menüsünden çık
     
     reply_keyboard = ReplyKeyboardMarkup([["🔙 Admin Paneli"]], resize_keyboard=True, one_time_keyboard=True)
     

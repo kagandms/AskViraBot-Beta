@@ -1,76 +1,56 @@
-# Bu dosya, RAM üzerinde tutulan geçici verileri (state) saklar.
+import asyncio
+import database as db
+import logging
 
-# Mevcut durumlar
-playing_tkm = set()
-notes_in_menu = set()
-deleting_notes = set()
-waiting_for_qr_data = set()
-waiting_for_reminder_input = set()
-waiting_for_pdf_conversion_input = set()
-waiting_for_weather_city = set()
-reminder_menu_active = set()
-waiting_for_reminder_delete = set()
-waiting_for_new_note_input = set()
-user_notes_page_index = {} 
+# --- STATE CONSTANTS (Durum Sabitleri) ---
+PLAYING_TKM = "playing_tkm"
+NOTES_IN_MENU = "notes_in_menu"
+DELETING_NOTES = "deleting_notes"
+WAITING_FOR_QR_DATA = "waiting_for_qr_data"
+WAITING_FOR_REMINDER_INPUT = "waiting_for_reminder_input"
+WAITING_FOR_PDF_CONVERSION_INPUT = "waiting_for_pdf_conversion_input"
+WAITING_FOR_WEATHER_CITY = "waiting_for_weather_city"
+REMINDER_MENU_ACTIVE = "reminder_menu_active"
+WAITING_FOR_REMINDER_DELETE = "waiting_for_reminder_delete"
+WAITING_FOR_NEW_NOTE_INPUT = "waiting_for_new_note_input"
+WAITING_FOR_EDIT_NOTE_INPUT = "waiting_for_edit_note_input" # Data: note_id
+EDITING_NOTES = "editing_notes"
+GAMES_MENU_ACTIVE = "games_menu_active"
+PLAYING_XOX = "playing_xox" # Data: Game state
+WAITING_FOR_VIDEO_LINK = "waiting_for_video_link" # Data: {platform, format}
+WAITING_FOR_FORMAT_SELECTION = "waiting_for_format_selection" # Data: platform
+AI_CHAT_ACTIVE = "ai_chat_active"
+METRO_BROWSING = "metro_browsing"
+METRO_SELECTION = "metro_selection" # Data: selection dict
+ADMIN_MENU_ACTIVE = "admin_menu_active"
+DEVELOPER_MENU_ACTIVE = "developer_menu_active"
 
-# --- YENİ EKLENEN DURUMLAR ---
-editing_notes = set()            # Kullanıcı not düzenleme menüsünde mi?
-waiting_for_edit_note_input = {} # Kullanıcı şu an hangi notu düzenliyor? {user_id: note_id}
-games_menu_active = set()        # Oyunlar menüsünde mi?
-playing_xox = {}                 # XOX durumu (İlerisi için hazırlık)
+# Old variables for backward compatibility usage in some places (though they should be removed)
+ai_daily_usage = {} 
+ai_last_reset_date = None
 
-# --- VIDEO DOWNLOADER DURUMLARI ---
-waiting_for_video_link = {}      # Link bekliyor {user_id: {"platform": str, "format": str}}
-waiting_for_format_selection = {}  # Format seçimi bekliyor {user_id: platform}
+# --- ASYNC HELPERS ---
 
-# --- AI CHAT DURUMLARI ---
-ai_chat_active = set()           # AI sohbet modunda {user_id}
-ai_daily_usage = {}              # Günlük kullanım {user_id: count}
-ai_last_reset_date = None        # Son sıfırlama tarihi
+async def set_state(user_id: int | str, state_name: str, data: dict = None) -> None:
+    """Tek bir durum belirler. (Eskiden set.add() yapılıyordu)."""
+    # Veritabanı çağrısı senkron olduğu için thread içinde çalıştırıyoruz
+    await asyncio.to_thread(db.set_user_state, user_id, state_name, data)
 
-# --- METRO DURUMLARI ---
-metro_browsing = set()       # Metro menüsünde geziniyor
-metro_selection = {}         # Seçimler {user_id: {"line": id, "line_name": name, "station": id}}
+async def check_state(user_id: int | str, state_name: str) -> bool:
+    """Kullanıcının belirtilen durumda olup olmadığını kontrol eder."""
+    current_state = await asyncio.to_thread(db.get_user_state, user_id)
+    if current_state and current_state.get("state_name") == state_name:
+        return True
+    return False
 
-# --- ADMIN DURUMLARI ---
-admin_menu_active = set()    # Admin menüsünde
+async def get_data(user_id: int | str) -> dict:
+    """Kullanıcının o anki durumuna ait veriyi (JSON) döndürür."""
+    s = await asyncio.to_thread(db.get_user_state, user_id)
+    return s.get("state_data", {}) if s else {}
 
-# --- GELİŞTİRİCİ DURUMU ---
-developer_menu_active = set()  # Geliştirici menüsünde
+async def clear_user_states(user_id: int | str) -> None:
+    """Kullanıcının tüm aktif durumlarını temizler (Veritabanından siler)."""
+    await asyncio.to_thread(db.clear_user_state, user_id)
 
-def clear_user_states(user_id: int) -> None:
-    """Kullanıcının tüm aktif durumlarını temizler."""
-    playing_tkm.discard(user_id)
-    notes_in_menu.discard(user_id)
-    deleting_notes.discard(user_id)
-    waiting_for_qr_data.discard(user_id)
-    waiting_for_reminder_input.discard(user_id)
-    waiting_for_pdf_conversion_input.discard(user_id)
-    waiting_for_weather_city.discard(user_id)
-    reminder_menu_active.discard(user_id)
-    waiting_for_reminder_delete.discard(user_id)
-    waiting_for_new_note_input.discard(user_id)
-    user_notes_page_index.pop(user_id, None)
-    
-    # Yeni durumları da temizle
-    editing_notes.discard(user_id)
-    waiting_for_edit_note_input.pop(user_id, None)
-    games_menu_active.discard(user_id)
-    playing_xox.pop(user_id, None)
-    
-    # Video downloader
-    waiting_for_video_link.pop(user_id, None)
-    waiting_for_format_selection.pop(user_id, None)
-    
-    # AI Chat
-    ai_chat_active.discard(user_id)
-    
-    # Metro
-    metro_browsing.discard(user_id)
-    metro_selection.pop(user_id, None)
-    
-    # Admin
-    admin_menu_active.discard(user_id)
-    
-    # Developer
-    developer_menu_active.discard(user_id)
+# For compatibility during refactor, some direct dict/set access might exist in old code.
+# We must remove them.

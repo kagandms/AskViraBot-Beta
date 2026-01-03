@@ -9,7 +9,7 @@ import database as db
 import state
 from texts import TEXTS, PDF_CONVERTER_BUTTONS, BUTTON_MAPPINGS
 from config import FONT_PATH
-from utils import get_input_back_keyboard_markup, get_main_keyboard_markup
+from utils import get_input_back_keyboard_markup, get_main_keyboard_markup, is_back_button
 from rate_limiter import rate_limit
 import logging
 
@@ -23,7 +23,7 @@ def get_pdf_keyboard_markup(lang):
 async def pdf_converter_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
-    state.clear_user_states(user_id)
+    await state.clear_user_states(user_id)
     
     await update.message.reply_text(
         TEXTS["pdf_converter_menu_prompt"][lang],
@@ -33,9 +33,10 @@ async def pdf_converter_menu(update: Update, context: ContextTypes.DEFAULT_TYPE)
 async def prompt_text_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
-    state.clear_user_states(user_id)
-    state.waiting_for_pdf_conversion_input.add(user_id)
-    context.user_data['pdf_mode'] = 'text'
+    await state.clear_user_states(user_id)
+    # Store mode in persistent state data
+    await state.set_state(user_id, state.WAITING_FOR_PDF_CONVERSION_INPUT, {"pdf_mode": "text"})
+    
     await update.message.reply_text(
         TEXTS["prompt_text_for_pdf"][lang],
         reply_markup=get_input_back_keyboard_markup(lang)
@@ -44,9 +45,10 @@ async def prompt_text_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE
 async def prompt_file_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
-    state.clear_user_states(user_id)
-    state.waiting_for_pdf_conversion_input.add(user_id)
-    context.user_data['pdf_mode'] = 'file'
+    await state.clear_user_states(user_id)
+    # Store mode in persistent state data
+    await state.set_state(user_id, state.WAITING_FOR_PDF_CONVERSION_INPUT, {"pdf_mode": "file"})
+    
     await update.message.reply_text(
         TEXTS["prompt_file_for_pdf"][lang],
         reply_markup=get_input_back_keyboard_markup(lang)
@@ -55,13 +57,15 @@ async def prompt_file_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE
 async def handle_pdf_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
-    mode = context.user_data.get('pdf_mode')
+    
+    # Retrieve mode from persistent state data
+    state_data = await state.get_data(user_id)
+    mode = state_data.get('pdf_mode')
     
     text_content = update.message.text.lower() if update.message.text else ""
-    back_keywords = ["geri", "back", "назад", "araçlar menüsü", "tools menu", "меню инструментов"]
-    if text_content in BUTTON_MAPPINGS["menu"] or text_content in BUTTON_MAPPINGS.get("back_to_tools", set()) or any(kw in text_content for kw in back_keywords):
+    if is_back_button(text_content):
         from handlers.general import tools_menu_command
-        state.waiting_for_pdf_conversion_input.discard(user_id)
+        await state.clear_user_states(user_id)
         await tools_menu_command(update, context)
         return
 
@@ -80,6 +84,7 @@ async def handle_pdf_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         else:
             pdf.set_font("Helvetica", size=12)
 
+        # Mode check via DB data is cleaner but logic here supports implicit detection too
         if update.message.text:
             text = update.message.text
             pdf.multi_cell(w=pdf.epw, h=10, text=text)
@@ -166,5 +171,5 @@ async def handle_pdf_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             if os.path.exists(temp):
                 os.remove(temp)
 
-    state.waiting_for_pdf_conversion_input.discard(user_id)
+    await state.clear_user_states(user_id)
     await pdf_converter_menu(update, context)
