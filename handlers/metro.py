@@ -33,6 +33,9 @@ _stations_cache = {}
 # Cache TTL (Time To Live)
 LINES_CACHE_TTL = timedelta(minutes=10)
 STATIONS_CACHE_TTL = timedelta(minutes=5)
+# Cache for directions by line_id (rarely changes)
+_directions_cache = {}
+DIRECTIONS_CACHE_TTL = timedelta(hours=1)
 
 # Global HTTP session for connection pooling
 _http_session = None
@@ -121,16 +124,37 @@ async def fetch_stations_by_line(line_id: int, force_refresh=False):
     return []
 
 
-async def fetch_directions_by_line(line_id: int):
-    """Fetch directions for a specific line (not cached - small data)"""
+async def fetch_directions_by_line(line_id: int, force_refresh=False):
+    """Fetch directions for a specific line with caching"""
+    global _directions_cache
+    
+    # Check cache first
+    now = datetime.now()
+    cache_key = str(line_id)
+    if not force_refresh and cache_key in _directions_cache:
+        cached = _directions_cache[cache_key]
+        if cached["expires"] and now < cached["expires"]:
+            logger.debug(f"Returning cached directions for line {line_id}")
+            return cached["data"]
+            
     try:
         session = await get_http_session()
         async with session.get(f"{METRO_API_BASE}/GetDirectionById/{line_id}") as response:
             data = await response.json()
             if data.get("Success"):
-                return data.get("Data", [])
+                result = data.get("Data", [])
+                # Update cache
+                _directions_cache[cache_key] = {
+                    "data": result,
+                    "expires": now + DIRECTIONS_CACHE_TTL
+                }
+                return result
     except Exception as e:
         logger.error(f"Metro API Error (GetDirectionById): {e}")
+        # Return cached if available
+        if cache_key in _directions_cache:
+             return _directions_cache[cache_key]["data"]
+             
     return []
 
 
@@ -335,8 +359,8 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         selected_line = None
         for line in lines:
             name = line.get("Name", "")
-            # Kullanıcı butonuna tıkladıysa "🚇 M1A..." formatında gelir
-            if name and name in text:
+            # Tam eşleşme kontrolü (M1 vs M11 karışıklığını önler)
+            if text == f"🚇 {name}":
                 selected_line = line
                 break
         
@@ -355,8 +379,8 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         
         for station in stations:
             name = station.get("Description", station.get("Name", ""))
-            # Butonda "📍 İstasyon Adı" yazıyor
-            if name and name in text:
+            # Tam eşleşme kontrolü
+            if text == f"📍 {name}":
                 selected_station = station
                 break
         
@@ -377,8 +401,8 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
     
     for direction in directions:
         name = direction.get("DirectionName", "")
-        # Butonda "➡️ Yön Adı" yazıyor
-        if name and name in text:
+        # Tam eşleşme kontrolü
+        if text == f"➡️ {name}":
             selected_dir = direction
             break
             
@@ -761,24 +785,8 @@ async def use_favorite(update: Update, context: ContextTypes.DEFAULT_TYPE, text:
             is_favorite_view=True
         )
         
+        
     except (ValueError, IndexError, KeyError) as e:
         logger.error(f"Favori kullanım hatası: {e}")
         await update.message.reply_text("⚠️ Favori bilgisi alınamadı.")
-    
-    if fav_index < 0 or fav_index >= len(favorites):
-        await update.message.reply_text("⚠️ Favori bulunamadı.")
-        return
-    
-    fav = favorites[fav_index]
-    
-    # State'i güncelle
-    state.metro_selection[user_id] = {
-        "line": fav["line_id"],
-        "line_name": fav["line_name"],
-        "station": fav["station_id"],
-        "station_name": fav["station_name"]
-    }
-    
-    # Direkt sefer saatlerini göster
-    await show_timetable(update, context, fav["station_id"], fav["direction_id"], fav["direction_name"], lang)
 
