@@ -279,6 +279,11 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         await save_to_favorites(update, context, lang, user_id)
         return
 
+    # 2.55 METRO MENÜSÜ GERİ BUTONU (Favoriler ana menüsünden gelir -> Hat Listesine dön)
+    if any(kw in text.lower() for kw in ["🔙 metro menüsü", "🔙 metro menu", "🔙 меню метро"]):
+        await metro_menu_command(update, context)
+        return
+
     # 2.6 FAVORİLER MENÜSÜ BUTONLARI (Alt menü butonları)
     if any(kw in text.lower() for kw in ["favorileri kullan", "use favorites", "использовать", "🚀"]):
         await show_favorites_list(update, context, lang)

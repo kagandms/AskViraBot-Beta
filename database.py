@@ -303,14 +303,18 @@ def add_metro_favorite(user_id: int | str, line_id: int, line_name: str,
         return False
 
 
-def remove_metro_favorite(favorite_id: int) -> bool:
-    """Metro favorisini siler."""
+def remove_metro_favorite(user_id: int, station_id: str, direction_id: str) -> bool:
+    """Metro favorisini siler (Kullanıcı, İstasyon ve Yön eşleşmesine göre)."""
     if not supabase: return False
     try:
-        supabase.table("metro_favorites").delete().eq("id", favorite_id).execute()
+        supabase.table("metro_favorites").delete()\
+            .eq("user_id", str(user_id))\
+            .eq("station_id", station_id)\
+            .eq("direction_id", direction_id)\
+            .execute()
         return True
     except Exception as e:
-        logger.error(f"Metro favori silme hatası (ID: {favorite_id}): {e}")
+        logger.error(f"Metro favori silme hatası (User: {user_id}, Station: {station_id}): {e}")
         return False
 
 
