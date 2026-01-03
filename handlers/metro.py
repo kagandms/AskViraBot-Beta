@@ -206,6 +206,10 @@ async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     if row:
         keyboard.append(row)
     
+    # Favoriler butonu
+    fav_texts = {"tr": "⭐ Favorilerim", "en": "⭐ My Favorites", "ru": "⭐ Избранное"}
+    keyboard.append([fav_texts.get(lang, fav_texts["en"])])
+    
     # Geri butonu - Araçlar menüsüne döner
     back_texts = {"tr": "🔙 Araçlar Menüsü", "en": "🔙 Tools Menu", "ru": "🔙 Меню Инструментов"}
     keyboard.append([back_texts.get(lang, back_texts["en"])])
@@ -269,10 +273,27 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
             await tools_menu_command(update, context)
             return
 
+    # 2.5 FAVORİLER BUTONU KONTROLÜ
+    fav_keywords = ["favorilerim", "my favorites", "избранное", "⭐"]
+    if any(kw in text.lower() for kw in fav_keywords):
+        await show_favorites(update, context, lang)
+        return
+    
+    # 2.6 FAVORİYE EKLE BUTONU KONTROLÜ
+    add_fav_keywords = ["favoriye ekle", "add to favorites", "добавить в избранное", "⭐ ekle", "⭐ add"]
+    if any(kw in text.lower() for kw in add_fav_keywords):
+        await save_to_favorites(update, context, lang, user_id)
+        return
+
     # 3. İLERİ YÖNLÜ SEÇİMLER
     
     # A) HAT SEÇİMİ (Henüz hat seçilmemişse)
     if "line" not in current_selection:
+        # Favori seçimi kontrolü (FAV_1, FAV_2 gibi)
+        if text.startswith("⭐ FAV"):
+            await use_favorite(update, context, text, lang, user_id)
+            return
+        
         lines = await fetch_lines()
         # Text "🚇 M1A Yenikapı..." gibi gelebilir. Parse etmeliyiz.
         # Basitçe text içinde M1A, M2 gibi kodları arayabiliriz veya tam eşleşme
@@ -460,5 +481,137 @@ async def show_timetable(update, context, station_id, direction_id, direction_na
     
     message = header + "\n\n" + "\n".join(departure_lines)
     
-    # Klavye değişmiyor, kullanıcı tekrar yön seçebilir
-    await update.message.reply_text(message)
+    # Favoriye ekle butonu
+    fav_add_texts = {"tr": "⭐ Favoriye Ekle", "en": "⭐ Add to Favorites", "ru": "⭐ Добавить в Избранное"}
+    back_texts = {"tr": "🔙 İstasyon Listesi", "en": "🔙 Station List", "ru": "🔙 Список Станций"}
+    
+    keyboard = [
+        [fav_add_texts.get(lang, fav_add_texts["en"])],
+        [back_texts.get(lang, back_texts["en"])]
+    ]
+    
+    # direction_id'yi kaydet (favoriye eklemek için)
+    state.metro_selection[update.effective_user.id]["direction_id"] = direction_id
+    state.metro_selection[update.effective_user.id]["direction_name"] = direction_name
+    
+    await update.message.reply_text(
+        message,
+        reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    )
+
+
+# --- FAVORİ FONKSİYONLARI ---
+
+async def show_favorites(update: Update, context: ContextTypes.DEFAULT_TYPE, lang: str) -> None:
+    """Kullanıcının metro favorilerini gösterir."""
+    user_id = update.effective_user.id
+    favorites = await asyncio.to_thread(db.get_metro_favorites, user_id)
+    
+    if not favorites:
+        no_fav_texts = {
+            "tr": "⭐ Henüz favori istasyonunuz yok.\n\nSefer saatlerini görüntüledikten sonra 'Favoriye Ekle' butonuna basarak favori ekleyebilirsiniz.",
+            "en": "⭐ You don't have any favorite stations yet.\n\nYou can add favorites by pressing 'Add to Favorites' after viewing departure times.",
+            "ru": "⭐ У вас пока нет избранных станций.\n\nВы можете добавить избранное, нажав 'Добавить в Избранное' после просмотра расписания."
+        }
+        await update.message.reply_text(no_fav_texts.get(lang, no_fav_texts["en"]))
+        await metro_menu_command(update, context)
+        return
+    
+    # Favorileri butonlarla göster
+    keyboard = []
+    fav_header = {"tr": "⭐ *Favori İstasyonlarınız*\n", "en": "⭐ *Your Favorite Stations*\n", "ru": "⭐ *Ваши Избранные Станции*\n"}
+    
+    message_lines = [fav_header.get(lang, fav_header["en"])]
+    
+    for i, fav in enumerate(favorites[:5], 1):  # Max 5 favori göster
+        station = fav.get("station_name", "?")
+        direction = fav.get("direction_name", "?")
+        line = fav.get("line_name", "?")
+        
+        btn_text = f"⭐ FAV{i}: {station} → {direction}"
+        if len(btn_text) > 40:
+            btn_text = f"⭐ FAV{i}: {station[:15]}..."
+        keyboard.append([btn_text])
+        message_lines.append(f"{i}. 🚇 {line} | {station} → {direction}")
+    
+    back_texts = {"tr": "🔙 Hat Listesi", "en": "🔙 Line List", "ru": "🔙 Список Линий"}
+    keyboard.append([back_texts.get(lang, back_texts["en"])])
+    
+    await update.message.reply_text(
+        "\n".join(message_lines),
+        reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True),
+        parse_mode="Markdown"
+    )
+
+
+async def save_to_favorites(update: Update, context: ContextTypes.DEFAULT_TYPE, lang: str, user_id: int) -> None:
+    """Mevcut seçimi favorilere kaydeder."""
+    selection = state.metro_selection.get(user_id, {})
+    
+    required_keys = ["line", "line_name", "station", "station_name", "direction_id", "direction_name"]
+    if not all(k in selection for k in required_keys):
+        error_texts = {
+            "tr": "⚠️ Favori eklemek için önce bir istasyon ve yön seçmelisiniz.",
+            "en": "⚠️ To add a favorite, you must first select a station and direction.",
+            "ru": "⚠️ Чтобы добавить в избранное, сначала выберите станцию и направление."
+        }
+        await update.message.reply_text(error_texts.get(lang, error_texts["en"]))
+        return
+    
+    success = await asyncio.to_thread(
+        db.add_metro_favorite,
+        user_id,
+        selection["line"],
+        selection["line_name"],
+        selection["station"],
+        selection["station_name"],
+        selection["direction_id"],
+        selection["direction_name"]
+    )
+    
+    if success:
+        success_texts = {
+            "tr": f"✅ {selection['station_name']} → {selection['direction_name']} favorilere eklendi!",
+            "en": f"✅ {selection['station_name']} → {selection['direction_name']} added to favorites!",
+            "ru": f"✅ {selection['station_name']} → {selection['direction_name']} добавлен в избранное!"
+        }
+        await update.message.reply_text(success_texts.get(lang, success_texts["en"]))
+    else:
+        exists_texts = {
+            "tr": "ℹ️ Bu istasyon zaten favorilerinizde.",
+            "en": "ℹ️ This station is already in your favorites.",
+            "ru": "ℹ️ Эта станция уже в избранном."
+        }
+        await update.message.reply_text(exists_texts.get(lang, exists_texts["en"]))
+
+
+async def use_favorite(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str, lang: str, user_id: int) -> None:
+    """Favoriden hızlı erişim - direkt sefer saatlerini gösterir."""
+    favorites = await asyncio.to_thread(db.get_metro_favorites, user_id)
+    
+    # FAV numarasını çıkar (⭐ FAV1: ...)
+    try:
+        # "⭐ FAV1:" formatından numara çıkar
+        fav_num = int(text.split("FAV")[1].split(":")[0].strip())
+        fav_index = fav_num - 1
+    except (ValueError, IndexError):
+        await update.message.reply_text("⚠️ Geçersiz favori seçimi.")
+        return
+    
+    if fav_index < 0 or fav_index >= len(favorites):
+        await update.message.reply_text("⚠️ Favori bulunamadı.")
+        return
+    
+    fav = favorites[fav_index]
+    
+    # State'i güncelle
+    state.metro_selection[user_id] = {
+        "line": fav["line_id"],
+        "line_name": fav["line_name"],
+        "station": fav["station_id"],
+        "station_name": fav["station_name"]
+    }
+    
+    # Direkt sefer saatlerini göster
+    await show_timetable(update, context, fav["station_id"], fav["direction_id"], fav["direction_name"], lang)
+

@@ -262,3 +262,54 @@ def log_dice_roll(user_id: int | str, result: int) -> None:
         supabase.table("dice_logs").insert(data).execute()
     except Exception as e:
         logger.error(f"Dice log hatası (User: {user_id}): {e}")
+
+
+# --- METRO FAVORİLERİ ---
+def get_metro_favorites(user_id: int | str) -> list[dict[str, Any]]:
+    """Kullanıcının metro favorilerini getirir."""
+    if not supabase: return []
+    try:
+        response = supabase.table("metro_favorites").select("*").eq("user_id", str(user_id)).execute()
+        return response.data if response.data else []
+    except Exception as e:
+        logger.error(f"Metro favorileri getirme hatası (User: {user_id}): {e}")
+        return []
+
+
+def add_metro_favorite(user_id: int | str, line_id: int, line_name: str, 
+                       station_id: int, station_name: str, 
+                       direction_id: int, direction_name: str) -> bool:
+    """Kullanıcının metro favorilerine yeni kayıt ekler."""
+    if not supabase: return False
+    try:
+        # Aynı favori varsa ekleme (duplicate kontrolü)
+        existing = supabase.table("metro_favorites").select("id").eq("user_id", str(user_id)).eq("station_id", station_id).eq("direction_id", direction_id).execute()
+        if existing.data:
+            return False  # Zaten var
+        
+        data = {
+            "user_id": str(user_id),
+            "line_id": line_id,
+            "line_name": line_name,
+            "station_id": station_id,
+            "station_name": station_name,
+            "direction_id": direction_id,
+            "direction_name": direction_name
+        }
+        supabase.table("metro_favorites").insert(data).execute()
+        return True
+    except Exception as e:
+        logger.error(f"Metro favori ekleme hatası (User: {user_id}): {e}")
+        return False
+
+
+def remove_metro_favorite(favorite_id: int) -> bool:
+    """Metro favorisini siler."""
+    if not supabase: return False
+    try:
+        supabase.table("metro_favorites").delete().eq("id", favorite_id).execute()
+        return True
+    except Exception as e:
+        logger.error(f"Metro favori silme hatası (ID: {favorite_id}): {e}")
+        return False
+
