@@ -5,15 +5,13 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Con
 
 # Modülleri içe aktar
 from config import BOT_TOKEN
-from keep_alive import keep_alive
-import database as db
 import state
-from texts import TEXTS
-from utils import get_main_keyboard_markup
+from texts import TEXTS, BUTTON_MAPPINGS
+from utils import get_ai_keyboard_markup, get_main_keyboard_markup
 from rate_limiter import is_rate_limited, get_remaining_cooldown
 
 # Handler'ları içe aktar
-from handlers import general, notes, reminders, games, tools, admin, ai_chat, metro
+from handlers import general, notes, reminders, games, tools, admin, ai_chat, metro, pdf, video, weather
 
 # --- LOGLAMA YAPILANDIRMASI ---
 logging.basicConfig(
@@ -151,9 +149,9 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await handle_buttons_logic(update, context)
     except Exception as e:
         logger.error(f"Error in handle_buttons: {e}", exc_info=True)
-        # Hata detayını kullanıcıya göster (Debug için)
+        # Hata detayını gizle
         if update.message:
-            await update.message.reply_text(f"⚠️ Hata: {str(e)}")
+            await update.message.reply_text("⚠️ Bir hata oluştu. Lütfen daha sonra tekrar deneyin.")
 
 async def on_startup(application):
     logger.info("Bot başlatılıyor... Bekleyen hatırlatıcılar kontrol ediliyor.")

@@ -2,7 +2,7 @@
 # Bu dosya, buton-handler eşleştirmelerini merkezi olarak yönetir.
 # Yeni buton eklemek için sadece BUTTON_HANDLERS listesine bir tuple eklemek yeterli.
 
-from handlers import general, notes, reminders, games, tools, admin, ai_chat, metro
+from handlers import general, notes, reminders, games, tools, admin, ai_chat, metro, pdf, video, weather
 
 # --- ÖZEL HANDLER'LAR ---
 # Bazı butonlar özel parametre veya mantık gerektirdiği için lambda kullanılır
@@ -48,17 +48,17 @@ BUTTON_HANDLERS = [
     # === ARAÇLAR ===
     ("time", tools.time_command),
     ("qrcode_button", tools.qrcode_command),
-    ("pdf_converter_main_button", tools.pdf_converter_menu),
-    ("weather_main_button", tools.weather_command),
+    ("pdf_converter_main_button", pdf.pdf_converter_menu),
+    ("weather_main_button", weather.weather_command),
     
     # === PDF SUB-MENÜ ===
-    ("text_to_pdf_button", tools.prompt_text_for_pdf),
-    ("image_to_pdf_button", tools.prompt_file_for_pdf),
-    ("document_to_pdf_button", tools.prompt_file_for_pdf),
+    ("text_to_pdf_button", pdf.prompt_text_for_pdf),
+    ("image_to_pdf_button", pdf.prompt_file_for_pdf),
+    ("document_to_pdf_button", pdf.prompt_file_for_pdf),
     
     # === VIDEO DOWNLOADER ===
-    ("video_downloader_main_button", tools.video_downloader_menu),
-    ("back_to_platform", tools.video_downloader_menu),
+    ("video_downloader_main_button", video.video_downloader_menu),
+    ("back_to_platform", video.video_downloader_menu),
     
     # === HATIRLATICI MENÜSÜ ===
     ("add_reminder_button", reminders.prompt_reminder_input),
@@ -78,14 +78,14 @@ BUTTON_HANDLERS = [
 # --- ÖZEL PLATFORM HANDLER'LARI ---
 # Bu handler'lar parametre gerektirdiği için ayrı tutulur
 VIDEO_PLATFORM_HANDLERS = {
-    "video_platform_tiktok": ("tiktok", tools.set_video_platform),
-    "video_platform_twitter": ("twitter", tools.set_video_platform),
-    "video_platform_instagram": ("instagram", tools.set_video_platform),
+    "video_platform_tiktok": ("tiktok", video.set_video_platform),
+    "video_platform_twitter": ("twitter", video.set_video_platform),
+    "video_platform_instagram": ("instagram", video.set_video_platform),
 }
 
 FORMAT_HANDLERS = {
-    "format_video": ("video", tools.set_download_format),
-    "format_audio": ("audio", tools.set_download_format),
+    "format_video": ("video", video.set_download_format),
+    "format_audio": ("audio", video.set_download_format),
 }
 
 # --- DİL BUTONLARI ---

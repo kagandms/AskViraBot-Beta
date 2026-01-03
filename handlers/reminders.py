@@ -194,7 +194,7 @@ async def start_pending_reminders(application):
 
         if target_time > now:
             wait_seconds = (target_time - now).total_seconds()
-            asyncio.create_task(reminder_task(application, reminder["chat_id"], reminder["message"], wait_seconds, reminder))
+            asyncio.create_task(reminder_task(application, reminder["chat_id"], reminder["message"], wait_seconds, reminder.get("id")))
         else:
             # DB İŞLEMİ: Asenkron
             await asyncio.to_thread(db.remove_reminder_db, reminder.get("id"))
