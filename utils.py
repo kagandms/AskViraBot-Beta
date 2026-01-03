@@ -75,8 +75,9 @@ def get_weather_cities_keyboard(lang: str) -> ReplyKeyboardMarkup:
     if row:
         keyboard.append(row)
         
-    # Geri butonu
-    back_text = TEXTS["back_button"][lang] if "back_button" in TEXTS else ("⬅️ Geri" if lang == "tr" else "⬅️ Back")
+    # Geri butonu - tüm dillere uygun
+    back_texts = {"tr": "⬅️ Geri", "en": "⬅️ Back", "ru": "⬅️ Назад"}
+    back_text = back_texts.get(lang, back_texts["en"])
     keyboard.append([back_text])
     
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)

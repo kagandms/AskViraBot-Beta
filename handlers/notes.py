@@ -13,6 +13,15 @@ async def notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     state.clear_user_states(user_id)
     
+    # Önceki "notları göster" mesajını sil
+    prev_msg_id = context.user_data.get('show_notes_msg_id')
+    if prev_msg_id:
+        try:
+            await context.bot.delete_message(chat_id=user_id, message_id=prev_msg_id)
+        except Exception:
+            pass
+        context.user_data.pop('show_notes_msg_id', None)
+    
     if update.callback_query:
         await update.callback_query.message.reply_text(
             TEXTS["notes_menu_prompt"][lang],
@@ -74,13 +83,25 @@ async def shownotes_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     notes = await asyncio.to_thread(db.get_notes, user_id)
     
+    # Önceki "notları göster" mesajını sil
+    prev_msg_id = context.user_data.get('show_notes_msg_id')
+    if prev_msg_id:
+        try:
+            await context.bot.delete_message(chat_id=user_id, message_id=prev_msg_id)
+        except Exception:
+            pass
+        context.user_data.pop('show_notes_msg_id', None)
+    
     if not notes:
-        await update.message.reply_text(TEXTS["no_notes"][lang], reply_markup=get_notes_keyboard_markup(lang))
+        sent_msg = await update.message.reply_text(TEXTS["no_notes"][lang], reply_markup=get_notes_keyboard_markup(lang))
     else:
         message = TEXTS["notes_header"][lang]
         for i, note in enumerate(notes, 1):
             message += f"{i}. {note}\n"
-        await update.message.reply_text(message, reply_markup=get_notes_keyboard_markup(lang))
+        sent_msg = await update.message.reply_text(message, reply_markup=get_notes_keyboard_markup(lang))
+    
+    # Mesaj ID'sini kaydet
+    context.user_data['show_notes_msg_id'] = sent_msg.message_id
 
 # --- NOT SİLME ---
 async def deletenotes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -88,6 +109,15 @@ async def deletenotes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     notes = await asyncio.to_thread(db.get_notes, user_id)
+    
+    # Önceki "notları göster" mesajını sil
+    prev_msg_id = context.user_data.get('show_notes_msg_id')
+    if prev_msg_id:
+        try:
+            await context.bot.delete_message(chat_id=user_id, message_id=prev_msg_id)
+        except Exception:
+            pass
+        context.user_data.pop('show_notes_msg_id', None)
     
     if not notes:
         await update.message.reply_text(TEXTS["no_notes"][lang]) 
@@ -172,6 +202,15 @@ async def edit_notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     notes = await asyncio.to_thread(db.get_notes, user_id)
+    
+    # Önceki "notları göster" mesajını sil
+    prev_msg_id = context.user_data.get('show_notes_msg_id')
+    if prev_msg_id:
+        try:
+            await context.bot.delete_message(chat_id=user_id, message_id=prev_msg_id)
+        except Exception:
+            pass
+        context.user_data.pop('show_notes_msg_id', None)
     
     if not notes:
         await update.message.reply_text(TEXTS["no_notes"][lang])

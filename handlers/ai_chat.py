@@ -199,7 +199,7 @@ Kullanıcının dilinde yanıt ver."""
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_message}
                 ],
-                max_tokens=500
+                max_tokens=1000
             )
         
         response = await asyncio.to_thread(call_openrouter)
