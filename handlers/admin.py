@@ -164,7 +164,7 @@ async def start_broadcast(query, context):
     await query.delete_message()
     
     # Reply Keyboard ile Geri butonu
-    reply_keyboard = ReplyKeyboardMarkup([["⬅️ Geri"]], resize_keyboard=True, one_time_keyboard=True)
+    reply_keyboard = ReplyKeyboardMarkup([["🔙 Admin Paneli"]], resize_keyboard=True, one_time_keyboard=True)
     
     broadcast_msg = await query.message.chat.send_message(
         "📢 *Duyuru Gönder*\n\n"
@@ -189,7 +189,7 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
     message = update.message.text.strip()
     
     # Geri butonuna basıldıysa iptal et
-    if message.lower() in ["⬅️ geri", "geri", "back"]:
+    if message.lower() in ["🔙 admin paneli", "⬅️ geri", "geri", "back"]:
         context.user_data['admin_broadcast'] = False
         # Prompt mesajını sil
         prompt_msg_id = context.user_data.pop('broadcast_prompt_msg_id', None)
@@ -336,7 +336,7 @@ async def start_broadcast_reply(update: Update, context: ContextTypes.DEFAULT_TY
     context.user_data['admin_broadcast'] = True
     state.admin_menu_active.discard(user_id)  # Admin menüsünden çık
     
-    reply_keyboard = ReplyKeyboardMarkup([["⬅️ Geri"]], resize_keyboard=True, one_time_keyboard=True)
+    reply_keyboard = ReplyKeyboardMarkup([["🔙 Admin Paneli"]], resize_keyboard=True, one_time_keyboard=True)
     
     await update.message.reply_text(
         "📢 *Duyuru Gönder*\n\n"

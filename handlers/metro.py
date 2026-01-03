@@ -206,9 +206,9 @@ async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     if row:
         keyboard.append(row)
     
-    # Geri butonu
-    back_text = TEXTS["back_button"][lang] if "back_button" in TEXTS else ("⬅️ Geri" if lang == "tr" else "⬅️ Back")
-    keyboard.append([back_text])
+    # Geri butonu - Araçlar menüsüne döner
+    back_texts = {"tr": "🔙 Araçlar Menüsü", "en": "🔙 Tools Menu", "ru": "🔙 Меню Инструментов"}
+    keyboard.append([back_texts.get(lang, back_texts["en"])])
     
     await update.message.reply_text(
         TEXTS["metro_menu_prompt"][lang],
@@ -227,7 +227,7 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
     
     # Geri / Menü Kontrolü
     from texts import BUTTON_MAPPINGS
-    back_keywords = BUTTON_MAPPINGS.get("back_button", []) + ["⬅️ Geri", "⬅️ Back", "geri", "back"]
+    back_keywords = BUTTON_MAPPINGS.get("back_to_tools", set()) | {"🔙 araçlar menüsü", "🔙 tools menu", "🔙 меню инструментов", "geri", "back", "назад"}
     menu_keywords = BUTTON_MAPPINGS.get("menu", [])
     
     current_selection = state.metro_selection.get(user_id, {})
@@ -240,8 +240,10 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         await tools_menu_command(update, context)
         return
 
-    # 2. GERİ BUOTNU MANTIĞI
-    if text in back_keywords or text.lower() in back_keywords:
+    # 2. GERİ BUOTNU MANTIĞI - Tüm geri butonlarını kontrol et
+    all_back_keywords = back_keywords | {"🔙 hat listesi", "🔙 line list", "🔙 список линий", 
+                                         "🔙 istasyon listesi", "🔙 station list", "🔙 список станций"}
+    if text.lower() in all_back_keywords or any(kw in text.lower() for kw in ["geri", "back", "назад", "hat listesi", "istasyon listesi", "araçlar menüsü", "tools menu"]):
         # Eğer İstasyon seçiliyse -> Yön seçimi iptal, İstasyonlara dön (Aslında Yönü iptal edip İstasyon listesini tekrar gösteriyoruz, yani Hat seçili duruma dönüyoruz)
         # SIRA: Hat Seçimi -> İstasyon Seçimi -> Yön Seçimi
         
@@ -365,8 +367,9 @@ async def show_stations(update, context, line_id, line_name, lang):
     if row:
         keyboard.append(row)
         
-    back_text = TEXTS["back_button"][lang] if "back_button" in TEXTS else ("⬅️ Geri" if lang == "tr" else "⬅️ Back")
-    keyboard.append([back_text])
+    # Geri butonu - Hat listesine döner
+    back_texts = {"tr": "🔙 Hat Listesi", "en": "🔙 Line List", "ru": "🔙 Список Линий"}
+    keyboard.append([back_texts.get(lang, back_texts["en"])])
     
     await update.message.reply_text(
         TEXTS["metro_select_station"][lang].format(line=line_name),
@@ -395,8 +398,9 @@ async def show_directions(update, context, line_id, station_id, lang):
         if name:
             keyboard.append([f"➡️ {name}"])
             
-    back_text = TEXTS["back_button"][lang] if "back_button" in TEXTS else ("⬅️ Geri" if lang == "tr" else "⬅️ Back")
-    keyboard.append([back_text])
+    # Geri butonu - İstasyon listesine döner
+    back_texts = {"tr": "🔙 İstasyon Listesi", "en": "🔙 Station List", "ru": "🔙 Список Станций"}
+    keyboard.append([back_texts.get(lang, back_texts["en"])])
     
     await update.message.reply_text(
         TEXTS["metro_select_direction"][lang],

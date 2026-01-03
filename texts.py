@@ -588,9 +588,9 @@ PDF_CONVERTER_BUTTONS = {
 }
 
 INPUT_BACK_BUTTONS = {
-    "tr": [["🔙 Geri"]],
-    "en": [["🔙 Back"]],
-    "ru": [["🔙 Назад"]]
+    "tr": [["🔙 Araçlar Menüsü"]],
+    "en": [["🔙 Tools Menu"]],
+    "ru": [["🔙 Меню Инструментов"]]
 }
 
 REMINDER_BUTTONS = {

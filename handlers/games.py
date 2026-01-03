@@ -70,8 +70,9 @@ def get_xox_difficulty_reply_markup(lang):
     }
     labels = texts.get(lang, texts["en"])
     
-    # Geri butonu
-    back = TEXTS["back_button"][lang] if "back_button" in TEXTS else ("⬅️ Geri" if lang == "tr" else "⬅️ Back")
+    # Geri butonu - Oyun Odasına döner
+    back_texts = {"tr": "🔙 Oyun Odası", "en": "🔙 Game Room", "ru": "🔙 Игровая Комната"}
+    back = back_texts.get(lang, back_texts["en"])
     
     keyboard = [
         [labels[0], labels[1], labels[2]],
