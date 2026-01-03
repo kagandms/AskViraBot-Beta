@@ -273,16 +273,16 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
             await tools_menu_command(update, context)
             return
 
-    # 2.5 FAVORİLER BUTONU KONTROLÜ
-    fav_keywords = ["favorilerim", "my favorites", "избранное", "⭐"]
-    if any(kw in text.lower() for kw in fav_keywords):
-        await show_favorites(update, context, lang)
-        return
-    
-    # 2.6 FAVORİYE EKLE BUTONU KONTROLÜ
+    # 2.5 FAVORİYE EKLE BUTONU KONTROLÜ (Önce kontrol edilmeli çünkü içinde ⭐ var)
     add_fav_keywords = ["favoriye ekle", "add to favorites", "добавить в избранное", "⭐ ekle", "⭐ add"]
     if any(kw in text.lower() for kw in add_fav_keywords):
         await save_to_favorites(update, context, lang, user_id)
+        return
+
+    # 2.6 FAVORİLER BUTONU KONTROLÜ
+    fav_keywords = ["favorilerim", "my favorites", "избранное", "⭐"]
+    if any(kw in text.lower() for kw in fav_keywords):
+        await show_favorites(update, context, lang)
         return
 
     # 3. İLERİ YÖNLÜ SEÇİMLER
