@@ -231,7 +231,7 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
             try:
                 await context.bot.send_message(
                     chat_id=uid,
-                    text=f"📢 *Duyuru*\n\n{message}",
+                    text=f"📢 *Geliştirici Duyurusu*\n\n{message}\n\n_— DruzhikBot Geliştiricisi_",
                     parse_mode="Markdown"
                 )
                 sent += 1

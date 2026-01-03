@@ -284,6 +284,17 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
 
+    # --- ŞEHİR ADI DÖNÜŞTÜRME (BAYRAKLI İSİMLERDEN API İSİMLERİNE) ---
+    # Kullanıcı "🇹🇷 İstanbul" gibi butona bastığında, API için "Istanbul" gerekiyor
+    original_city_name = city_name
+    for lang_code, cities in CITY_NAMES_TRANSLATED.items():
+        for english_name, translated_name in cities.items():
+            if city_name.strip() == translated_name.strip():
+                city_name = english_name
+                break
+        if city_name != original_city_name:
+            break
+
     # --- GERİ TUŞU KONTROLÜ (EKLENEN KISIM) ---
     city_name_lower = city_name.lower().strip()
     # "Geri" butonuna basıldığında gelen metni kontrol ediyoruz

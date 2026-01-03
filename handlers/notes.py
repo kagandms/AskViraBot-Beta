@@ -75,12 +75,12 @@ async def shownotes_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     notes = await asyncio.to_thread(db.get_notes, user_id)
     
     if not notes:
-        await update.message.reply_text(TEXTS["no_notes"][lang])
+        await update.message.reply_text(TEXTS["no_notes"][lang], reply_markup=get_notes_keyboard_markup(lang))
     else:
         message = TEXTS["notes_header"][lang]
         for i, note in enumerate(notes, 1):
             message += f"{i}. {note}\n"
-        await update.message.reply_text(message)
+        await update.message.reply_text(message, reply_markup=get_notes_keyboard_markup(lang))
 
 # --- NOT SİLME ---
 async def deletenotes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
