@@ -79,7 +79,7 @@ def increment_usage(user_id: int):
 
 # --- HANDLER'LAR ---
 @rate_limit("heavy")
-async def ai_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def ai_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """AI asistan ana menüsü"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -98,7 +98,7 @@ async def ai_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=get_ai_menu_keyboard(lang)
     )
 
-async def start_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def start_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """AI sohbet modunu başlat"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -119,7 +119,7 @@ async def start_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=get_ai_chat_keyboard(lang)
     )
 
-async def end_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def end_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """AI sohbet modunu bitir"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -131,7 +131,7 @@ async def end_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=get_main_keyboard_markup(lang, user_id)
     )
 
-async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """AI sohbet modundaki mesajları işle"""
     user_id = update.effective_user.id
     

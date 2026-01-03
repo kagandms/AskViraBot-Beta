@@ -160,7 +160,7 @@ async def fetch_timetable(station_id: int, direction_id: int):
 # --- HANDLER LOGIC (REPLY KEYBOARD) ---
 
 @rate_limit("heavy")
-async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Metro menüsünü başlat (Hatları listele)"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -216,7 +216,7 @@ async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
         parse_mode="Markdown"
     )
 
-async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Metro menüsü içindeki metin etkileşimlerini yönetir"""
     user_id = update.effective_user.id
     if user_id not in state.metro_browsing:

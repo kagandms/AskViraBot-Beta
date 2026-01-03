@@ -7,7 +7,7 @@ from texts import TEXTS, BUTTON_MAPPINGS
 from utils import get_notes_keyboard_markup, get_input_back_keyboard_markup
 
 # --- NOTLAR MENÜSÜ ---
-async def notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -33,7 +33,7 @@ async def notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=get_notes_keyboard_markup(lang)
         )
 
-async def addnote_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def addnote_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -46,7 +46,7 @@ async def addnote_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await prompt_new_note(update, context)
 
-async def prompt_new_note(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def prompt_new_note(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -54,7 +54,7 @@ async def prompt_new_note(update: Update, context: ContextTypes.DEFAULT_TYPE):
     state.waiting_for_new_note_input.add(user_id)
     await update.message.reply_text(TEXTS["prompt_new_note"][lang], reply_markup=get_input_back_keyboard_markup(lang))
 
-async def handle_new_note_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_new_note_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -77,7 +77,7 @@ async def handle_new_note_input(update: Update, context: ContextTypes.DEFAULT_TY
     state.waiting_for_new_note_input.discard(user_id)
     await update.message.reply_text(TEXTS["note_saved"][lang] + text, reply_markup=get_notes_keyboard_markup(lang))
 
-async def shownotes_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def shownotes_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron (Dil ve Notlar)
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -104,7 +104,7 @@ async def shownotes_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['show_notes_msg_id'] = sent_msg.message_id
 
 # --- NOT SİLME ---
-async def deletenotes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def deletenotes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -153,10 +153,10 @@ async def deletenotes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(TEXTS["prompt_select_note_to_delete"][lang], reply_markup=reply_markup)
 
-async def select_note_to_delete_prompt(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def select_note_to_delete_prompt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await deletenotes_menu(update, context)
 
-async def delete_note_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def delete_note_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     user_id = query.from_user.id
     # DB İŞLEMİ: Asenkron
@@ -197,7 +197,7 @@ async def delete_note_callback(update: Update, context: ContextTypes.DEFAULT_TYP
              await query.edit_message_text(TEXTS["invalid_note_number"][lang])
 
 # --- NOT DÜZENLEME ---
-async def edit_notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def edit_notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -230,7 +230,7 @@ async def edit_notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(TEXTS["edit_notes_menu_prompt"][lang], reply_markup=reply_markup)
 
-async def handle_edit_note_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_edit_note_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     user_id = query.from_user.id
     # DB İŞLEMİ: Asenkron
@@ -298,7 +298,7 @@ async def handle_edit_note_callback(update: Update, context: ContextTypes.DEFAUL
         # Mesaj ID'lerini kaydet (geri basınca silinecek)
         context.user_data['edit_note_msg_ids'] = [sent_msg1.message_id, sent_msg2.message_id]
 
-async def handle_edit_note_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_edit_note_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)

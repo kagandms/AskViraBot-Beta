@@ -6,14 +6,18 @@ import state
 from texts import TEXTS
 from utils import get_main_keyboard_markup
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Bot başlatma komutu."""
     user_id = update.effective_user.id
     state.clear_user_states(user_id)
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     await update.message.reply_text(TEXTS["start"][lang])
 
-async def tools_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def tools_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Araçlar menüsünü gösterir."""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
@@ -22,7 +26,9 @@ async def tools_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
         TEXTS["tools_menu_prompt"][lang],
         reply_markup=get_tools_keyboard_markup(lang)
     )
-async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+
+async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Ana menüyü gösterir. Hem komut hem de callback (geri tuşu) ile çalışır."""
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
@@ -44,7 +50,9 @@ async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=get_main_keyboard_markup(lang, user_id)
         )
 
-async def set_language(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def set_language(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Kullanıcı dilini ayarlar."""
     user_id = str(update.effective_user.id)
     text = update.message.text.lower()
     lang_to_set = None
@@ -62,7 +70,8 @@ async def set_language(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(TEXTS["language_set"][lang_to_set])
         await menu_command(update, context)
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Tüm komutları ve özellikleri listeler"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)

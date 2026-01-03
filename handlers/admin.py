@@ -26,7 +26,7 @@ def get_admin_keyboard():
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
-async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Admin paneli ana komutu"""
     user_id = update.effective_user.id
     
@@ -44,7 +44,7 @@ async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-async def handle_admin_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_admin_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Admin paneli mesaj handler'ı (Reply Keyboard)"""
     user_id = update.effective_user.id
     
@@ -83,7 +83,7 @@ async def handle_admin_message(update: Update, context: ContextTypes.DEFAULT_TYP
     
     return False
 
-async def admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Admin panel callback handler"""
     query = update.callback_query
     user_id = query.from_user.id
@@ -176,7 +176,7 @@ async def start_broadcast(query, context):
     # Mesaj ID'sini sakla (sonra silmek için)
     context.user_data['broadcast_prompt_msg_id'] = broadcast_msg.message_id
 
-async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Duyuru mesajını işle ve gönder"""
     user_id = update.effective_user.id
     
@@ -282,7 +282,7 @@ async def show_users(query, context):
 
 # --- REPLY KEYBOARD BASED HELPERS ---
 
-async def show_stats_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def show_stats_reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """İstatistikleri göster (Reply Keyboard için)"""
     try:
         users = await asyncio.to_thread(db.get_all_users_count)
@@ -311,7 +311,7 @@ async def show_stats_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await update.message.reply_text(f"❌ Hata: {e}")
 
-async def show_users_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def show_users_reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Son kullanıcıları listele (Reply Keyboard için)"""
     try:
         users = await asyncio.to_thread(db.get_recent_users, 10)
@@ -330,7 +330,7 @@ async def show_users_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await update.message.reply_text(f"❌ Hata: {e}")
 
-async def start_broadcast_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def start_broadcast_reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Duyuru gönderme modunu başlat (Reply Keyboard için)"""
     user_id = update.effective_user.id
     context.user_data['admin_broadcast'] = True

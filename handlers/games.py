@@ -11,7 +11,7 @@ from rate_limiter import rate_limit
 
 # --- OYUNLAR MENÜSÜ ---
 @rate_limit("games")
-async def games_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def games_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Oyunlar Alt Menüsünü Açar"""
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
@@ -155,7 +155,7 @@ def bot_make_move(board, difficulty="easy"):
     else: return bot_move_hard(board)
 
 @rate_limit("games")
-async def xox_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def xox_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Zorluk seçimini başlat (Reply Keyboard)"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -176,7 +176,7 @@ async def xox_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=get_xox_difficulty_reply_markup(lang)
     )
 
-async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """XOX hamlelerini ve seçimlerini yönetir"""
     user_id = update.effective_user.id
     if user_id not in state.playing_xox:
@@ -294,7 +294,7 @@ async def finish_get_xox_game(update, board, winner, lang, user_id, difficulty):
 
 # --- DİĞER OYUNLAR ---
 @rate_limit("games")
-async def dice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def dice_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, update.effective_user.id)
     number = random.randint(1, 6)
@@ -303,7 +303,7 @@ async def dice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(TEXTS["dice_rolled"][lang].format(number=number))
 
 @rate_limit("games")
-async def coinflip_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def coinflip_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, update.effective_user.id)
     result = random.choice(["heads", "tails"])
@@ -314,7 +314,7 @@ async def coinflip_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # --- TAŞ KAĞIT MAKAS (GÜNCELLENDİ) ---
 @rate_limit("games")
-async def tkm_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def tkm_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     state.clear_user_states(user_id)
     state.playing_tkm.add(user_id)
@@ -323,7 +323,7 @@ async def tkm_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = TKM_BUTTONS.get(lang, TKM_BUTTONS["en"])
     await update.message.reply_text(TEXTS["tkm_welcome"][lang], reply_markup=ReplyKeyboardMarkup(buttons, resize_keyboard=True))
 
-async def tkm_play(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def tkm_play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     lang = "en"  # Fallback dil
     try:

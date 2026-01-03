@@ -21,14 +21,14 @@ def get_pdf_keyboard_markup(lang):
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
 # --- ZAMAN KOMUTU ---
-async def time_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def time_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
     now = datetime.now().strftime("%H:%M:%S")
     await update.message.reply_text(f"🕒 Saat: {now}")
 
 # --- QR KOD ---
 @rate_limit("heavy")
-async def qrcode_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def qrcode_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -87,7 +87,7 @@ async def generate_and_send_qr(update: Update, context: ContextTypes.DEFAULT_TYP
 
 # --- PDF DÖNÜŞTÜRÜCÜ ---
 @rate_limit("heavy")
-async def pdf_converter_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def pdf_converter_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -98,7 +98,7 @@ async def pdf_converter_menu(update: Update, context: ContextTypes.DEFAULT_TYPE)
         reply_markup=get_pdf_keyboard_markup(lang)
     )
 
-async def prompt_text_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def prompt_text_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -110,7 +110,7 @@ async def prompt_text_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE
         reply_markup=get_input_back_keyboard_markup(lang)
     )
 
-async def prompt_file_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def prompt_file_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -122,7 +122,7 @@ async def prompt_file_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE
         reply_markup=get_input_back_keyboard_markup(lang)
     )
 
-async def handle_pdf_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_pdf_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -254,7 +254,7 @@ async def handle_pdf_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # --- HAVA DURUMU ---
 @rate_limit("heavy")
-async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -371,7 +371,7 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
     # State'i silmiyoruz - kullanıcı başka şehir seçebilir veya Geri'ye basabilir
     # state.waiting_for_weather_city.discard(user_id)  # KALDIRILDI
 
-async def weather_callback_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def weather_callback_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     user_id = query.from_user.id
     # DB İŞLEMİ: Asenkron
@@ -503,7 +503,7 @@ def get_developer_keyboard(lang):
     }
     return ReplyKeyboardMarkup(labels.get(lang, labels["en"]), resize_keyboard=True)
 
-async def show_developer_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def show_developer_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
@@ -524,7 +524,7 @@ async def show_developer_info(update: Update, context: ContextTypes.DEFAULT_TYPE
         parse_mode="Markdown"
     )
 
-async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Geliştirici menüsü buton işleyicisi"""
     import state
     user_id = update.effective_user.id
@@ -575,7 +575,7 @@ async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT
     
     return False
 
-async def handle_social_media_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_social_media_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     await query.answer()
     if query.data == "back_to_main_menu":
@@ -593,7 +593,7 @@ def get_format_selection_keyboard_markup(lang):
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
 @rate_limit("heavy")
-async def video_downloader_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def video_downloader_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Video indirme platform seçim menüsü"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -643,7 +643,7 @@ async def set_download_format(update: Update, context: ContextTypes.DEFAULT_TYPE
         reply_markup=get_input_back_keyboard_markup(lang)
     )
 
-async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Video/Ses linkini al, indir ve gönder"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)

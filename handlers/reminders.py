@@ -11,7 +11,7 @@ from texts import TEXTS, BUTTON_MAPPINGS
 from config import TIMEZONE
 from utils import get_reminder_keyboard_markup, get_input_back_keyboard_markup, format_remaining_time
 
-async def reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -19,7 +19,7 @@ async def reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     state.reminder_menu_active.add(user_id)
     await update.message.reply_text(TEXTS["reminder_menu_prompt"][lang], reply_markup=get_reminder_keyboard_markup(lang))
 
-async def show_reminders_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def show_reminders_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -52,7 +52,7 @@ async def show_reminders_command(update: Update, context: ContextTypes.DEFAULT_T
             message += f"{i+1}. [{error_text.get(lang, 'Error')}] - {reminder.get('message', unknown_text.get(lang, 'Unknown'))}\n"
     await update.message.reply_text(message, reply_markup=get_reminder_keyboard_markup(lang))
 
-async def prompt_reminder_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def prompt_reminder_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -123,7 +123,7 @@ async def reminder_task(application, chat_id, message, wait_seconds, reminder_id
     except Exception as e:
         logger.error(f"Hatırlatıcı gönderilemedi (chat_id: {chat_id}): {e}")
 
-async def delete_reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def delete_reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -156,7 +156,7 @@ async def delete_reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     if update.callback_query: await update.callback_query.edit_message_text(TEXTS["prompt_select_reminder_to_delete"][lang], reply_markup=reply_markup)
     else: await update.message.reply_text(TEXTS["prompt_select_reminder_to_delete"][lang], reply_markup=reply_markup)
 
-async def delete_reminder_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def delete_reminder_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     user_id = query.from_user.id
     # DB İŞLEMİ: Asenkron
@@ -178,7 +178,7 @@ async def delete_reminder_callback(update: Update, context: ContextTypes.DEFAULT
             await query.edit_message_text(TEXTS["error_occurred"][lang] + str(e))
             await delete_reminder_menu(update, context)
 
-async def remind_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def remind_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if context.args: await process_reminder_input(update, context, ' '.join(context.args))
     else: await reminder_menu(update, context)
 
