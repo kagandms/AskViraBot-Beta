@@ -136,8 +136,7 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     """AI sohbet modundaki mesajları işle"""
     user_id = update.effective_user.id
     
-    if not await state.check_state(user_id, state.AI_CHAT_ACTIVE):
-        return False
+    # State zaten main.py'de kontrol edildi
     
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     user_message = update.message.text

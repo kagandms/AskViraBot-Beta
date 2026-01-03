@@ -74,8 +74,7 @@ async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
-    if not await state.check_state(user_id, state.WAITING_FOR_VIDEO_LINK):
-        return False
+    # State zaten main.py'de kontrol edildi
 
     download_info = await state.get_data(user_id)
     if not download_info:

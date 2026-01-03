@@ -69,8 +69,7 @@ async def handle_new_note_input(update: Update, context: ContextTypes.DEFAULT_TY
         await notes_menu(update, context)
         return
 
-    if not await state.check_state(user_id, state.WAITING_FOR_NEW_NOTE_INPUT):
-        return
+    # State zaten main.py'de kontrol edildi, burada tekrar kontrol gereksiz
 
     # DB İŞLEMİ: Asenkron (Not Ekleme)
     await asyncio.to_thread(db.add_note, user_id, text)
@@ -346,8 +345,7 @@ async def handle_edit_note_input(update: Update, context: ContextTypes.DEFAULT_T
         await edit_notes_menu(update, context)
         return
 
-    if not await state.check_state(user_id, state.WAITING_FOR_EDIT_NOTE_INPUT):
-        return
+    # State zaten main.py'de kontrol edildi
 
     state_data = await state.get_data(user_id)
     note_index = state_data.get('editing_note_index')
