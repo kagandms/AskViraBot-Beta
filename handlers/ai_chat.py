@@ -99,7 +99,7 @@ async def ai_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     state.clear_user_states(user_id)
     
-    remaining = get_user_remaining_quota(user_id)
+    remaining = await get_user_remaining_quota_async(user_id)
     
     # Adminler için "Sınırsız" göster
     if user_id in ADMIN_IDS:
@@ -117,7 +117,7 @@ async def start_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
-    remaining = get_user_remaining_quota(user_id)
+    remaining = await get_user_remaining_quota_async(user_id)
     if remaining <= 0:
         await update.message.reply_text(
             TEXTS["ai_limit_reached"][lang],
@@ -161,7 +161,7 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         return True
     
     # Günlük limit kontrolü
-    remaining = get_user_remaining_quota(user_id)
+    remaining = await get_user_remaining_quota_async(user_id)
     if remaining <= 0:
         state.ai_chat_active.discard(user_id)
         await update.message.reply_text(
@@ -230,8 +230,8 @@ Kullanıcının dilinde yanıt ver."""
             ai_response = "⚠️ Boş yanıt alındı, lütfen farklı bir soru sorun."
         
         # Sayacı artır
-        increment_usage(user_id)
-        new_remaining = get_user_remaining_quota(user_id)
+        await increment_usage_async(user_id)
+        new_remaining = await get_user_remaining_quota_async(user_id)
         
         # Yanıtı gönder
         await thinking_msg.delete()
