@@ -273,6 +273,12 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
             await tools_menu_command(update, context)
             return
 
+    # 2.2 FAVORİ KULLANIMI (En üstte kontrol edilmeli)
+    # ⭐ FAV... butonuna basıldığında
+    if text.startswith("⭐ FAV"):
+        await use_favorite(update, context, text, lang, user_id)
+        return
+
     # 2.5 FAVORİYE EKLE BUTONU KONTROLÜ (Önce kontrol edilmeli çünkü içinde ⭐ var)
     add_fav_keywords = ["favoriye ekle", "add to favorites", "добавить в избранное", "⭐ ekle", "⭐ add"]
     if any(kw in text.lower() for kw in add_fav_keywords):
@@ -285,14 +291,15 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         return
 
     # 2.6 FAVORİLER MENÜSÜ BUTONLARI (Alt menü butonları)
-    if any(kw in text.lower() for kw in ["favorileri kullan", "use favorites", "использовать", "🚀"]):
+    # "Favori İstasyonlar" butonu
+    if any(kw in text.lower() for kw in ["favori istasyonlar", "favorite stations", "избранные станции", "🚀"]):
         await show_favorites_list(update, context, lang)
         return
     if any(kw in text.lower() for kw in ["favorileri düzenle", "edit favorites", "ред. избранное"]):
         await show_favorites_edit_menu(update, context, lang)
         return
 
-    # 2.7 ANA FAVORİLER BUTONU KONTROLÜ
+    # 2.7 ANA FAVORİLER BUTONU KONTROLÜ (En sona bırakıldı ki diğer ⭐'ları yutmasın)
     fav_keywords = ["favorilerim", "my favorites", "избранное", "⭐"]
     if any(kw in text.lower() for kw in fav_keywords):
         await show_favorites(update, context, lang)
@@ -314,10 +321,7 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
     
     # A) HAT SEÇİMİ (Henüz hat seçilmemişse)
     if "line" not in current_selection:
-        # Favori seçimi kontrolü (FAV_1, FAV_2 gibi)
-        if text.startswith("⭐ FAV"):
-            await use_favorite(update, context, text, lang, user_id)
-            return
+        # Favori seçimi kontrolü BURADAN KALDIRILDI (Yukarı taşındı)
         
         lines = await fetch_lines()
         # Text "🚇 M1A Yenikapı..." gibi gelebilir. Parse etmeliyiz.
@@ -536,7 +540,7 @@ async def show_favorites(update: Update, context: ContextTypes.DEFAULT_TYPE, lan
         "ru": "⭐ *Меню Избранного*\n\nПожалуйста, выберите действие:"
     }
     
-    btn_show = {"tr": "📋 Favorileri Kullan", "en": "📋 Use Favorites", "ru": "📋 Использовать"}
+    btn_show = {"tr": "⭐ Favori İstasyonlar", "en": "⭐ Favorite Stations", "ru": "⭐ Избранные Станции"}
     btn_edit = {"tr": "✏️ Favorileri Düzenle", "en": "✏️ Edit Favorites", "ru": "✏️ Ред. Избранное"}
     btn_back = {"tr": "🔙 Metro Menüsü", "en": "🔙 Metro Menu", "ru": "🔙 Меню Метро"}
     
