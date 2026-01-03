@@ -246,8 +246,7 @@ async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
 async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Metro menüsü içindeki metin etkileşimlerini yönetir"""
     user_id = update.effective_user.id
-    if not await state.check_state(user_id, state.METRO_BROWSING):
-        return
+    # State zaten main.py'de kontrol edildi
         
     text = update.message.text
     from texts import turkish_lower

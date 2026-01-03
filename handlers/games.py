@@ -158,8 +158,7 @@ async def xox_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """XOX hamlelerini ve seçimlerini yönetir"""
     user_id = update.effective_user.id
-    if not await state.check_state(user_id, state.PLAYING_XOX):
-        return
+    # State zaten main.py'de kontrol edildi
         
     text = update.message.text
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
