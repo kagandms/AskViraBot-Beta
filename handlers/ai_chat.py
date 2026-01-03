@@ -56,26 +56,40 @@ def get_ai_chat_keyboard(lang):
     }
     return ReplyKeyboardMarkup(buttons.get(lang, buttons["en"]), resize_keyboard=True)
 
-# --- GÜNLÜK LİMİT KONTROLÜ ---
-def check_and_reset_daily_limits():
-    """Yeni gün başladıysa tüm kullanım sayaçlarını sıfırla"""
-    today = date.today()
-    if state.ai_last_reset_date != today:
-        state.ai_daily_usage.clear()
-        state.ai_last_reset_date = today
+# --- GÜNLÜK LİMİT KONTROLÜ (VERİTABANI İLE) ---
+def get_today_str() -> str:
+    """Bugünün tarihini 'YYYY-MM-DD' formatında döndürür."""
+    return date.today().isoformat()
 
-def get_user_remaining_quota(user_id: int) -> int:
-    """Kullanıcının kalan günlük mesaj hakkı"""
-    check_and_reset_daily_limits()
-    used = state.ai_daily_usage.get(user_id, 0)
+
+async def get_user_remaining_quota_async(user_id: int) -> int:
+    """Kullanıcının kalan günlük mesaj hakkı (asenkron, DB destekli)."""
+    today = get_today_str()
+    used = await asyncio.to_thread(db.get_ai_daily_usage, user_id, today)
     # Admin kullanıcılara 999 limit
     limit = 999 if user_id in ADMIN_IDS else AI_DAILY_LIMIT
     return max(0, limit - used)
 
-def increment_usage(user_id: int):
-    """Kullanıcının günlük sayacını artır"""
-    check_and_reset_daily_limits()
-    state.ai_daily_usage[user_id] = state.ai_daily_usage.get(user_id, 0) + 1
+
+async def increment_usage_async(user_id: int) -> None:
+    """Kullanıcının günlük sayacını artır (asenkron, DB destekli)."""
+    today = get_today_str()
+    await asyncio.to_thread(db.increment_ai_usage, user_id, today)
+
+
+# Eski senkron fonksiyonlar uyumluluk için
+def get_user_remaining_quota(user_id: int) -> int:
+    """Kullanıcının kalan günlük mesaj hakkı (eğer senkron gerekiyorsa)."""
+    today = get_today_str()
+    used = db.get_ai_daily_usage(user_id, today)
+    limit = 999 if user_id in ADMIN_IDS else AI_DAILY_LIMIT
+    return max(0, limit - used)
+
+
+def increment_usage(user_id: int) -> None:
+    """Kullanıcının günlük sayacını artır (senkron, fallback)."""
+    today = get_today_str()
+    db.increment_ai_usage(user_id, today)
 
 # --- HANDLER'LAR ---
 @rate_limit("heavy")

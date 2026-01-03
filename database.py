@@ -313,3 +313,39 @@ def remove_metro_favorite(favorite_id: int) -> bool:
         logger.error(f"Metro favori silme hatası (ID: {favorite_id}): {e}")
         return False
 
+
+# --- AI GÜNLÜK KULLANIM KALİKİLİĞİ ---
+def get_ai_daily_usage(user_id: int | str, today_str: str) -> int:
+    """Kullanıcının bugünkü AI kullanım sayısını döndürür."""
+    if not supabase: return 0
+    try:
+        response = supabase.table("ai_usage").select("usage_count").eq("user_id", str(user_id)).eq("usage_date", today_str).execute()
+        if response.data:
+            return response.data[0]["usage_count"]
+        return 0
+    except Exception as e:
+        logger.error(f"AI kullanım getirme hatası (User: {user_id}): {e}")
+        return 0
+
+
+def set_ai_daily_usage(user_id: int | str, today_str: str, count: int) -> None:
+    """Kullanıcının bugünkü AI kullanım sayısını ayarlar."""
+    if not supabase: return
+    try:
+        data = {"user_id": str(user_id), "usage_date": today_str, "usage_count": count}
+        supabase.table("ai_usage").upsert(data, on_conflict="user_id,usage_date").execute()
+    except Exception as e:
+        logger.error(f"AI kullanım kaydetme hatası (User: {user_id}): {e}")
+
+
+def increment_ai_usage(user_id: int | str, today_str: str) -> int:
+    """Kullanıcının AI kullanımını 1 artırır ve yeni sayıyı döndürür."""
+    if not supabase: return 0
+    try:
+        current = get_ai_daily_usage(user_id, today_str)
+        new_count = current + 1
+        set_ai_daily_usage(user_id, today_str, new_count)
+        return new_count
+    except Exception as e:
+        logger.error(f"AI kullanım artırma hatası (User: {user_id}): {e}")
+        return 0
