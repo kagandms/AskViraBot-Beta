@@ -126,7 +126,8 @@ async def start_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         return
     
     await state.clear_user_states(user_id)
-    await state.set_state(user_id, state.AI_CHAT_ACTIVE)
+    # Initialize with empty conversation history
+    await state.set_state(user_id, state.AI_CHAT_ACTIVE, {"messages": []})
     
     await update.message.reply_text(
         TEXTS["ai_chat_started"][lang],
@@ -199,6 +200,10 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     update_task = asyncio.create_task(update_thinking_message())
     
     try:
+        # Get conversation history from state
+        state_data = await state.get_data(user_id)
+        message_history = state_data.get("messages", []) if state_data else []
+        
         # OpenRouter API çağrısı
         system_prompt = """Sen DruzhikBot adlı bir Telegram botunun içinde çalışan yardımcı bir asistansın.
 Kullanıcıyla sohbet et, sorularını yanıtla, yardımcı ol.
@@ -206,13 +211,15 @@ Kısa ve öz cevaplar ver (max 2-3 paragraf).
 Emoji kullanabilirsin.
 Kullanıcının dilinde yanıt ver."""
         
+        # Build messages list with history
+        api_messages = [{"role": "system", "content": system_prompt}]
+        api_messages.extend(message_history)  # Add previous messages
+        api_messages.append({"role": "user", "content": user_message})
+        
         def call_openrouter():
             return client.chat.completions.create(
                 model=AI_MODEL,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_message}
-                ],
+                messages=api_messages,
                 max_tokens=1000
             )
         
@@ -232,6 +239,14 @@ Kullanıcının dilinde yanıt ver."""
         # Sayacı artır
         await increment_usage_async(user_id)
         new_remaining = await get_user_remaining_quota_async(user_id)
+        
+        # Save conversation to history (keep last 10 messages = 5 exchanges)
+        message_history.append({"role": "user", "content": user_message})
+        message_history.append({"role": "assistant", "content": ai_response})
+        # Limit to last 10 messages to save DB space
+        if len(message_history) > 10:
+            message_history = message_history[-10:]
+        await state.set_state(user_id, state.AI_CHAT_ACTIVE, {"messages": message_history})
         
         # Yanıtı gönder
         await thinking_msg.delete()

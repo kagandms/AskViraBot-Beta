@@ -231,7 +231,7 @@ async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
     winner = check_winner(board)
     
     if winner:
-        await finish_get_xox_game(update, board, winner, lang, user_id, game_state["difficulty"])
+        await finish_get_xox_game(update, context, board, winner, lang, user_id, game_state["difficulty"])
         return
         
     # BOT HAMLESİ (O)
@@ -240,7 +240,7 @@ async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
         board[bot_move] = "O"
         winner = check_winner(board)
         if winner:
-            await finish_get_xox_game(update, board, winner, lang, user_id, game_state["difficulty"])
+            await finish_get_xox_game(update, context, board, winner, lang, user_id, game_state["difficulty"])
             return
             
     # OYUN DEVAM -> DB GÜNCELLE
@@ -252,7 +252,7 @@ async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
         reply_markup=get_xox_board_reply_markup(board)
     )
 
-async def finish_get_xox_game(update, board, winner, lang, user_id, difficulty):
+async def finish_get_xox_game(update, context, board, winner, lang, user_id, difficulty):
     """Oyunu bitir"""
     msg = ""
     if winner == "X": msg = TEXTS["xox_win"][lang]
@@ -268,7 +268,7 @@ async def finish_get_xox_game(update, board, winner, lang, user_id, difficulty):
     
     await asyncio.sleep(0.5)
     await state.clear_user_states(user_id)
-    await games_menu(update, context=None)
+    await games_menu(update, context)
 
 # --- DİĞER OYUNLAR ---
 @rate_limit("games")
