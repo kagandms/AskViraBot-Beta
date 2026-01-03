@@ -7,7 +7,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Con
 from config import BOT_TOKEN
 import state
 from texts import TEXTS, BUTTON_MAPPINGS
-from utils import get_ai_keyboard_markup, get_main_keyboard_markup
+from utils import get_main_keyboard_markup
 from rate_limiter import is_rate_limited, get_remaining_cooldown
 
 # Handler'ları içe aktar
