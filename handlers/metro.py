@@ -227,6 +227,9 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         return
         
     text = update.message.text
+    from texts import turkish_lower
+    text_lower = turkish_lower(text)
+    
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
     # Geri / Menü Kontrolü
@@ -237,7 +240,7 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
     current_selection = state.metro_selection.get(user_id, {})
     
     # 1. MENÜYE DÖNÜŞ (Eğer ana menü komutu geldiyse)
-    if text.lower() in menu_keywords:
+    if text_lower in menu_keywords:
         from handlers.general import tools_menu_command
         state.metro_browsing.discard(user_id)
         state.metro_selection.pop(user_id, None)
@@ -247,7 +250,7 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
     # 2. GERİ BUOTNU MANTIĞI - Tüm geri butonlarını kontrol et
     all_back_keywords = back_keywords | {"🔙 hat listesi", "🔙 line list", "🔙 список линий", 
                                          "🔙 istasyon listesi", "🔙 station list", "🔙 список станций"}
-    if text.lower() in all_back_keywords or any(kw in text.lower() for kw in ["geri", "back", "назад", "hat listesi", "istasyon listesi", "araçlar menüsü", "tools menu"]):
+    if text_lower in all_back_keywords or any(kw in text_lower for kw in ["geri", "back", "назад", "hat listesi", "istasyon listesi", "araçlar menüsü", "tools menu"]):
         # Eğer İstasyon seçiliyse -> Yön seçimi iptal, İstasyonlara dön (Aslında Yönü iptal edip İstasyon listesini tekrar gösteriyoruz, yani Hat seçili duruma dönüyoruz)
         # SIRA: Hat Seçimi -> İstasyon Seçimi -> Yön Seçimi
         
@@ -275,45 +278,45 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
 
     # 2.2 FAVORİ KULLANIMI (En üstte kontrol edilmeli)
     # ⭐ FAV... butonuna basıldığında
-    if text.startswith("⭐ FAV"):
+    if text_lower.startswith("⭐ fav"):
         await use_favorite(update, context, text, lang, user_id)
         return
 
     # 2.5 FAVORİYE EKLE BUTONU KONTROLÜ (Önce kontrol edilmeli çünkü içinde ⭐ var)
     add_fav_keywords = ["favoriye ekle", "add to favorites", "добавить в избранное", "⭐ ekle", "⭐ add"]
-    if any(kw in text.lower() for kw in add_fav_keywords):
+    if any(kw in text_lower for kw in add_fav_keywords):
         await save_to_favorites(update, context, lang, user_id)
         return
 
     # 2.55 METRO MENÜSÜ GERİ BUTONU (Favoriler ana menüsünden gelir -> Hat Listesine dön)
-    if any(kw in text.lower() for kw in ["🔙 metro menüsü", "🔙 metro menu", "🔙 меню метро"]):
+    if any(kw in text_lower for kw in ["🔙 metro menüsü", "🔙 metro menu", "🔙 меню метро"]):
         await metro_menu_command(update, context)
         return
 
     # 2.6 FAVORİLER MENÜSÜ BUTONLARI (Alt menü butonları)
     # "Favori İstasyonlar" butonu
-    if any(kw in text.lower() for kw in ["favori istasyonlar", "favorite stations", "избранные станции", "🚀"]):
+    if any(kw in text_lower for kw in ["favori istasyonlar", "favorite stations", "избранные станции", "🚀"]):
         await show_favorites_list(update, context, lang)
         return
-    if any(kw in text.lower() for kw in ["favorileri düzenle", "edit favorites", "ред. избранное"]):
+    if any(kw in text_lower for kw in ["favorileri düzenle", "edit favorites", "ред. избранное"]):
         await show_favorites_edit_menu(update, context, lang)
         return
 
     # 2.7 ANA FAVORİLER BUTONU KONTROLÜ (En sona bırakıldı ki diğer ⭐'ları yutmasın)
     fav_keywords = ["favorilerim", "my favorites", "избранное", "⭐"]
-    if any(kw in text.lower() for kw in fav_keywords):
+    if any(kw in text_lower for kw in fav_keywords):
         await show_favorites(update, context, lang)
         return
 
     # 2.8 FAVORİLER MENÜSÜ GERİ BUTONU (Özel case)
     # Bu buton "Show Favorites List" içinden geliyor, ana favori menüsüne dönmeli
     fav_back_keywords = ["🔙 favoriler menüsü", "🔙 favorites menu", "🔙 меню избранного"]
-    if any(kw in text.lower() for kw in fav_back_keywords):
+    if any(kw in text_lower for kw in fav_back_keywords):
         await show_favorites(update, context, lang)
         return
 
     # 2.9 SİLME BUTONU KONTROLÜ (🗑️ FAV...)
-    if text.startswith("🗑️ FAV"):
+    if text_lower.startswith("🗑️ fav"):
         await delete_favorite(update, context, text, lang, user_id)
         return
 
