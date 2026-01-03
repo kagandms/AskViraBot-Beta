@@ -55,9 +55,9 @@ async def handle_admin_message(update: Update, context: ContextTypes.DEFAULT_TYP
         return False
     
     text = update.message.text.strip()
-    # Debug log
-    from main import logger
-    logger.info(f"Admin Action: User {user_id} sent '{text}'")
+    # Debug log (using logging directly to avoid circular import)
+    import logging
+    logging.info(f"Admin Action: User {user_id} sent '{text}'")
     
     # Geri butonu
     if is_back_button(text):
