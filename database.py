@@ -355,6 +355,21 @@ def increment_ai_usage(user_id: int | str, today_str: str) -> int:
         logger.error(f"AI kullanım artırma hatası (User: {user_id}): {e}")
         return 0
 
+
+def get_ai_total_stats(today_str: str) -> dict:
+    """Bugünkü toplam AI kullanım istatistiklerini döndürür."""
+    if not supabase: return {"total_messages": 0, "unique_users": 0}
+    try:
+        response = supabase.table("ai_usage").select("usage_count").eq("usage_date", today_str).execute()
+        if response.data:
+            total = sum(row["usage_count"] for row in response.data)
+            unique = len(response.data)
+            return {"total_messages": total, "unique_users": unique}
+        return {"total_messages": 0, "unique_users": 0}
+    except Exception as e:
+        logger.error(f"AI istatistik hatası: {e}")
+        return {"total_messages": 0, "unique_users": 0}
+
 # --- STATE MANAGEMENT (Durum Yönetimi) ---
 def set_user_state(user_id: int | str, state_name: str, state_data: dict = None) -> None:
     """Kullanıcının durumunu ve verisini kaydeder/günceller."""

@@ -7,7 +7,6 @@ from texts import TEXTS, BUTTON_MAPPINGS
 from utils import get_notes_keyboard_markup, get_input_back_keyboard_markup
 
 # --- NOTLAR MENÜSÜ ---
-# --- NOTLAR MENÜSÜ ---
 async def notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron

@@ -77,20 +77,6 @@ async def increment_usage_async(user_id: int) -> None:
     await asyncio.to_thread(db.increment_ai_usage, user_id, today)
 
 
-# Eski senkron fonksiyonlar uyumluluk için
-def get_user_remaining_quota(user_id: int) -> int:
-    """Kullanıcının kalan günlük mesaj hakkı (eğer senkron gerekiyorsa)."""
-    today = get_today_str()
-    used = db.get_ai_daily_usage(user_id, today)
-    limit = 999 if user_id in ADMIN_IDS else AI_DAILY_LIMIT
-    return max(0, limit - used)
-
-
-def increment_usage(user_id: int) -> None:
-    """Kullanıcının günlük sayacını artır (senkron, fallback)."""
-    today = get_today_str()
-    db.increment_ai_usage(user_id, today)
-
 # --- HANDLER'LAR ---
 @rate_limit("heavy")
 async def ai_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

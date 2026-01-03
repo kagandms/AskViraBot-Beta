@@ -127,9 +127,9 @@ async def show_stats(query, context):
         reminders = await asyncio.to_thread(db.get_all_reminders_count)
         
         # AI kullanım istatistikleri (Veritabanından)
-        # TODO: Implement granular daily usage if needed. For now showing total.
-        # total_ai_usage = sum(state.ai_daily_usage.values()) 
-        # ai_active_users = len(state.ai_daily_usage)
+        from datetime import date
+        today_str = date.today().isoformat()
+        ai_stats = await asyncio.to_thread(db.get_ai_total_stats, today_str)
         
         tz = pytz.timezone(TIMEZONE)
         now = datetime.now(tz).strftime("%d.%m.%Y %H:%M")
@@ -139,6 +139,10 @@ async def show_stats(query, context):
 👥 Toplam Kullanıcı: *{users}*
 📝 Toplam Not: *{notes}*
 ⏰ Aktif Hatırlatıcı: *{reminders}*
+
+🤖 *AI Kullanımı (Bugün)*
+💬 Mesaj: *{ai_stats['total_messages']}*
+👤 Aktif Kullanıcı: *{ai_stats['unique_users']}*
 
 🕐 Güncelleme: {now}
 """

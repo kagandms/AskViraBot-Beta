@@ -25,10 +25,6 @@ METRO_SELECTION = "metro_selection" # Data: selection dict
 ADMIN_MENU_ACTIVE = "admin_menu_active"
 DEVELOPER_MENU_ACTIVE = "developer_menu_active"
 
-# Old variables for backward compatibility usage in some places (though they should be removed)
-ai_daily_usage = {} 
-ai_last_reset_date = None
-
 # --- ASYNC HELPERS ---
 
 async def set_state(user_id: int | str, state_name: str, data: dict = None) -> None:
