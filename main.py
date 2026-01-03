@@ -5,6 +5,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Con
 
 # Modülleri içe aktar
 from config import BOT_TOKEN
+import database as db
 import state
 from texts import TEXTS, BUTTON_MAPPINGS
 from utils import get_main_keyboard_markup

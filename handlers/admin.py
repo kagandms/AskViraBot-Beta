@@ -9,7 +9,6 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKe
 from telegram.ext import ContextTypes
 import database as db
 from config import ADMIN_IDS, TIMEZONE
-from config import ADMIN_IDS, TIMEZONE
 from utils import get_main_keyboard_markup, is_back_button
 import pytz
 import state
