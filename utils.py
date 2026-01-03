@@ -108,13 +108,14 @@ def is_back_button(text: str) -> bool:
         "🔙 oyun odası", "🔙 game room", "🔙 игровая комната",
         "🔙 hat listesi", "🔙 line list", "🔙 список линий",
         "🔙 istasyon listesi", "🔙 station list", "🔙 список станций",
-        "🔙 favoriler menüsü", "🔙 favorites menu", "🔙 меню избранного"
+        "🔙 favoriler menüsü", "🔙 favorites menu", "🔙 меню избранного",
+        "◀️ geri", "◀️ back", "◀️ назад"
     }
 
     return (text_lower in generic_back) or \
            (text_lower in mapped_back) or \
            (text_lower in specific_back) or \
-           any(k in text_lower for k in ["🔙"])
+           any(k in text_lower for k in ["🔙", "◀️"])
 
 def format_remaining_time(remaining_seconds: float, lang: str) -> str:
     days = int(remaining_seconds // (24 * 3600))
