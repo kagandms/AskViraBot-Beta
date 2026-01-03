@@ -462,7 +462,7 @@ async def show_directions(update, context, line_id, station_id, lang):
         reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     )
 
-async def show_timetable(update, context, station_id, direction_id, direction_name, lang):
+async def show_timetable(update, context, station_id, direction_id, direction_name, lang, is_favorite_view=False):
     # Loading mesajı
     loading_texts = {"tr": "⏳ Sefer saatleri yükleniyor...", "en": "⏳ Loading departure times...", "ru": "⏳ Загрузка расписания..."}
     loading_msg = await update.message.reply_text(loading_texts.get(lang, loading_texts["en"]))
@@ -515,19 +515,22 @@ async def show_timetable(update, context, station_id, direction_id, direction_na
     
     message = header + "\n\n" + "\n".join(departure_lines)
     
-    # Favoriye ekle butonu
-    fav_add_texts = {"tr": "⭐ Favoriye Ekle", "en": "⭐ Add to Favorites", "ru": "⭐ Добавить в Избранное"}
-    back_texts = {"tr": "🔙 İstasyon Listesi", "en": "🔙 Station List", "ru": "🔙 Список Станций"}
+    # Butonları ayarla
+    keyboard = []
     
-    keyboard = [
-        [fav_add_texts.get(lang, fav_add_texts["en"])],
-        [back_texts.get(lang, back_texts["en"])]
-    ]
-    
-    # direction_id'yi kaydet (favoriye eklemek için)
-    state.metro_selection[update.effective_user.id]["direction_id"] = direction_id
-    state.metro_selection[update.effective_user.id]["direction_name"] = direction_name
-    
+    if not is_favorite_view:
+        # Favoriye ekle butonu (Sadece normal gezintide göster)
+        fav_add_texts = {"tr": "⭐ Favoriye Ekle", "en": "⭐ Add to Favorites", "ru": "⭐ Добавить в Избранное"}
+        keyboard.append([fav_add_texts.get(lang, fav_add_texts["en"])])
+        
+        # İstasyon Listesine dön
+        back_texts = {"tr": "🔙 İstasyon Listesi", "en": "🔙 Station List", "ru": "🔙 Список Станций"}
+        keyboard.append([back_texts.get(lang, back_texts["en"])])
+    else:
+        # Favoriler Menüsüne dön
+        back_texts = {"tr": "🔙 Favoriler Menüsü", "en": "🔙 Favorites Menu", "ru": "🔙 Меню Избранного"}
+        keyboard.append([back_texts.get(lang, back_texts["en"])])
+
     await update.message.reply_text(
         message,
         reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
@@ -754,7 +757,8 @@ async def use_favorite(update: Update, context: ContextTypes.DEFAULT_TYPE, text:
             fav["station_id"], 
             fav["direction_id"], 
             fav["direction_name"], 
-            lang
+            lang,
+            is_favorite_view=True
         )
         
     except (ValueError, IndexError, KeyError) as e:
