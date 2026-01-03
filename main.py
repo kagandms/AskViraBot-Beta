@@ -92,13 +92,13 @@ async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYP
         return
     if await state.check_state(user_id, state.WAITING_FOR_PDF_CONVERSION_INPUT):
         if update.message.document or update.message.photo or update.message.text:
-            await tools.handle_pdf_input(update, context)
+            await pdf.handle_pdf_input(update, context)
         return
     if await state.check_state(user_id, state.WAITING_FOR_WEATHER_CITY):
-        await tools.get_weather_data(update, context, text_raw)
+        await weather.get_weather_data(update, context, text_raw)
         return
     if await state.check_state(user_id, state.WAITING_FOR_VIDEO_LINK):
-        await tools.download_and_send_media(update, context)
+        await video.download_and_send_media(update, context)
         return
     if await state.check_state(user_id, state.AI_CHAT_ACTIVE):
         await ai_chat.handle_ai_message(update, context)
@@ -177,8 +177,8 @@ def main():
         # Tools
         CommandHandler("time", tools.time_command),
         CommandHandler("qrcode", tools.qrcode_command),
-        CommandHandler("pdfconverter", tools.pdf_converter_menu),
-        CommandHandler("weather", tools.weather_command),
+        CommandHandler("pdfconverter", pdf.pdf_converter_menu),
+        CommandHandler("weather", weather.weather_command),
         CommandHandler("developer", tools.show_developer_info),
         
         # Notes
@@ -209,7 +209,7 @@ def main():
         CallbackQueryHandler(tools.handle_social_media_callbacks, pattern=r"^(back_to_main_menu)$"),
         CallbackQueryHandler(reminders.delete_reminder_callback, pattern=r"^(delete_rem_\d+|reminders_back_inline)$"),
         CallbackQueryHandler(admin.admin_callback, pattern=r"^admin_"),
-        CallbackQueryHandler(tools.weather_callback_query, pattern=r"^forecast_"),
+        CallbackQueryHandler(weather.weather_callback_query, pattern=r"^forecast_"),
         # Metro removed (Reply Keyboard)
         
         # Messages
