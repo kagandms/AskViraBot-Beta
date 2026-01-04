@@ -452,7 +452,7 @@ async def slot_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     )
 
 async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Slot makinesini çevir"""
+    """Slot makinesini çevir (Animasyonlu)"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     text = update.message.text.lower() if update.message.text else ""
@@ -468,64 +468,82 @@ async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not any(k in text for k in spin_keywords):
         return
     
-    # Animasyon efekti için "çevriliyor" mesajı
-    spinning_msg = await update.message.reply_text("🎰 Çevriliyor...")
-    await asyncio.sleep(0.8)
+    # Başlangıç mesajı
+    msg_template = "🎰 *SLOT MAKİNESİ*\n\n╔═══════════╗\n║ {r1} │ {r2} │ {r3} ║\n╚═══════════╝\n\n{status}"
     
-    # 3 rastgele sembol seç
+    initial_status = {"tr": "Çevriliyor...", "en": "Spinning...", "ru": "Крутится..."}
+    spinning_msg = await update.message.reply_text(
+        msg_template.format(r1="❓", r2="❓", r3="❓", status=initial_status.get(lang, "Spinning...")),
+        parse_mode="Markdown"
+    )
+    
+    # --- ANİMASYON DÖNGÜSÜ (3 Adım) ---
+    for _ in range(3):
+        await asyncio.sleep(0.5) # Yarım saniye bekle
+        
+        # Rastgele semboller göster (Animasyon)
+        anim_r1 = random.choice(SLOT_SYMBOLS)
+        anim_r2 = random.choice(SLOT_SYMBOLS)
+        anim_r3 = random.choice(SLOT_SYMBOLS)
+        
+        try:
+            await spinning_msg.edit_text(
+                msg_template.format(r1=anim_r1, r2=anim_r2, r3=anim_r3, status=initial_status.get(lang, "Spinning...")),
+                parse_mode="Markdown"
+            )
+        except Exception:
+            pass # Hızlı tıklamada hata olursa geç
+            
+    await asyncio.sleep(0.5) # Son bekleme
+    
+    # --- NİHAİ SONUÇ ---
     reel1 = random.choice(SLOT_SYMBOLS)
     reel2 = random.choice(SLOT_SYMBOLS)
     reel3 = random.choice(SLOT_SYMBOLS)
     
-    result_line = f"║ {reel1} │ {reel2} │ {reel3} ║"
-    
     # Sonucu belirle
     if reel1 == reel2 == reel3:
         if reel1 == SLOT_JACKPOT:
-            result_text = {
-                "tr": f"🎰 *SLOT MAKİNESİ*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n🎉🎉🎉 *JACKPOT!* 🎉🎉🎉\n\n💎 Büyük ödülü kazandın!",
-                "en": f"🎰 *SLOT MACHINE*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n🎉🎉🎉 *JACKPOT!* 🎉🎉🎉\n\n💎 You hit the big prize!",
-                "ru": f"🎰 *СЛОТ МАШИНА*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n🎉🎉🎉 *ДЖЕКПОТ!* 🎉🎉🎉\n\n💎 Ты сорвал куш!"
+            status_text = {
+                "tr": "🎉🎉🎉 *JACKPOT!* 🎉🎉🎉\n\n💎 Büyük ödülü kazandın!",
+                "en": "🎉🎉🎉 *JACKPOT!* 🎉🎉🎉\n\n💎 You hit the big prize!",
+                "ru": "🎉🎉🎉 *ДЖЕКПОТ!* 🎉🎉🎉\n\n💎 Ты сорвал куш!"
             }
             win_type = "jackpot"
         else:
-            result_text = {
-                "tr": f"🎰 *SLOT MAKİNESİ*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n🎉 *Kazandın!* 3 aynı sembol!",
-                "en": f"🎰 *SLOT MACHINE*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n🎉 *You win!* 3 matching symbols!",
-                "ru": f"🎰 *СЛОТ МАШИНА*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n🎉 *Победа!* 3 одинаковых символа!"
+            status_text = {
+                "tr": "🎉 *Kazandın!* 3 aynı sembol!",
+                "en": "🎉 *You win!* 3 matching symbols!",
+                "ru": "🎉 *Победа!* 3 одинаковых символа!"
             }
             win_type = "win"
     elif reel1 == reel2 or reel2 == reel3 or reel1 == reel3:
-        result_text = {
-            "tr": f"🎰 *SLOT MAKİNESİ*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n😊 2 aynı sembol! Az kaldı...",
-            "en": f"🎰 *SLOT MACHINE*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n😊 2 matching! So close...",
-            "ru": f"🎰 *СЛОТ МАШИНА*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n😊 2 одинаковых! Почти..."
+        status_text = {
+            "tr": "😊 2 aynı sembol! Az kaldı...",
+            "en": "😊 2 matching! So close...",
+            "ru": "😊 2 одинаковых! Почти..."
         }
         win_type = "close"
     else:
-        result_text = {
-            "tr": f"🎰 *SLOT MAKİNESİ*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n😔 Kaybettin! Tekrar dene.",
-            "en": f"🎰 *SLOT MACHINE*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n😔 You lose! Try again.",
-            "ru": f"🎰 *СЛОТ МАШИНА*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n😔 Проигрыш! Попробуй ещё."
+        status_text = {
+            "tr": "😔 Kaybettin! Tekrar dene.",
+            "en": "😔 You lose! Try again.",
+            "ru": "😔 Проигрыш! Попробуй ещё."
         }
         win_type = "lose"
     
     # Log kaydet
     await asyncio.to_thread(db.log_slot_game, user_id, f"{reel1}{reel2}{reel3}", win_type)
     
-    # Spinning mesajını güncelle
+    # Final mesaj
     try:
         await spinning_msg.edit_text(
-            result_text.get(lang, result_text["en"]),
-            reply_markup=None,
-            parse_mode="Markdown"
-        )
-    except Exception:
-        await update.message.reply_text(
-            result_text.get(lang, result_text["en"]),
+            msg_template.format(r1=reel1, r2=reel2, r3=reel3, status=status_text.get(lang, status_text["en"])),
             reply_markup=get_slot_keyboard(lang),
             parse_mode="Markdown"
         )
+    except Exception:
+        pass
 
 # --- BLACKJACK (21) ---
 CARD_VALUES = {'A': 11, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 10, 'Q': 10, 'K': 10}
