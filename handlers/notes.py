@@ -29,10 +29,12 @@ async def notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
             reply_markup=get_notes_keyboard_markup(lang)
         )
     else:
-        await update.message.reply_text(
+        sent_msg = await update.message.reply_text(
             TEXTS["notes_menu_prompt"][lang],
             reply_markup=get_notes_keyboard_markup(lang)
         )
+        # Store for cleanup
+        await state.set_state(user_id, state.NOTES_IN_MENU, {"message_id": sent_msg.message_id})
 
 async def addnote_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id

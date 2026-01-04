@@ -57,8 +57,8 @@ async def prompt_reminder_input(update: Update, context: ContextTypes.DEFAULT_TY
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     await state.clear_user_states(user_id)
-    await state.set_state(user_id, state.WAITING_FOR_REMINDER_INPUT)
-    await update.message.reply_text(TEXTS["remind_prompt_input"][lang], reply_markup=get_input_back_keyboard_markup(lang))
+    sent_msg = await update.message.reply_text(TEXTS["remind_prompt_input"][lang], reply_markup=get_input_back_keyboard_markup(lang))
+    await state.set_state(user_id, state.WAITING_FOR_REMINDER_INPUT, {"message_id": sent_msg.message_id})
 
 async def process_reminder_input(update: Update, context: ContextTypes.DEFAULT_TYPE, input_string: str = None):
     user_id = update.effective_user.id
@@ -67,6 +67,15 @@ async def process_reminder_input(update: Update, context: ContextTypes.DEFAULT_T
     text = input_string if input_string else update.message.text
 
     if text.lower() in BUTTON_MAPPINGS["menu"]:
+        # Cleanup
+        try:
+            state_data = await state.get_data(user_id)
+            if "message_id" in state_data:
+                await context.bot.delete_message(chat_id=user_id, message_id=state_data["message_id"])
+            await update.message.delete()
+        except Exception:
+            pass
+
         await state.clear_user_states(user_id)
         await reminder_menu(update, context)
         return

@@ -237,11 +237,14 @@ async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     back_texts = {"tr": "🔙 Araçlar Menüsü", "en": "🔙 Tools Menu", "ru": "🔙 Меню Инструментов"}
     keyboard.append([back_texts.get(lang, back_texts["en"])])
     
-    await update.message.reply_text(
+    sent_msg = await update.message.reply_text(
         TEXTS["metro_menu_prompt"][lang],
         reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True),
         parse_mode="Markdown"
     )
+    
+    # Store message_id in state
+    await state.set_state(user_id, state.METRO_BROWSING, {"message_id": sent_msg.message_id})
 
 async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Metro menüsü içindeki metin etkileşimlerini yönetir"""
@@ -287,24 +290,50 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         # SIRA: Hat Seçimi -> İstasyon Seçimi -> Yön Seçimi
         
         if "station" in current_selection:
+            # Clean up previous message
+            try:
+                if "message_id" in current_selection:
+                    await context.bot.delete_message(chat_id=user_id, message_id=current_selection["message_id"])
+                await update.message.delete()
+            except Exception:
+                pass
+
             # İstasyondan hatta dön
             current_selection.pop("station", None)
             current_selection.pop("station_name", None)
+            current_selection.pop("message_id", None) # Clear ID to avoid issues
             # Update state data
             await state.set_state(user_id, state.METRO_BROWSING, current_selection)
             await show_stations(update, context, current_selection["line"], current_selection["line_name"], lang)
             return
             
         elif "line" in current_selection:
+            # Clean up previous message
+            try:
+                if "message_id" in current_selection:
+                    await context.bot.delete_message(chat_id=user_id, message_id=current_selection["message_id"])
+                await update.message.delete()
+            except Exception:
+                pass
+
             # Hattan hat listesine dön
             current_selection.pop("line", None)
             current_selection.pop("line_name", None)
+            current_selection.pop("message_id", None)
             # Update state data
             await state.set_state(user_id, state.METRO_BROWSING, current_selection)
             await metro_menu_command(update, context) # Hatları listele
             return
             
         else:
+            # Clean up previous message
+            try:
+                if "message_id" in current_selection:
+                    await context.bot.delete_message(chat_id=user_id, message_id=current_selection["message_id"])
+                await update.message.delete()
+            except Exception:
+                pass
+
             # Metro'dan çık, Araçlar menüsüne dön
             from handlers.general import tools_menu_command
             await state.clear_user_states(user_id)
@@ -463,10 +492,16 @@ async def show_stations(update, context, line_id, line_name, lang):
     back_texts = {"tr": "🔙 Hat Listesi", "en": "🔙 Line List", "ru": "🔙 Список Линий"}
     keyboard.append([back_texts.get(lang, back_texts["en"])])
     
-    await update.message.reply_text(
+    sent_msg = await update.message.reply_text(
         TEXTS["metro_select_station"][lang].format(line=line_name),
         reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     )
+    
+    # Store message_id - Fetch current state to merge
+    user_id = update.effective_user.id
+    current_state = await state.get_data(user_id) or {}
+    current_state["message_id"] = sent_msg.message_id
+    await state.set_state(user_id, state.METRO_BROWSING, current_state)
 
 async def show_directions(update, context, line_id, station_id, lang):
     # Loading mesajı
@@ -494,10 +529,16 @@ async def show_directions(update, context, line_id, station_id, lang):
     back_texts = {"tr": "🔙 İstasyon Listesi", "en": "🔙 Station List", "ru": "🔙 Список Станций"}
     keyboard.append([back_texts.get(lang, back_texts["en"])])
     
-    await update.message.reply_text(
+    sent_msg = await update.message.reply_text(
         TEXTS["metro_select_direction"][lang],
         reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     )
+    
+    # Store message_id
+    user_id = update.effective_user.id
+    current_state = await state.get_data(user_id) or {}
+    current_state["message_id"] = sent_msg.message_id
+    await state.set_state(user_id, state.METRO_BROWSING, current_state)
 
 async def show_timetable(update, context, station_id, direction_id, direction_name, lang, is_favorite_view=False):
     # Loading mesajı
@@ -572,10 +613,13 @@ async def show_timetable(update, context, station_id, direction_id, direction_na
         back_texts = {"tr": "🔙 Favoriler Menüsü", "en": "🔙 Favorites Menu", "ru": "🔙 Меню Избранного"}
         keyboard.append([back_texts.get(lang, back_texts["en"])])
 
-    await update.message.reply_text(
+    sent_msg = await update.message.reply_text(
         message,
         reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     )
+    
+    current_selection["message_id"] = sent_msg.message_id
+    await state.set_state(user_id, state.METRO_BROWSING, current_selection)
 
 
 # --- FAVORİ FONKSİYONLARI ---

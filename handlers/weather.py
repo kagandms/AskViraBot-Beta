@@ -35,12 +35,11 @@ async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         await get_weather_data(update, context, city)
     else:
         await state.clear_user_states(user_id)
-        await state.set_state(user_id, state.WAITING_FOR_WEATHER_CITY)
-        
-        await update.message.reply_text(
+        sent_msg = await update.message.reply_text(
             TEXTS["weather_prompt_city"][lang],
             reply_markup=get_weather_cities_keyboard(lang)
         )
+        await state.set_state(user_id, state.WAITING_FOR_WEATHER_CITY, {"message_id": sent_msg.message_id})
 
 async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, city_name):
     user_id = update.effective_user.id
@@ -57,6 +56,15 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
 
     city_name_lower = city_name.lower().strip()
     if is_back_button(city_name_lower):
+        # Cleanup
+        try:
+            state_data = await state.get_data(user_id)
+            if "message_id" in state_data:
+                await context.bot.delete_message(chat_id=user_id, message_id=state_data["message_id"])
+            await update.message.delete()
+        except Exception:
+            pass
+
         from handlers.general import tools_menu_command
         await state.clear_user_states(user_id)
         await tools_menu_command(update, context)

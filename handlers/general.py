@@ -21,6 +21,18 @@ async def tools_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
+    # Cleanup previous state/messages
+    try:
+        current_data = await state.get_data(user_id)
+        if current_data and "message_id" in current_data:
+             await context.bot.delete_message(chat_id=user_id, message_id=current_data["message_id"])
+        if update.message:
+            await update.message.delete()
+    except Exception:
+        pass
+
+    await state.clear_user_states(user_id)
+    
     await update.message.reply_text(
         TEXTS["tools_menu_prompt"][lang],
         reply_markup=get_tools_keyboard_markup(lang)
@@ -32,6 +44,17 @@ async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Cleanup
+    try:
+        current_data = await state.get_data(user_id)
+        if current_data and "message_id" in current_data:
+             await context.bot.delete_message(chat_id=user_id, message_id=current_data["message_id"])
+        if update.message:
+            await update.message.delete()
+    except Exception:
+        pass
+        
     await state.clear_user_states(user_id)
     
     # Eğer callback query (buton) üzerinden geldiyse
