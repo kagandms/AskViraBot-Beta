@@ -24,45 +24,52 @@ async def games_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         reply_markup=get_games_keyboard_markup(lang)
     )
 
-# --- XOX (TIC TAC TOE) - REPLY KEYBOARD VERSION ---
-# ... (Helper functions remain same until xox_start) ...
-def get_xox_board_reply_markup(board):
-    """3x3 XOX tahtası (Reply Keyboard) - Numaralı"""
-    keyboard = []
-    mapping = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"]
-    
-    current_row = []
-    for i in range(9):
-        cell = board[i]
-        if cell == " ":
-            text = mapping[i]
-        else:
-            text = "❌" if cell == "X" else "⭕"
-        current_row.append(text)
-        if len(current_row) == 3:
-            keyboard.append(current_row)
-            current_row = []
-            
-    # Çıkış butonu
-    keyboard.append(["🔙 Oyunlar Menüsü"])
-    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+# --- XOX (TIC TAC TOE) - INLINE KEYBOARD VERSION ---
 
-def get_xox_difficulty_reply_markup(lang):
-    """Zorluk seçimi için Reply keyboard"""
-    texts = {
+def get_xox_board_inline_markup(board, game_over=False):
+    """3x3 XOX tahtası (Inline Keyboard)"""
+    keyboard = []
+    
+    for row_start in range(0, 9, 3):
+        row = []
+        for i in range(row_start, row_start + 3):
+            cell = board[i]
+            if cell == " ":
+                text = "·"  # Boş hücre
+                callback = f"xox_{i}" if not game_over else "xox_noop"
+            else:
+                text = "❌" if cell == "X" else "⭕"
+                callback = "xox_noop"  # Dolu hücreye tıklanamaz
+            row.append(InlineKeyboardButton(text, callback_data=callback))
+        keyboard.append(row)
+    
+    # Alt butonlar
+    if game_over:
+        keyboard.append([
+            InlineKeyboardButton("🔄 Tekrar", callback_data="xox_restart"),
+            InlineKeyboardButton("🔙 Çıkış", callback_data="xox_exit")
+        ])
+    else:
+        keyboard.append([InlineKeyboardButton("🔙 Çıkış", callback_data="xox_exit")])
+    
+    return InlineKeyboardMarkup(keyboard)
+
+def get_xox_difficulty_inline_markup(lang):
+    """Zorluk seçimi için Inline keyboard"""
+    labels = {
         "tr": ["🟢 Kolay", "🟡 Orta", "🔴 Zor"],
         "en": ["🟢 Easy", "🟡 Medium", "🔴 Hard"],
         "ru": ["🟢 Легко", "🟡 Средне", "🔴 Сложно"]
     }
-    labels = texts.get(lang, texts["en"])
-    back_texts = {"tr": "🔙 Oyun Odası", "en": "🔙 Game Room", "ru": "🔙 Игровая Комната"}
-    back = back_texts.get(lang, back_texts["en"])
+    buttons = labels.get(lang, labels["en"])
     
     keyboard = [
-        [labels[0], labels[1], labels[2]],
-        [back]
+        [InlineKeyboardButton(buttons[0], callback_data="xox_diff_easy"),
+         InlineKeyboardButton(buttons[1], callback_data="xox_diff_medium"),
+         InlineKeyboardButton(buttons[2], callback_data="xox_diff_hard")],
+        [InlineKeyboardButton("🔙", callback_data="xox_exit")]
     ]
-    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return InlineKeyboardMarkup(keyboard)
 
 # ... (check_winner, bot_move functions remain same) ...
 def check_winner(board):
@@ -134,47 +141,195 @@ def bot_make_move(board, difficulty="easy"):
 
 @rate_limit("games")
 async def xox_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Zorluk seçimini başlat (Reply Keyboard)"""
+    """XOX oyununu başlat (Inline Keyboard - single message)"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
-    # State ayarla
-    await state.clear_user_states(user_id)
-    initial_game_state = {"board": [" "]*9, "difficulty": None, "active": False}
-    await state.set_state(user_id, state.PLAYING_XOX, initial_game_state)
+    # Kullanıcının mesajını sil (temiz UI)
+    try:
+        await update.message.delete()
+    except Exception:
+        pass
     
-    # Zorluk seçim metni
     difficulty_prompt = {
-        "tr": "🎮 XOX Oyunu\n\nZorluk seviyesi seçin:",
-        "en": "🎮 XOX Game\n\nSelect difficulty level:",
-        "ru": "🎮 Игра XOX\n\nВыберите уровень сложности:"
+        "tr": "🎮 *XOX Oyunu*\n\nZorluk seviyesi seçin:",
+        "en": "🎮 *XOX Game*\n\nSelect difficulty level:",
+        "ru": "🎮 *Игра XOX*\n\nВыберите уровень сложности:"
     }
     
-    sent_message = await update.message.reply_text(
-        difficulty_prompt.get(lang, difficulty_prompt["en"]),
-        reply_markup=get_xox_difficulty_reply_markup(lang)
+    sent_message = await context.bot.send_message(
+        chat_id=user_id,
+        text=difficulty_prompt.get(lang, difficulty_prompt["en"]),
+        reply_markup=get_xox_difficulty_inline_markup(lang),
+        parse_mode="Markdown"
     )
     
-    # Update state with message id (requires fetching current state first if we want to preserve other fields, but here we are initializing)
-    # Actually, we set initial state just above. Let's update it.
-    initial_game_state["message_id"] = sent_message.message_id
-    await state.set_state(user_id, state.PLAYING_XOX, initial_game_state)
+    # State kaydet
+    await state.clear_user_states(user_id)
+    await state.set_state(user_id, state.PLAYING_XOX, {
+        "board": [" "]*9,
+        "difficulty": None,
+        "active": False,
+        "message_id": sent_message.message_id,
+        "lang": lang
+    })
 
-async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """XOX hamlelerini ve seçimlerini yönetir"""
-    user_id = update.effective_user.id
-    # State zaten main.py'de kontrol edildi
-        
-    text = update.message.text
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+async def handle_xox_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """XOX Inline Keyboard callback'lerini işle"""
+    query = update.callback_query
+    user_id = query.from_user.id
+    data = query.data
     
-    # Retrieve game state from DB
+    await query.answer()  # Callback onayı
+    
     game_state = await state.get_data(user_id)
-    if not game_state: # Should not happen if check_state passed
+    if not game_state:
+        await query.message.delete()
         return
+    
+    lang = game_state.get("lang", "en")
+    board = game_state.get("board", [" "]*9)
+    
+    # --- ÇIKIŞ ---
+    if data == "xox_exit":
+        await query.message.delete()
+        await state.clear_user_states(user_id)
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=TEXTS["games_menu_prompt"][lang],
+            reply_markup=get_games_keyboard_markup(lang)
+        )
+        return
+    
+    # --- NOOP (dolu hücre veya oyun bitti) ---
+    if data == "xox_noop":
+        return
+    
+    # --- TEKRAR OYNA ---
+    if data == "xox_restart":
+        difficulty_prompt = {
+            "tr": "🎮 *XOX Oyunu*\n\nZorluk seviyesi seçin:",
+            "en": "🎮 *XOX Game*\n\nSelect difficulty level:",
+            "ru": "🎮 *Игра XOX*\n\nВыберите уровень сложности:"
+        }
+        
+        await query.message.edit_text(
+            difficulty_prompt.get(lang, difficulty_prompt["en"]),
+            reply_markup=get_xox_difficulty_inline_markup(lang),
+            parse_mode="Markdown"
+        )
+        
+        await state.set_state(user_id, state.PLAYING_XOX, {
+            "board": [" "]*9,
+            "difficulty": None,
+            "active": False,
+            "message_id": query.message.message_id,
+            "lang": lang
+        })
+        return
+    
+    # --- ZORLUK SEÇİMİ ---
+    if data.startswith("xox_diff_"):
+        difficulty = data.replace("xox_diff_", "")
+        
+        game_state["difficulty"] = difficulty
+        game_state["active"] = True
+        game_state["board"] = [" "]*9
+        
+        await state.set_state(user_id, state.PLAYING_XOX, game_state)
+        
+        welcome = {
+            "tr": "🎮 *XOX Oyunu*\n\nSen: ❌ | Bot: ⭕\n\nBir hücreye tıkla!",
+            "en": "🎮 *XOX Game*\n\nYou: ❌ | Bot: ⭕\n\nTap a cell!",
+            "ru": "🎮 *Игра XOX*\n\nТы: ❌ | Бот: ⭕\n\nНажми на клетку!"
+        }
+        
+        await query.message.edit_text(
+            welcome.get(lang, welcome["en"]),
+            reply_markup=get_xox_board_inline_markup(game_state["board"]),
+            parse_mode="Markdown"
+        )
+        return
+    
+    # --- OYUN HAMLESİ ---
+    if data.startswith("xox_") and data[4:].isdigit():
+        if not game_state.get("active"):
+            return
+        
+        move_index = int(data[4:])
+        
+        if board[move_index] != " ":
+            return  # Dolu hücre
+        
+        # KULLANICI HAMLESİ (X)
+        board[move_index] = "X"
+        winner = check_winner(board)
+        
+        if winner:
+            await finish_xox_inline(query, context, board, winner, lang, user_id, game_state["difficulty"])
+            return
+        
+        # BOT HAMLESİ (O)
+        bot_move_idx = bot_make_move(board, game_state["difficulty"])
+        if bot_move_idx is not None:
+            board[bot_move_idx] = "O"
+            winner = check_winner(board)
+            if winner:
+                await finish_xox_inline(query, context, board, winner, lang, user_id, game_state["difficulty"])
+                return
+        
+        # OYUN DEVAM
+        game_state["board"] = board
+        await state.set_state(user_id, state.PLAYING_XOX, game_state)
+        
+        status = {
+            "tr": "🎮 *XOX Oyunu*\n\nSen: ❌ | Bot: ⭕",
+            "en": "🎮 *XOX Game*\n\nYou: ❌ | Bot: ⭕",
+            "ru": "🎮 *Игра XOX*\n\nТы: ❌ | Бот: ⭕"
+        }
+        
+        await query.message.edit_text(
+            status.get(lang, status["en"]),
+            reply_markup=get_xox_board_inline_markup(board),
+            parse_mode="Markdown"
+        )
 
-    # ÇIKIŞ / GERİ KONTROLÜ
-    # ÇIKIŞ / GERİ KONTROLÜ
+async def finish_xox_inline(query, context, board, winner, lang, user_id, difficulty):
+    """XOX oyununu bitir (Inline versiyonu)"""
+    if winner == "X":
+        msg = TEXTS["xox_win"][lang]
+    elif winner == "O":
+        msg = TEXTS["xox_lose"][lang]
+    else:
+        msg = TEXTS["xox_draw"][lang]
+    
+    await query.message.edit_text(
+        f"🎮 *XOX*\n\n{msg}",
+        reply_markup=get_xox_board_inline_markup(board, game_over=True),
+        parse_mode="Markdown"
+    )
+    
+    await asyncio.to_thread(db.log_xox_game, user_id, winner, difficulty)
+    
+    # State'i güncelle (oyun bitti)
+    game_state = await state.get_data(user_id)
+    if game_state:
+        game_state["active"] = False
+        await state.set_state(user_id, state.PLAYING_XOX, game_state)
+
+# Legacy message handler (for Reply Keyboard compatibility)
+async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """XOX - eski Reply Keyboard desteği (geri uyumluluk)"""
+    user_id = update.effective_user.id
+    text = update.message.text if update.message.text else ""
+    
+    game_state = await state.get_data(user_id)
+    if not game_state:
+        return
+    
+    lang = game_state.get("lang", "en")
+    
+    # Sadece geri butonu için
     if is_back_button(text):
         try:
             if "message_id" in game_state:
@@ -182,105 +337,16 @@ async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
             await update.message.delete()
         except Exception:
             pass
-            
+        
         await state.clear_user_states(user_id)
         await games_menu(update, context)
         return
-        
-    # ZORLUK SEÇİMİ
-    if not game_state.get("active"):
-        text_lower = text.lower()
-        selected_diff = None
-        
-        if "kolay" in text_lower or "easy" in text_lower or "легко" in text_lower:
-            selected_diff = "easy"
-        elif "orta" in text_lower or "medium" in text_lower or "средне" in text_lower:
-            selected_diff = "medium"
-        elif "zor" in text_lower or "hard" in text_lower or "сложно" in text_lower:
-            selected_diff = "hard"
-        
-        if selected_diff:
-            game_state["difficulty"] = selected_diff
-            game_state["active"] = True
-            # Update state in DB
-            await state.set_state(user_id, state.PLAYING_XOX, game_state)
-            
-            await update.message.reply_text(
-                f"{TEXTS['xox_welcome'][lang]}",
-                reply_markup=get_xox_board_reply_markup(game_state["board"])
-            )
-        else:
-            await update.message.reply_text(TEXTS["xox_invalid_move"][lang])
-        return
-
-    # OYUN HAMLESİ
-    mapping = {"1️⃣": 0, "2️⃣": 1, "3️⃣": 2, "4️⃣": 3, "5️⃣": 4, "6️⃣": 5, "7️⃣": 6, "8️⃣": 7, "9️⃣": 8}
-    move_index = mapping.get(text.strip())
     
-    if move_index is None:
-        for emoji, idx in mapping.items():
-            if emoji in text:
-                move_index = idx
-                break
-    
-    if move_index is None:
-        text_clean = text.strip()
-        if text_clean in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-            move_index = int(text_clean) - 1
-    
-    if move_index is None:
-        await update.message.reply_text(TEXTS["xox_invalid_move"][lang])
-        return
-        
-    board = game_state["board"]
-    
-    if board[move_index] != " ":
-        await update.message.reply_text(TEXTS["xox_invalid_move"][lang])
-        return
-        
-    # KULLANICI HAMLESİ (X)
-    board[move_index] = "X"
-    winner = check_winner(board)
-    
-    if winner:
-        await finish_get_xox_game(update, context, board, winner, lang, user_id, game_state["difficulty"])
-        return
-        
-    # BOT HAMLESİ (O)
-    bot_move = bot_make_move(board, game_state["difficulty"])
-    if bot_move is not None:
-        board[bot_move] = "O"
-        winner = check_winner(board)
-        if winner:
-            await finish_get_xox_game(update, context, board, winner, lang, user_id, game_state["difficulty"])
-            return
-            
-    # OYUN DEVAM -> DB GÜNCELLE
-    game_state["board"] = board
-    await state.set_state(user_id, state.PLAYING_XOX, game_state)
-    
-    await update.message.reply_text(
-        TEXTS["xox_bot_moved"][lang] if "xox_bot_moved" in TEXTS else "Bot played.",
-        reply_markup=get_xox_board_reply_markup(board)
-    )
-
-async def finish_get_xox_game(update, context, board, winner, lang, user_id, difficulty):
-    """Oyunu bitir"""
-    msg = ""
-    if winner == "X": msg = TEXTS["xox_win"][lang]
-    elif winner == "O": msg = TEXTS["xox_lose"][lang]
-    else: msg = TEXTS["xox_draw"][lang]
-    
-    await update.message.reply_text(
-        msg,
-        reply_markup=get_xox_board_reply_markup(board)
-    )
-    
-    await asyncio.to_thread(db.log_xox_game, user_id, winner, difficulty)
-    
-    await asyncio.sleep(0.5)
-    await state.clear_user_states(user_id)
-    await games_menu(update, context)
+    # Diğer mesajları yoksay (Inline Keyboard kullanılıyor)
+    try:
+        await update.message.delete()
+    except Exception:
+        pass
 
 # --- DİĞER OYUNLAR ---
 @rate_limit("games")
