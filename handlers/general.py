@@ -4,8 +4,7 @@ from telegram.ext import ContextTypes
 import database as db
 import state
 from texts import TEXTS
-from utils import get_main_keyboard_markup
-
+from config import BOT_NAME
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Bot başlatma komutu."""
@@ -13,7 +12,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await state.clear_user_states(user_id)
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
-    await update.message.reply_text(TEXTS["start"][lang])
+    await update.message.reply_text(TEXTS["start"][lang].format(bot_name=BOT_NAME))
 
 
 async def tools_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -77,7 +76,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
     help_texts = {
-        "tr": """📚 *DruzhikBot Nasıl Kullanılır?*
+        "tr": """📚 *{bot_name} Nasıl Kullanılır?*
 
 🏠 *Ana Menü*
 Tüm özelliklere menü butonlarından kolayca ulaşabilirsin!
@@ -127,7 +126,7 @@ Tüm özelliklere menü butonlarından kolayca ulaşabilirsin!
 
 💡 *İpucu:* Menü butonlarını kullanarak daha hızlı gezinebilirsin!""",
 
-        "en": """📚 *DruzhikBot – How to Use?*
+        "en": """📚 *{bot_name} – How to Use?*
 
 🏠 *Main Menu*
 Access all features easily through the menu buttons!
@@ -177,7 +176,7 @@ Access all features easily through the menu buttons!
 
 💡 *Tip:* Use menu buttons for faster navigation!""",
 
-        "ru": """📚 *DruzhikBot – Как использовать?*
+        "ru": """📚 *{bot_name} – Как использовать?*
 
 🏠 *Главное меню*
 Все функции доступны через кнопки меню!
@@ -230,7 +229,7 @@ Access all features easily through the menu buttons!
     
     from utils import get_main_keyboard_markup
     await update.message.reply_text(
-        help_texts.get(lang, help_texts["en"]),
+        help_texts.get(lang, help_texts["en"]).format(bot_name=BOT_NAME),
         parse_mode="Markdown",
         reply_markup=get_main_keyboard_markup(lang, user_id)
     )

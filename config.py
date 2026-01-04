@@ -13,7 +13,10 @@ NOTES_PER_PAGE = 5
 TIMEZONE = os.getenv("TIMEZONE", "Europe/Istanbul")  # Varsayilan: Turkiye
 
 # --- API ANAHTARLARI ---
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+# --- CONFIGURATION (Vira Beta) ---
+# Bu klasör sadece Vira Beta (Test) botu içindir.
+BOT_TOKEN = "8489172747:AAFA0c2twlXGz0njIKmYqC1k1eAutVXzIM4"
+BOT_NAME = "Vira Beta"
 OPENWEATHERMAP_API_KEY = os.getenv("OPENWEATHERMAP_API_KEY")
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 AI_DAILY_LIMIT = 30  # Kullanıcı başına günlük AI mesaj limiti

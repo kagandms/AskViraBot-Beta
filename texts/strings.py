@@ -39,9 +39,9 @@ TEXTS = {
     
     # ... (Eski metinler korunuyor) ...
     "start": {
-        "tr": "👋 Merhaba! Ben DruzhikBot. Seni tekrar görmek güzel.\n/menu yazarak komutlara ulaşabilirsin.",
-        "en": "👋 Hello! I am DruzhikBot. Good to see you again.\nYou can access commands by typing /menu.",
-        "ru": "👋 Привет! Я DruzhikBot. Рад снова видеть тебя.\nВы можете получить доступ к командам, набрав /menu."
+        "tr": "👋 Merhaba! Ben {bot_name}. Seni tekrar görmek güzel.\n/menu yazarak komutlara ulaşabilirsin.",
+        "en": "👋 Hello! I am {bot_name}. Good to see you again.\nYou can access commands by typing /menu.",
+        "ru": "👋 Привет! Я {bot_name}. Рад снова видеть тебя.\nВы можете получить доступ к командам, набрав /menu."
     },
     "menu_prompt": {
         "tr": "🏠 Ana Menüdesiniz. Ne yapmak istersiniz? 👇",
