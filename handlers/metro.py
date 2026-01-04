@@ -13,7 +13,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKe
 from telegram.ext import ContextTypes
 import database as db
 from texts import TEXTS
-from utils import get_tools_keyboard_markup, is_back_button
+from utils import get_tools_keyboard_markup, is_back_button, cleanup_context
 from rate_limiter import rate_limit
 import state
 
@@ -188,6 +188,9 @@ async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     """Metro menüsünü başlat (Hatları listele)"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Cleanup previous context
+    await cleanup_context(context, user_id)
     
     # State başlat
     await state.clear_user_states(user_id)

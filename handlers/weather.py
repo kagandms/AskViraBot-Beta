@@ -22,6 +22,10 @@ async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
+    # Cleanup previous context
+    from utils import cleanup_context
+    await cleanup_context(context, user_id)
+    
     api_key = OPENWEATHERMAP_API_KEY
     if not api_key:
         await update.message.reply_text(

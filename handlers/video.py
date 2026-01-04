@@ -22,6 +22,11 @@ def get_format_selection_keyboard_markup(lang):
 async def video_downloader_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Cleanup previous context
+    from utils import cleanup_context
+    await cleanup_context(context, user_id)
+    
     await state.clear_user_states(user_id)
     
     await update.message.reply_text(

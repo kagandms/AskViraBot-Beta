@@ -11,6 +11,11 @@ async def notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Cleanup previous context
+    from utils import cleanup_context
+    await cleanup_context(context, user_id)
+    
     await state.clear_user_states(user_id)
     await state.set_state(user_id, state.NOTES_IN_MENU)
     
