@@ -1,5 +1,5 @@
 """
-AI Chat Handler for DruzhikBot
+AI Chat Handler for ViraBot
 OpenRouter API Integration with DeepSeek Model
 """
 
@@ -190,7 +190,7 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         message_history = state_data.get("messages", []) if state_data else []
         
         # OpenRouter API çağrısı
-        system_prompt = """Sen DruzhikBot adlı bir Telegram botunun içinde çalışan yardımcı bir asistansın.
+        system_prompt = """Sen ViraBot adlı bir Telegram botunun içinde çalışan yardımcı bir asistansın.
 Kullanıcıyla sohbet et, sorularını yanıtla, yardımcı ol.
 Kısa ve öz cevaplar ver (max 2-3 paragraf).
 Emoji kullanabilirsin.

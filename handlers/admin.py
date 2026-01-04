@@ -1,5 +1,5 @@
 """
-Admin Panel Handler for DruzhikBot
+Admin Panel Handler for ViraBot
 Sadece ADMIN_IDS listesindeki kullanıcılar erişebilir.
 """
 
@@ -237,7 +237,7 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
                  try:
                      await context.bot.send_message(
                          chat_id=uid,
-                         text=f"📢 *Geliştirici Duyurusu*\n\n{message_text}\n\n_— DruzhikBot Geliştiricisi_",
+                         text=f"📢 *Geliştirici Duyurusu*\n\n{message_text}\n\n_— ViraBot Geliştiricisi_",
                          parse_mode="Markdown"
                      )
                      sent += 1

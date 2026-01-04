@@ -219,7 +219,7 @@ def main():
     for handler in handlers_list:
         app.add_handler(handler)
     
-    logger.info("DruzhikBot çalışıyor...")
+    logger.info("ViraBot çalışıyor...")
     app.run_polling()
 
 if __name__ == "__main__":

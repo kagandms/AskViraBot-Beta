@@ -1,5 +1,5 @@
 """
-Centralized Logging Configuration for DruzhikBot
+Centralized Logging Configuration for ViraBot
 Provides consistent logging across all modules.
 """
 
@@ -31,7 +31,7 @@ def setup_logging():
     
     # Optional: File handler (can be enabled via environment variable)
     if os.getenv("LOG_TO_FILE", "false").lower() == "true":
-        log_file = os.getenv("LOG_FILE_PATH", "druzhikbot.log")
+        log_file = os.getenv("LOG_FILE_PATH", "virabot.log")
         file_handler = RotatingFileHandler(
             log_file,
             maxBytes=5*1024*1024,  # 5MB

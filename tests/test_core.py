@@ -1,5 +1,5 @@
 """
-Basic Unit Tests for DruzhikBot
+Basic Unit Tests for ViraBot
 Run with: python -m pytest tests/ -v
 """
 

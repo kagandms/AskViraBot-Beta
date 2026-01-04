@@ -2,21 +2,28 @@ import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
-# .env dosyasını yükle
-load_dotenv()
-
 # --- SABİTLER ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# .env dosyasını yükle (Explicit path)
+env_path = os.path.join(BASE_DIR, ".env")
+load_dotenv(env_path)
+
 # Font dosyasının proje ana dizininde (main.py ile aynı yerde) olduğunu varsayıyoruz
 FONT_PATH = os.path.join(BASE_DIR, "DejaVuSans.ttf")
 NOTES_PER_PAGE = 5
 TIMEZONE = os.getenv("TIMEZONE", "Europe/Istanbul")  # Varsayilan: Turkiye
 
 # --- API ANAHTARLARI ---
-# --- CONFIGURATION (Vira Beta) ---
-# Bu klasör sadece Vira Beta (Test) botu içindir.
-BOT_TOKEN = "8489172747:AAFA0c2twlXGz0njIKmYqC1k1eAutVXzIM4"
-BOT_NAME = "Vira Beta"
+# --- CONFIGURATION (Vira Production) ---
+# Bu klasör Vira Production (Gerçek) botu içindir.
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+
+if not BOT_TOKEN:
+    print("❌ HATA: TELEGRAM_BOT_TOKEN bulunamadı! Lütfen .env dosyasını kontrol edin.")
+    print(f"   Beklenen .env yolu: {env_path}")
+    print("   İçerik formatı: TELEGRAM_BOT_TOKEN=123456:ABC-DEF...")
+BOT_NAME = "Vira"
 OPENWEATHERMAP_API_KEY = os.getenv("OPENWEATHERMAP_API_KEY")
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 AI_DAILY_LIMIT = 30  # Kullanıcı başına günlük AI mesaj limiti

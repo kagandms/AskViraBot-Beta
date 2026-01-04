@@ -1,5 +1,5 @@
 """
-Rate Limiter Module for DruzhikBot
+Rate Limiter Module for ViraBot
 Kullanıcı bazlı rate limiting sistemi.
 """
 
