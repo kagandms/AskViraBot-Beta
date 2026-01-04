@@ -126,3 +126,46 @@ def format_remaining_time(remaining_seconds: float, lang: str) -> str:
     seconds = int(remaining_seconds % 60)
     if days > 0: return TEXTS["remaining_time_format"][lang].format(days=days, hours=hours, minutes=minutes, seconds=seconds)
     else: return TEXTS["remaining_time_format_short"][lang].format(hours=hours, minutes=minutes, seconds=seconds)
+
+# --- GEÇICI BİLDİRİM (Self-Destructing Message) ---
+import asyncio
+
+async def send_temp_message(update_or_bot, chat_id: int, text: str, delay: float = 3.0):
+    """
+    Geçici bildirim mesajı gönderir ve belirli süre sonra siler.
+    Hata mesajları, onaylar vb. için kullanılır.
+    
+    Args:
+        update_or_bot: Update objesi veya Bot instance
+        chat_id: Mesaj gönderilecek chat ID
+        text: Mesaj metni
+        delay: Silinmeden önce beklenecek süre (saniye)
+    """
+    try:
+        # Bot instance'ı al
+        if hasattr(update_or_bot, 'message'):
+            bot = update_or_bot.message._bot
+        elif hasattr(update_or_bot, 'callback_query') and update_or_bot.callback_query:
+            bot = update_or_bot.callback_query.message._bot
+        else:
+            bot = update_or_bot  # Doğrudan bot objesi
+        
+        msg = await bot.send_message(chat_id=chat_id, text=text)
+        await asyncio.sleep(delay)
+        try:
+            await msg.delete()
+        except Exception:
+            pass
+    except Exception:
+        pass  # Silently fail
+
+async def delete_user_message(update, delay: float = 0.5):
+    """
+    Kullanıcının mesajını siler (UI temizliği için).
+    Reply Keyboard etkileşimlerinde kullanılır.
+    """
+    try:
+        await asyncio.sleep(delay)
+        await update.message.delete()
+    except Exception:
+        pass

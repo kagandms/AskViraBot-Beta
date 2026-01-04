@@ -215,6 +215,7 @@ def main():
         CallbackQueryHandler(reminders.delete_reminder_callback, pattern=r"^(delete_rem_\d+|reminders_back_inline)$"),
         CallbackQueryHandler(admin.admin_callback, pattern=r"^admin_"),
         CallbackQueryHandler(weather.weather_callback_query, pattern=r"^forecast_"),
+        CallbackQueryHandler(games.handle_blackjack_callback, pattern=r"^bj_"),
         
         # Messages
         MessageHandler(filters.TEXT & (~filters.COMMAND) | filters.Document.ALL | filters.PHOTO, handle_buttons),

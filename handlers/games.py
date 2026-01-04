@@ -415,14 +415,32 @@ def calculate_score(hand):
         aces -= 1
     return score
 
-def get_blackjack_keyboard(lang):
-    """Blackjack oyun klavyesi (Hit/Stand)"""
-    texts = {
-        "tr": [["🃏 Kart Çek (Hit)", "✋ Dur (Stand)"], ["🔙 Oyun Odası"]],
-        "en": [["🃏 Hit", "✋ Stand"], ["🔙 Game Room"]],
-        "ru": [["🃏 Ещё (Hit)", "✋ Хватит (Stand)"], ["🔙 Игровая Комната"]]
-    }
-    return ReplyKeyboardMarkup(texts.get(lang, texts["en"]), resize_keyboard=True)
+def get_blackjack_inline_keyboard(lang, game_over=False):
+    """Blackjack oyun klavyesi (Inline - Hit/Stand)"""
+    if game_over:
+        labels = {
+            "tr": [["🔄 Tekrar Oyna", "🔙 Oyun Odası"]],
+            "en": [["🔄 Play Again", "🔙 Game Room"]],
+            "ru": [["🔄 Играть Снова", "🔙 Игровая"]]
+        }
+        buttons = labels.get(lang, labels["en"])
+        keyboard = [
+            [InlineKeyboardButton(buttons[0][0], callback_data="bj_restart"),
+             InlineKeyboardButton(buttons[0][1], callback_data="bj_exit")]
+        ]
+    else:
+        labels = {
+            "tr": [["🃏 Kart Çek", "✋ Dur"]],
+            "en": [["🃏 Hit", "✋ Stand"]],
+            "ru": [["🃏 Ещё", "✋ Хватит"]]
+        }
+        buttons = labels.get(lang, labels["en"])
+        keyboard = [
+            [InlineKeyboardButton(buttons[0][0], callback_data="bj_hit"),
+             InlineKeyboardButton(buttons[0][1], callback_data="bj_stand")],
+            [InlineKeyboardButton("🔙", callback_data="bj_exit")]
+        ]
+    return InlineKeyboardMarkup(keyboard)
 
 def format_blackjack_state(player_hand, dealer_hand, lang, hide_dealer=True):
     """Oyun durumunu formatla"""
@@ -449,7 +467,7 @@ def format_blackjack_state(player_hand, dealer_hand, lang, hide_dealer=True):
 
 @rate_limit("games")
 async def blackjack_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Blackjack oyununu başlat"""
+    """Blackjack oyununu başlat (Inline Keyboard - single message)"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
@@ -457,14 +475,6 @@ async def blackjack_start(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     deck = create_deck()
     player_hand = [deck.pop(), deck.pop()]
     dealer_hand = [deck.pop(), deck.pop()]
-    
-    # State kaydet
-    await state.clear_user_states(user_id)
-    await state.set_state(user_id, state.PLAYING_BLACKJACK, {
-        "deck": deck,
-        "player_hand": player_hand,
-        "dealer_hand": dealer_hand
-    })
     
     player_score = calculate_score(player_hand)
     
@@ -478,108 +488,176 @@ async def blackjack_start(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     msg += format_blackjack_state(player_hand, dealer_hand, lang, hide_dealer=True)
     
     # Blackjack kontrolü (ilk 2 kart = 21)
+    game_over = False
     if player_score == 21:
-        msg += "\n\n🎉 BLACKJACK!"
-        await finish_blackjack(update, context, player_hand, dealer_hand, deck, lang, user_id)
-        return
+        msg += "\n\n🎉 *BLACKJACK!*"
+        game_over = True
     
-    sent_message = await update.message.reply_text(msg, reply_markup=get_blackjack_keyboard(lang), parse_mode="Markdown")
+    # Kullanıcının başlatma mesajını sil (temiz UI)
+    try:
+        await update.message.delete()
+    except Exception:
+        pass
     
-    # Store message ID for cleanup
+    sent_message = await context.bot.send_message(
+        chat_id=user_id,
+        text=msg, 
+        reply_markup=get_blackjack_inline_keyboard(lang, game_over=game_over), 
+        parse_mode="Markdown"
+    )
+    
+    # State kaydet (message_id ile birlikte)
+    await state.clear_user_states(user_id)
     await state.set_state(user_id, state.PLAYING_BLACKJACK, {
         "deck": deck,
         "player_hand": player_hand,
         "dealer_hand": dealer_hand,
-        "message_id": sent_message.message_id
+        "message_id": sent_message.message_id,
+        "lang": lang,
+        "game_over": game_over
     })
+    
+    # Eğer Blackjack ise sonucu logla
+    if game_over:
+        await asyncio.to_thread(db.log_blackjack_game, user_id, player_score, calculate_score(dealer_hand), "win")
 
-async def handle_blackjack_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Blackjack hamlelerini işle"""
-    user_id = update.effective_user.id
-    text = update.message.text.lower()
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+async def handle_blackjack_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Blackjack Inline Keyboard callback'lerini işle"""
+    query = update.callback_query
+    user_id = query.from_user.id
+    data = query.data
+    
+    await query.answer()  # Callback onayı
     
     game_data = await state.get_data(user_id)
     if not game_data:
+        await query.message.delete()
         return
     
-    # Geri kontrolü
-    # Geri kontrolü
-    if is_back_button(text):
-        # Cleanup messages
-        try:
-            if "message_id" in game_data:
-                await context.bot.delete_message(chat_id=user_id, message_id=game_data["message_id"])
-            await update.message.delete()
-        except Exception:
-            pass
-
-        await state.clear_user_states(user_id)
-        await games_menu(update, context)
-        return
-    
+    lang = game_data.get("lang", "en")
     deck = game_data["deck"]
     player_hand = game_data["player_hand"]
     dealer_hand = game_data["dealer_hand"]
     
-    # HIT (Kart Çek)
-    if any(k in text for k in ["hit", "çek", "ещё", "kart"]):
+    # --- ÇIKIŞ ---
+    if data == "bj_exit":
+        await query.message.delete()
+        await state.clear_user_states(user_id)
+        # Games menüsünü göster (yeni mesaj olarak)
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=TEXTS["games_menu_prompt"][lang],
+            reply_markup=get_games_keyboard_markup(lang)
+        )
+        return
+    
+    # --- TEKRAR OYNA ---
+    if data == "bj_restart":
+        await query.message.delete()
+        # Yeni oyun başlat (fake update gönder)
+        # Alternatif: Direkt fonksiyonu çağır
+        new_deck = create_deck()
+        new_player = [new_deck.pop(), new_deck.pop()]
+        new_dealer = [new_deck.pop(), new_deck.pop()]
+        
+        welcome_texts = {
+            "tr": "🃏 *Blackjack (21)*\n\nKart çekerek 21'e yaklaşmaya çalış!\n21'i geçersen kaybedersin.\n\n",
+            "en": "🃏 *Blackjack (21)*\n\nTry to get as close to 21 as possible!\nGo over 21 and you lose.\n\n",
+            "ru": "🃏 *Блэкджек (21)*\n\nПопробуй приблизиться к 21!\nПревысишь 21 — проиграешь.\n\n"
+        }
+        
+        msg = welcome_texts.get(lang, welcome_texts["en"])
+        msg += format_blackjack_state(new_player, new_dealer, lang, hide_dealer=True)
+        
+        player_score = calculate_score(new_player)
+        game_over = player_score == 21
+        if game_over:
+            msg += "\n\n🎉 *BLACKJACK!*"
+        
+        sent = await context.bot.send_message(
+            chat_id=user_id,
+            text=msg,
+            reply_markup=get_blackjack_inline_keyboard(lang, game_over=game_over),
+            parse_mode="Markdown"
+        )
+        
+        await state.set_state(user_id, state.PLAYING_BLACKJACK, {
+            "deck": new_deck,
+            "player_hand": new_player,
+            "dealer_hand": new_dealer,
+            "message_id": sent.message_id,
+            "lang": lang,
+            "game_over": game_over
+        })
+        
+        if game_over:
+            await asyncio.to_thread(db.log_blackjack_game, user_id, player_score, calculate_score(new_dealer), "win")
+        return
+    
+    # Oyun bittiyse diğer butonları işleme
+    if game_data.get("game_over"):
+        return
+    
+    # --- HIT (Kart Çek) ---
+    if data == "bj_hit":
         player_hand.append(deck.pop())
         player_score = calculate_score(player_hand)
         
         # Bust kontrolü
         if player_score > 21:
-            await finish_blackjack(update, context, player_hand, dealer_hand, deck, lang, user_id, bust=True)
+            # Oyun bitti - Kaybetti
+            result_texts = {
+                "tr": "💥 *Battın!* 21'i geçtin.",
+                "en": "💥 *Bust!* You went over 21.",
+                "ru": "💥 *Перебор!* Ты превысил 21."
+            }
+            msg = format_blackjack_state(player_hand, dealer_hand, lang, hide_dealer=False)
+            msg += f"\n\n{result_texts.get(lang, result_texts['en'])}"
+            
+            await query.message.edit_text(
+                msg, 
+                reply_markup=get_blackjack_inline_keyboard(lang, game_over=True),
+                parse_mode="Markdown"
+            )
+            
+            game_data["game_over"] = True
+            await state.set_state(user_id, state.PLAYING_BLACKJACK, game_data)
+            await asyncio.to_thread(db.log_blackjack_game, user_id, player_score, calculate_score(dealer_hand), "lose")
             return
         
-        # State güncelle
+        # Devam et
+        msg = format_blackjack_state(player_hand, dealer_hand, lang, hide_dealer=True)
+        
+        if player_score == 21:
+            msg += "\n\n✨ *21!*"
+        
         game_data["player_hand"] = player_hand
         game_data["deck"] = deck
         await state.set_state(user_id, state.PLAYING_BLACKJACK, game_data)
         
-        msg = format_blackjack_state(player_hand, dealer_hand, lang, hide_dealer=True)
-        
-        if player_score == 21:
-            msg += "\n\n21! ✨"
-        
-        await update.message.reply_text(msg, reply_markup=get_blackjack_keyboard(lang))
+        await query.message.edit_text(
+            msg,
+            reply_markup=get_blackjack_inline_keyboard(lang),
+            parse_mode="Markdown"
+        )
         return
     
-    # STAND (Dur)
-    if any(k in text for k in ["stand", "dur", "хватит", "✋"]):
-        await finish_blackjack(update, context, player_hand, dealer_hand, deck, lang, user_id)
-        return
-    
-    # Geçersiz giriş
-    invalid_texts = {
-        "tr": "Lütfen 'Kart Çek' veya 'Dur' butonlarını kullan.",
-        "en": "Please use 'Hit' or 'Stand' buttons.",
-        "ru": "Используйте кнопки 'Ещё' или 'Хватит'."
-    }
-    await update.message.reply_text(invalid_texts.get(lang, invalid_texts["en"]))
-
-async def finish_blackjack(update, context, player_hand, dealer_hand, deck, lang, user_id, bust=False):
-    """Blackjack oyununu bitir"""
-    player_score = calculate_score(player_hand)
-    
-    result_texts = {
-        "tr": {"bust": "💥 Battın! 21'i geçtin.", "win": "🎉 Kazandın!", "lose": "😞 Kaybettin!", "tie": "🤝 Berabere!", "dealer_bust": "🎉 Krupiye battı, sen kazandın!"},
-        "en": {"bust": "💥 Bust! You went over 21.", "win": "🎉 You win!", "lose": "😞 You lose!", "tie": "🤝 It's a tie!", "dealer_bust": "🎉 Dealer busts, you win!"},
-        "ru": {"bust": "💥 Перебор! Ты превысил 21.", "win": "🎉 Ты выиграл!", "lose": "😞 Ты проиграл!", "tie": "🤝 Ничья!", "dealer_bust": "🎉 У дилера перебор, ты выиграл!"}
-    }
-    r = result_texts.get(lang, result_texts["en"])
-    
-    result = ""
-    
-    if bust:
-        result = r["bust"]
-        game_result = "lose"
-    else:
+    # --- STAND (Dur) ---
+    if data == "bj_stand":
+        player_score = calculate_score(player_hand)
+        
         # Krupiye oynamalı (16 veya altında kart çekmeli)
         while calculate_score(dealer_hand) < 17:
             dealer_hand.append(deck.pop())
         
         dealer_score = calculate_score(dealer_hand)
+        
+        result_texts = {
+            "tr": {"win": "🎉 *Kazandın!*", "lose": "😞 *Kaybettin!*", "tie": "🤝 *Berabere!*", "dealer_bust": "🎉 *Krupiye battı, sen kazandın!*"},
+            "en": {"win": "🎉 *You win!*", "lose": "😞 *You lose!*", "tie": "🤝 *It's a tie!*", "dealer_bust": "🎉 *Dealer busts, you win!*"},
+            "ru": {"win": "🎉 *Ты выиграл!*", "lose": "😞 *Ты проиграл!*", "tie": "🤝 *Ничья!*", "dealer_bust": "🎉 *У дилера перебор!*"}
+        }
+        r = result_texts.get(lang, result_texts["en"])
         
         if dealer_score > 21:
             result = r["dealer_bust"]
@@ -593,15 +671,47 @@ async def finish_blackjack(update, context, player_hand, dealer_hand, deck, lang
         else:
             result = r["tie"]
             game_result = "draw"
+        
+        msg = format_blackjack_state(player_hand, dealer_hand, lang, hide_dealer=False)
+        msg += f"\n\n{result}"
+        
+        await query.message.edit_text(
+            msg,
+            reply_markup=get_blackjack_inline_keyboard(lang, game_over=True),
+            parse_mode="Markdown"
+        )
+        
+        game_data["game_over"] = True
+        await state.set_state(user_id, state.PLAYING_BLACKJACK, game_data)
+        await asyncio.to_thread(db.log_blackjack_game, user_id, player_score, dealer_score, game_result)
+
+# Legacy message handler (for compatibility / back button from Reply Keyboard)
+async def handle_blackjack_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Blackjack - eski Reply Keyboard desteği (geri uyumluluk)"""
+    user_id = update.effective_user.id
+    text = update.message.text.lower() if update.message.text else ""
     
-    # Sonucu göster
-    msg = format_blackjack_state(player_hand, dealer_hand, lang, hide_dealer=False)
-    msg += f"\n\n{result}"
+    game_data = await state.get_data(user_id)
+    if not game_data:
+        return
     
-    await update.message.reply_text(msg, reply_markup=get_games_keyboard_markup(lang))
+    lang = game_data.get("lang", "en")
     
-    # Log
-    await asyncio.to_thread(db.log_blackjack_game, user_id, player_score, calculate_score(dealer_hand), game_result)
+    # Sadece geri butonu için
+    if is_back_button(text):
+        try:
+            if "message_id" in game_data:
+                await context.bot.delete_message(chat_id=user_id, message_id=game_data["message_id"])
+            await update.message.delete()
+        except Exception:
+            pass
+        
+        await state.clear_user_states(user_id)
+        await games_menu(update, context)
+        return
     
-    await asyncio.sleep(0.5)
-    await state.clear_user_states(user_id)
+    # Diğer mesajları yoksay (Inline Keyboard kullanılıyor)
+    try:
+        await update.message.delete()
+    except Exception:
+        pass
