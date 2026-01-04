@@ -5,6 +5,7 @@ import database as db
 import state
 from texts import TEXTS
 from config import BOT_NAME
+from utils import get_main_keyboard_markup, get_tools_keyboard_markup
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Bot başlatma komutu."""
@@ -20,7 +21,6 @@ async def tools_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
-    from utils import get_tools_keyboard_markup
     await update.message.reply_text(
         TEXTS["tools_menu_prompt"][lang],
         reply_markup=get_tools_keyboard_markup(lang)
@@ -227,7 +227,6 @@ Access all features easily through the menu buttons!
 💡 *Совет:* Используйте кнопки меню для быстрой навигации!"""
     }
     
-    from utils import get_main_keyboard_markup
     await update.message.reply_text(
         help_texts.get(lang, help_texts["en"]).format(bot_name=BOT_NAME),
         parse_mode="Markdown",
