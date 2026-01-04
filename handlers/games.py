@@ -417,7 +417,8 @@ async def tkm_play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         
     except Exception as e:
         logging.getLogger(__name__).error(f"TKM Error: {e}")
-        await update.message.reply_text(TEXTS["error_occurred"][lang])
+        from utils import send_temp_message
+        await send_temp_message(update, user_id, TEXTS["error_occurred"][lang])
         await state.clear_user_states(user_id)
 
 # --- SLOT MAKİNESİ ---
@@ -585,15 +586,19 @@ async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             reply_markup=get_slot_keyboard(lang),
             parse_mode="Markdown"
         )
+        # Final mesajın ID'sini tekrar kaydet (Emin olmak için)
+        await state.set_state(user_id, state.PLAYING_SLOT, {"message_id": spinning_msg.message_id})
     except Exception as e:
         # Edit başarısız olursa (örneğin mesaj silindiyse) yeni mesaj at
         logging.getLogger(__name__).error(f"Slot final update error: {e}")
         try:
-            await update.message.reply_text(
+            new_msg = await update.message.reply_text(
                 final_text,
                 reply_markup=get_slot_keyboard(lang),
                 parse_mode="Markdown"
             )
+            # Yeni mesaj atıldıysa onun ID'sini kaydet
+            await state.set_state(user_id, state.PLAYING_SLOT, {"message_id": new_msg.message_id})
         except: pass
 
 # --- BLACKJACK (21) ---

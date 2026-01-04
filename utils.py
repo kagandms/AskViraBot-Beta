@@ -151,3 +151,29 @@ async def cleanup_context(context, user_id):
     except Exception as e:
         # logging.error(f"Cleanup error: {e}")
         pass
+
+async def send_temp_message(update_or_bot, chat_id: int, text: str, delay: float = 5.0):
+    """
+    Gönderilen mesajı belirli bir süre sonra otomatik siler.
+    Hata mesajları ve kısa bilgilendirmeler için idealdir.
+    """
+    import asyncio
+    try:
+        # update nesnesi mi yoksa bot nesnesi mi geldi kontrol et
+        if hasattr(update_or_bot, "message"):
+            msg = await update_or_bot.message.reply_text(text)
+        else:
+            msg = await update_or_bot.send_message(chat_id=chat_id, text=text)
+            
+        await asyncio.sleep(delay)
+        try:
+            await msg.delete()
+        except: pass
+    except: pass
+
+async def delete_user_message(update):
+    """Kullanıcının gönderdiği mesajı siler (Eğer yetki varsa)"""
+    try:
+        if update.message:
+            await update.message.delete()
+    except: pass
