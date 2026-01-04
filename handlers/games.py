@@ -23,10 +23,13 @@ async def games_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     await state.clear_user_states(user_id)
     await state.set_state(user_id, state.GAMES_MENU_ACTIVE)
     
-    await update.message.reply_text(
+    msg = await update.message.reply_text(
         TEXTS["games_menu_prompt"][lang], 
         reply_markup=get_games_keyboard_markup(lang)
     )
+    
+    # Mesaj ID'sini kaydet
+    await state.set_state(user_id, state.GAMES_MENU_ACTIVE, {"message_id": msg.message_id})
 
 # --- OYUNCU İSTATİSTİKLERİ ---
 @rate_limit("games")
@@ -176,6 +179,9 @@ async def xox_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Zorluk seçimini başlat (Reply Keyboard)"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Cleanup previous context
+    await cleanup_context(context, user_id)
     
     # State ayarla
     await state.clear_user_states(user_id)
@@ -340,6 +346,9 @@ async def coinflip_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 @rate_limit("games")
 async def tkm_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
+    # Cleanup
+    await cleanup_context(context, user_id)
+    
     await state.clear_user_states(user_id)
     await state.set_state(user_id, state.PLAYING_TKM)
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
@@ -439,6 +448,9 @@ async def slot_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     """Slot makinesini başlat"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Cleanup
+    await cleanup_context(context, user_id)
     
     await state.clear_user_states(user_id)
     await state.set_state(user_id, state.PLAYING_SLOT)
@@ -667,6 +679,9 @@ async def blackjack_start(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     """Blackjack oyununu başlat"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Cleanup previous context
+    await cleanup_context(context, user_id)
     
     # Deste oluştur ve kartları dağıt
     deck = create_deck()

@@ -100,6 +100,14 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     """Tüm komutları ve özellikleri listeler"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Cleanup previous context (e.g. menu prompt)
+    await cleanup_context(context, user_id)
+    try:
+        if update.message:
+            await update.message.delete()
+    except Exception: pass
     
     help_texts = {
         "tr": """📚 *{bot_name} Nasıl Kullanılır?*
