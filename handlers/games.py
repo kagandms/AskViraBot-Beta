@@ -485,41 +485,44 @@ async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # Animasyon durumları
     status_text = initial_status.get(lang, "Spinning...")
     
-    # 1. Aşama: Hepsi dönüyor (2.5 saniye)
-    # Bu sürede 5 kez güncelleme yap (0.5sn aralıklarla)
-    for _ in range(5):
-        await asyncio.sleep(0.5)
+    # Animasyon durumları
+    spinning_text = initial_status.get(lang, "Spinning...")
+    
+    # 1. Aşama: Hepsi dönüyor (2.3 saniye)
+    # 0.4s * 6 = 2.4s (yaklaşık 2.3s)
+    for _ in range(6):
+        await asyncio.sleep(0.4)
         try:
             await spinning_msg.edit_text(
-                msg_template.format(r1=random.choice(SLOT_SYMBOLS), r2=random.choice(SLOT_SYMBOLS), r3=random.choice(SLOT_SYMBOLS), status=status_text),
+                msg_template.format(r1=random.choice(SLOT_SYMBOLS), r2=random.choice(SLOT_SYMBOLS), r3=random.choice(SLOT_SYMBOLS), status=spinning_text),
                 parse_mode="Markdown"
             )
         except Exception: pass
 
     # 1. Çark Durdu (reel1 sabit, diğerleri dönüyor)
-    # 2. Aşama: 2. ve 3. çark dönüyor (2.0 saniye)
-    for _ in range(4):
-        await asyncio.sleep(0.5)
+    # 2. Aşama: 2. ve 3. çark dönüyor (2.3 saniye)
+    for _ in range(6):
+        await asyncio.sleep(0.4)
         try:
             await spinning_msg.edit_text(
-                msg_template.format(r1=reel1, r2=random.choice(SLOT_SYMBOLS), r3=random.choice(SLOT_SYMBOLS), status=status_text),
+                msg_template.format(r1=reel1, r2=random.choice(SLOT_SYMBOLS), r3=random.choice(SLOT_SYMBOLS), status=spinning_text),
                 parse_mode="Markdown"
             )
         except Exception: pass
         
     # 2. Çark Durdu (reel1 ve reel2 sabit, 3. dönüyor)
-    # 3. Aşama: Sadece 3. çark dönüyor (2.0 saniye)
-    for _ in range(4):
-        await asyncio.sleep(0.5)
+    # 3. Aşama: Sadece 3. çark dönüyor (2.3 saniye)
+    for _ in range(6):
+        await asyncio.sleep(0.4)
         try:
             await spinning_msg.edit_text(
-                msg_template.format(r1=reel1, r2=reel2, r3=random.choice(SLOT_SYMBOLS), status=status_text),
+                msg_template.format(r1=reel1, r2=reel2, r3=random.choice(SLOT_SYMBOLS), status=spinning_text),
                 parse_mode="Markdown"
             )
         except Exception: pass
     
-    # 3. Çark Durdu - FİNAL SONUÇ
-    await asyncio.sleep(0.5) # Kısa bir son bekleme
+    # 3. Çark Durdu - FİNAL SONUÇ ÖNCESİ KISA BEKLEME
+    await asyncio.sleep(0.4)
     
     # Sonucu belirle
     if reel1 == reel2 == reel3:
