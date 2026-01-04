@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import aiohttp
-from datetime import datetime as dt
+from datetime import datetime as dt, timedelta
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 import database as db
@@ -10,6 +10,12 @@ from texts import TEXTS, BUTTON_MAPPINGS, CITY_NAMES_TRANSLATED
 from config import OPENWEATHERMAP_API_KEY
 from utils import get_weather_cities_keyboard, get_tools_keyboard_markup, is_back_button
 from rate_limiter import rate_limit
+
+# --- WEATHER CACHE SYSTEM ---
+_weather_cache = {}  # {city_name_lower: {"data": {...}, "expires": datetime, "lang": str}}
+WEATHER_CACHE_TTL = timedelta(minutes=10)
+
+logger = logging.getLogger(__name__)
 
 @rate_limit("heavy")
 async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -63,24 +69,68 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
         await state.clear_user_states(user_id)
         return
 
+    target_message = update.message if update.message else update.callback_query.message
+    
+    # --- CACHE CHECK ---
+    cache_key = f"{city_name_lower}_{lang}"
+    now = dt.now()
+    
+    if cache_key in _weather_cache:
+        cached = _weather_cache[cache_key]
+        if now < cached["expires"]:
+            # Cache HIT - use cached data
+            logger.debug(f"CACHE HIT: {cache_key}")
+            data = cached["data"]
+            
+            msg = TEXTS["weather_current"][lang].format(
+                city=data["city"],
+                temp=data["temp"],
+                feels_like=data["feels_like"],
+                description=data["description"],
+                humidity=data["humidity"],
+                wind_speed=data["wind_speed"]
+            )
+            
+            forecast_keyboard = InlineKeyboardMarkup([
+                [InlineKeyboardButton(TEXTS["weather_forecast_button"][lang], callback_data=f"forecast_{data['city']}")]
+            ])
+            
+            await target_message.reply_text(msg, reply_markup=get_weather_cities_keyboard(lang))
+            await target_message.reply_text("👆", reply_markup=forecast_keyboard)
+            return
+    
+    # --- API CALL (Cache MISS) ---
+    logger.debug(f"CACHE MISS: {cache_key} - Fetching from API")
     weather_lang = lang 
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={api_key}&units=metric&lang={weather_lang}"
-    
-    target_message = update.message if update.message else update.callback_query.message
 
     try:
         timeout = aiohttp.ClientTimeout(total=10)
         async with aiohttp.ClientSession(timeout=timeout) as session:
             async with session.get(url) as response:
-                data = await response.json()
+                api_data = await response.json()
 
-        if data["cod"] == 200:
-            weather_desc = data["weather"][0]["description"]
-            temp = data["main"]["temp"]
-            feels_like = data["main"]["feels_like"]
-            humidity = data["main"]["humidity"]
-            wind_speed = data["wind"]["speed"]
-            city = data["name"]
+        if api_data["cod"] == 200:
+            weather_desc = api_data["weather"][0]["description"]
+            temp = api_data["main"]["temp"]
+            feels_like = api_data["main"]["feels_like"]
+            humidity = api_data["main"]["humidity"]
+            wind_speed = api_data["wind"]["speed"]
+            city = api_data["name"]
+            
+            # --- CACHE STORE ---
+            _weather_cache[cache_key] = {
+                "data": {
+                    "city": city,
+                    "temp": temp,
+                    "feels_like": feels_like,
+                    "description": weather_desc.title(),
+                    "humidity": humidity,
+                    "wind_speed": wind_speed
+                },
+                "expires": now + WEATHER_CACHE_TTL
+            }
+            logger.debug(f"CACHED: {cache_key} for {WEATHER_CACHE_TTL}")
             
             msg = TEXTS["weather_current"][lang].format(
                 city=city,
@@ -96,10 +146,7 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
             ])
             
             await target_message.reply_text(msg, reply_markup=get_weather_cities_keyboard(lang))
-            await target_message.reply_text(
-                "👆",
-                reply_markup=forecast_keyboard
-            )
+            await target_message.reply_text("👆", reply_markup=forecast_keyboard)
         else:
             await target_message.reply_text(TEXTS["weather_city_not_found"][lang].format(city=city_name))
 
@@ -108,7 +155,7 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
     except aiohttp.ClientError:
         await target_message.reply_text(TEXTS["weather_api_error"][lang])
     except Exception as e:
-        logging.getLogger(__name__).error(f"Weather Error: {e}")
+        logger.error(f"Weather Error: {e}")
         await target_message.reply_text(TEXTS["weather_api_error"][lang])
     
 async def weather_callback_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
