@@ -38,6 +38,9 @@ async def show_player_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
+    # Cleanup previous context (e.g. game room menu)
+    await cleanup_context(context, user_id)
+    
     # İstatistikleri çek
     xox_stats = await asyncio.to_thread(db.get_user_xox_stats, user_id)
     tkm_stats = await asyncio.to_thread(db.get_user_tkm_stats, user_id)
@@ -58,12 +61,15 @@ async def show_player_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             f"  {h['total']}: {stats['total']}"
         )
     
-    msg = f"{h['title']}\n\n"
-    msg += f"❌⭕ {format_stats('XOX', xox_stats)}\n\n"
-    msg += f"🪨📄✂️ {format_stats('Taş-Kağıt-Makas', tkm_stats)}\n\n"
-    msg += f"🃏 {format_stats('Blackjack', bj_stats)}"
+    msg_text = f"{h['title']}\n\n"
+    msg_text += f"❌⭕ {format_stats('XOX', xox_stats)}\n\n"
+    msg_text += f"🪨📄✂️ {format_stats('Taş-Kağıt-Makas', tkm_stats)}\n\n"
+    msg_text += f"🃏 {format_stats('Blackjack', bj_stats)}"
     
-    await update.message.reply_text(msg, reply_markup=get_games_keyboard_markup(lang), parse_mode="Markdown")
+    sent_msg = await update.message.reply_text(msg_text, reply_markup=get_games_keyboard_markup(lang), parse_mode="Markdown")
+    
+    # Mesaj ID'sini kaydet - çıkışta silinmesi için
+    await state.set_state(user_id, state.GAMES_MENU_ACTIVE, {"message_id": sent_msg.message_id})
 
 
 # --- XOX (TIC TAC TOE) - REPLY KEYBOARD VERSION ---

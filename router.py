@@ -10,8 +10,22 @@ from handlers import general, notes, reminders, games, tools, admin, ai_chat, me
 async def show_language_keyboard(update, context):
     """Dil seçim klavyesini gösterir"""
     from telegram import ReplyKeyboardMarkup
+    from utils import cleanup_context
+    import state
+    import asyncio
+    import database as db
+    
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Cleanup previous context
+    await cleanup_context(context, user_id)
+    
     language_keyboard = ReplyKeyboardMarkup([["🇹🇷 Türkçe", "🇬🇧 English", "🇷🇺 Русский"]], resize_keyboard=True)
-    await update.message.reply_text("Lütfen bir dil seçin:", reply_markup=language_keyboard)
+    sent_msg = await update.message.reply_text("Lütfen bir dil seçin:", reply_markup=language_keyboard)
+    
+    # Save message ID for cleanup
+    await state.set_state(user_id, "language_selection", {"message_id": sent_msg.message_id})
 
 # --- BUTON HANDLER EŞLEŞTİRMELERİ ---
 # Format: (mapping_key, handler_function)

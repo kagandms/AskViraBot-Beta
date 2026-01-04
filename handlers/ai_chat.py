@@ -83,20 +83,28 @@ async def ai_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """AI asistan ana menüsü"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Cleanup previous context
+    from utils import cleanup_context
+    await cleanup_context(context, user_id)
+    
     await state.clear_user_states(user_id)
     
     remaining = await get_user_remaining_quota_async(user_id)
     
     # Adminler için "Sınırsız" göster
     if user_id in ADMIN_IDS:
-        msg = TEXTS["ai_menu_prompt_admin"][lang]
+        msg_text = TEXTS["ai_menu_prompt_admin"][lang]
     else:
-        msg = TEXTS["ai_menu_prompt"][lang].format(remaining=remaining, limit=AI_DAILY_LIMIT)
+        msg_text = TEXTS["ai_menu_prompt"][lang].format(remaining=remaining, limit=AI_DAILY_LIMIT)
     
-    await update.message.reply_text(
-        msg,
+    sent_msg = await update.message.reply_text(
+        msg_text,
         reply_markup=get_ai_menu_keyboard(lang)
     )
+    
+    # Mesaj ID'sini kaydet
+    await state.set_state(user_id, state.AI_CHAT_ACTIVE, {"message_id": sent_msg.message_id})
 
 async def start_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """AI sohbet modunu başlat"""
@@ -110,6 +118,10 @@ async def start_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             reply_markup=get_main_keyboard_markup(lang)
         )
         return
+    
+    # Cleanup previous context (AI menu prompt)
+    from utils import cleanup_context
+    await cleanup_context(context, user_id)
     
     await state.clear_user_states(user_id)
     # Initialize with empty conversation history
