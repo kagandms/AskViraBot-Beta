@@ -162,10 +162,19 @@ async def on_shutdown(application):
     await metro.close_http_session()
 
 def main():
-    keep_alive()
-
-    app = ApplicationBuilder().token(BOT_TOKEN).post_init(on_startup).post_shutdown(on_shutdown).build()
-
+    import os
+    from flask import Flask, request
+    import threading
+    
+    # Webhook URL - Render provides this automatically
+    WEBHOOK_URL = os.getenv("RENDER_EXTERNAL_URL", "")
+    PORT = int(os.getenv("PORT", 8080))
+    
+    app_flask = Flask(__name__)
+    
+    # Build telegram application
+    telegram_app = ApplicationBuilder().token(BOT_TOKEN).post_init(on_startup).post_shutdown(on_shutdown).build()
+    
     # Handler Listesi
     handlers_list = [
         CommandHandler("start", general.start),
@@ -203,13 +212,10 @@ def main():
         # Callbacks
         CallbackQueryHandler(notes.delete_note_callback, pattern=r"^(delete_note_\d+|notes_prev_page|notes_next_page|delete_notes_back_inline)$"),
         CallbackQueryHandler(notes.handle_edit_note_callback, pattern=r"^(edit_note_\d+|notes_back_inline)$"),
-        # XOX removed (Reply Keyboard)
-        # Weather removed (Reply Keyboard)
         CallbackQueryHandler(tools.handle_social_media_callbacks, pattern=r"^(back_to_main_menu)$"),
         CallbackQueryHandler(reminders.delete_reminder_callback, pattern=r"^(delete_rem_\d+|reminders_back_inline)$"),
         CallbackQueryHandler(admin.admin_callback, pattern=r"^admin_"),
         CallbackQueryHandler(weather.weather_callback_query, pattern=r"^forecast_"),
-        # Metro removed (Reply Keyboard)
         
         # Messages
         MessageHandler(filters.TEXT & (~filters.COMMAND) | filters.Document.ALL | filters.PHOTO, handle_buttons),
@@ -217,10 +223,44 @@ def main():
     ]
 
     for handler in handlers_list:
-        app.add_handler(handler)
+        telegram_app.add_handler(handler)
     
-    logger.info("ViraBot çalışıyor...")
-    app.run_polling()
+    # --- WEBHOOK MODE ---
+    if WEBHOOK_URL:
+        logger.info(f"🚀 WEBHOOK MODE - URL: {WEBHOOK_URL}")
+        
+        @app_flask.route(f"/{BOT_TOKEN}", methods=["POST"])
+        def webhook():
+            """Handle incoming webhook updates from Telegram"""
+            update = Update.de_json(request.get_json(force=True), telegram_app.bot)
+            asyncio.run(telegram_app.process_update(update))
+            return "OK"
+        
+        @app_flask.route("/")
+        def health():
+            """Health check endpoint for Render"""
+            return "ViraBot Beta (Webhook Mode) is running!"
+        
+        async def setup_webhook():
+            """Set webhook URL with Telegram"""
+            await telegram_app.initialize()
+            await telegram_app.bot.set_webhook(url=f"{WEBHOOK_URL}/{BOT_TOKEN}")
+            logger.info(f"✅ Webhook registered: {WEBHOOK_URL}/{BOT_TOKEN[:10]}...")
+            await on_startup(telegram_app)
+        
+        # Setup webhook
+        asyncio.run(setup_webhook())
+        
+        # Run Flask server
+        logger.info(f"🌐 Starting Flask server on port {PORT}")
+        app_flask.run(host="0.0.0.0", port=PORT)
+    
+    # --- POLLING MODE (Fallback for local development) ---
+    else:
+        logger.info("📡 POLLING MODE (No RENDER_EXTERNAL_URL found)")
+        from keep_alive import keep_alive
+        keep_alive()
+        telegram_app.run_polling()
 
 if __name__ == "__main__":
     main()
