@@ -416,6 +416,117 @@ async def tkm_play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text(TEXTS["error_occurred"][lang])
         await state.clear_user_states(user_id)
 
+# --- SLOT MAKİNESİ ---
+SLOT_SYMBOLS = ["🍎", "🍋", "🍒", "🍇", "🔔", "⭐", "💎", "7️⃣"]
+SLOT_JACKPOT = "7️⃣"
+
+def get_slot_keyboard(lang):
+    """Slot makinesi klavyesi"""
+    spin_texts = {"tr": "🎰 ÇEVİR!", "en": "🎰 SPIN!", "ru": "🎰 КРУТИТЬ!"}
+    back_texts = {"tr": "🔙 Oyun Odası", "en": "🔙 Game Room", "ru": "🔙 Игровая Комната"}
+    
+    return ReplyKeyboardMarkup([
+        [spin_texts.get(lang, spin_texts["en"])],
+        [back_texts.get(lang, back_texts["en"])]
+    ], resize_keyboard=True)
+
+@rate_limit("games")
+async def slot_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Slot makinesini başlat"""
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    await state.clear_user_states(user_id)
+    await state.set_state(user_id, state.PLAYING_SLOT)
+    
+    welcome = {
+        "tr": "🎰 *Slot Makinesi*\n\n3 aynı sembol = Kazandın!\n7️⃣ 7️⃣ 7️⃣ = JACKPOT!\n\nÇevirmek için butona bas!",
+        "en": "🎰 *Slot Machine*\n\n3 matching symbols = You win!\n7️⃣ 7️⃣ 7️⃣ = JACKPOT!\n\nPress the button to spin!",
+        "ru": "🎰 *Слот Машина*\n\n3 одинаковых символа = Победа!\n7️⃣ 7️⃣ 7️⃣ = ДЖЕКПОТ!\n\nНажми кнопку чтобы крутить!"
+    }
+    
+    await update.message.reply_text(
+        welcome.get(lang, welcome["en"]),
+        reply_markup=get_slot_keyboard(lang),
+        parse_mode="Markdown"
+    )
+
+async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Slot makinesini çevir"""
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    text = update.message.text.lower() if update.message.text else ""
+    
+    # Geri kontrolü
+    if is_back_button(text):
+        await state.clear_user_states(user_id)
+        await games_menu(update, context)
+        return
+    
+    # Spin kontrolü
+    spin_keywords = ["çevir", "spin", "крутить", "🎰"]
+    if not any(k in text for k in spin_keywords):
+        return
+    
+    # Animasyon efekti için "çevriliyor" mesajı
+    spinning_msg = await update.message.reply_text("🎰 Çevriliyor...")
+    await asyncio.sleep(0.8)
+    
+    # 3 rastgele sembol seç
+    reel1 = random.choice(SLOT_SYMBOLS)
+    reel2 = random.choice(SLOT_SYMBOLS)
+    reel3 = random.choice(SLOT_SYMBOLS)
+    
+    result_line = f"║ {reel1} │ {reel2} │ {reel3} ║"
+    
+    # Sonucu belirle
+    if reel1 == reel2 == reel3:
+        if reel1 == SLOT_JACKPOT:
+            result_text = {
+                "tr": f"🎰 *SLOT MAKİNESİ*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n🎉🎉🎉 *JACKPOT!* 🎉🎉🎉\n\n💎 Büyük ödülü kazandın!",
+                "en": f"🎰 *SLOT MACHINE*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n🎉🎉🎉 *JACKPOT!* 🎉🎉🎉\n\n💎 You hit the big prize!",
+                "ru": f"🎰 *СЛОТ МАШИНА*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n🎉🎉🎉 *ДЖЕКПОТ!* 🎉🎉🎉\n\n💎 Ты сорвал куш!"
+            }
+            win_type = "jackpot"
+        else:
+            result_text = {
+                "tr": f"🎰 *SLOT MAKİNESİ*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n🎉 *Kazandın!* 3 aynı sembol!",
+                "en": f"🎰 *SLOT MACHINE*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n🎉 *You win!* 3 matching symbols!",
+                "ru": f"🎰 *СЛОТ МАШИНА*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n🎉 *Победа!* 3 одинаковых символа!"
+            }
+            win_type = "win"
+    elif reel1 == reel2 or reel2 == reel3 or reel1 == reel3:
+        result_text = {
+            "tr": f"🎰 *SLOT MAKİNESİ*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n😊 2 aynı sembol! Az kaldı...",
+            "en": f"🎰 *SLOT MACHINE*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n😊 2 matching! So close...",
+            "ru": f"🎰 *СЛОТ МАШИНА*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n😊 2 одинаковых! Почти..."
+        }
+        win_type = "close"
+    else:
+        result_text = {
+            "tr": f"🎰 *SLOT MAKİNESİ*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n😔 Kaybettin! Tekrar dene.",
+            "en": f"🎰 *SLOT MACHINE*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n😔 You lose! Try again.",
+            "ru": f"🎰 *СЛОТ МАШИНА*\n\n╔═══════════╗\n{result_line}\n╚═══════════╝\n\n😔 Проигрыш! Попробуй ещё."
+        }
+        win_type = "lose"
+    
+    # Log kaydet
+    await asyncio.to_thread(db.log_slot_game, user_id, f"{reel1}{reel2}{reel3}", win_type)
+    
+    # Spinning mesajını güncelle
+    try:
+        await spinning_msg.edit_text(
+            result_text.get(lang, result_text["en"]),
+            reply_markup=None,
+            parse_mode="Markdown"
+        )
+    except Exception:
+        await update.message.reply_text(
+            result_text.get(lang, result_text["en"]),
+            reply_markup=get_slot_keyboard(lang),
+            parse_mode="Markdown"
+        )
+
 # --- BLACKJACK (21) ---
 CARD_VALUES = {'A': 11, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 10, 'Q': 10, 'K': 10}
 CARD_SUITS = ['♠️', '♥️', '♦️', '♣️']

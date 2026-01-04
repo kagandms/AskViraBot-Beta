@@ -18,6 +18,7 @@ EDITING_NOTES = "editing_notes"
 GAMES_MENU_ACTIVE = "games_menu_active"
 PLAYING_XOX = "playing_xox" # Data: Game state
 PLAYING_BLACKJACK = "playing_blackjack" # Data: deck, player_hand, dealer_hand
+PLAYING_SLOT = "playing_slot" # Slot makinesi
 WAITING_FOR_VIDEO_LINK = "waiting_for_video_link" # Data: {platform, format}
 WAITING_FOR_FORMAT_SELECTION = "waiting_for_format_selection" # Data: platform
 AI_CHAT_ACTIVE = "ai_chat_active"

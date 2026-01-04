@@ -277,6 +277,19 @@ def log_blackjack_game(user_id: int | str, player_score: int, dealer_score: int,
     except Exception as e:
         logger.error(f"Blackjack log hatası (User: {user_id}): {e}")
 
+def log_slot_game(user_id: int | str, symbols: str, result: str) -> None:
+    """Slot makinesi oyun sonucunu loglar."""
+    if not supabase: return
+    try:
+        data = {
+            "user_id": str(user_id),
+            "symbols": symbols,
+            "result": result
+        }
+        supabase.table("slot_logs").insert(data).execute()
+    except Exception as e:
+        logger.error(f"Slot log hatası (User: {user_id}): {e}")
+
 # --- OYUNCU İSTATİSTİKLERİ ---
 def get_user_xox_stats(user_id: int | str) -> dict[str, int]:
     """XOX istatistiklerini getirir: wins, losses, draws, total"""

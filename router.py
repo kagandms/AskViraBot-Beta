@@ -46,6 +46,7 @@ BUTTON_HANDLERS = [
     ("tkm_main", games.tkm_start),
     ("blackjack_main", games.blackjack_start),
     ("player_stats", games.show_player_stats),
+    ("slot_main", games.slot_start),
     
     # === ARAÇLAR ===
     ("time", tools.time_command),
