@@ -27,7 +27,7 @@ async def games_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 # --- XOX (TIC TAC TOE) - INLINE KEYBOARD VERSION ---
 
 def get_xox_board_inline_markup(board, game_over=False):
-    """3x3 XOX tahtası (Inline Keyboard)"""
+    """3x3 XOX tahtası (Inline Keyboard) - Büyük butonlar"""
     keyboard = []
     
     for row_start in range(0, 9, 3):
@@ -35,11 +35,14 @@ def get_xox_board_inline_markup(board, game_over=False):
         for i in range(row_start, row_start + 3):
             cell = board[i]
             if cell == " ":
-                text = "·"  # Boş hücre
+                text = "⬜"  # Büyük boş kare
                 callback = f"xox_{i}" if not game_over else "xox_noop"
-            else:
-                text = "❌" if cell == "X" else "⭕"
-                callback = "xox_noop"  # Dolu hücreye tıklanamaz
+            elif cell == "X":
+                text = "❌"
+                callback = "xox_noop"
+            else:  # O
+                text = "⭕"
+                callback = "xox_noop"
             row.append(InlineKeyboardButton(text, callback_data=callback))
         keyboard.append(row)
     
