@@ -577,29 +577,25 @@ async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # Log kaydet
     await asyncio.to_thread(db.log_slot_game, user_id, f"{reel1}{reel2}{reel3}", win_type)
     
-    # Final mesaj
-    # Final mesaj - Kesinlikle güncellenmeli
+    # Final mesaj - Kesin garanti çözüm: Eskiyi sil, yeniyi at
     final_text = msg_template.format(r1=reel1, r2=reel2, r3=reel3, status=status_text.get(lang, status_text["en"]))
+    
+    # 1. Önce dönen mesajı silmeye çalış
     try:
-        await spinning_msg.edit_text(
+        await spinning_msg.delete()
+    except: pass
+    
+    # 2. Sonucu temiz bir mesaj olarak at
+    try:
+        new_result_msg = await update.message.reply_text(
             final_text,
             reply_markup=get_slot_keyboard(lang),
             parse_mode="Markdown"
         )
-        # Final mesajın ID'sini tekrar kaydet (Emin olmak için)
-        await state.set_state(user_id, state.PLAYING_SLOT, {"message_id": spinning_msg.message_id})
+        # Yeni mesajın ID'sini tekil olarak kaydet
+        await state.set_state(user_id, state.PLAYING_SLOT, {"message_id": new_result_msg.message_id})
     except Exception as e:
-        # Edit başarısız olursa (örneğin mesaj silindiyse) yeni mesaj at
-        logging.getLogger(__name__).error(f"Slot final update error: {e}")
-        try:
-            new_msg = await update.message.reply_text(
-                final_text,
-                reply_markup=get_slot_keyboard(lang),
-                parse_mode="Markdown"
-            )
-            # Yeni mesaj atıldıysa onun ID'sini kaydet
-            await state.set_state(user_id, state.PLAYING_SLOT, {"message_id": new_msg.message_id})
-        except: pass
+        logging.getLogger(__name__).error(f"Slot result send error: {e}")
 
 # --- BLACKJACK (21) ---
 CARD_VALUES = {'A': 11, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 10, 'Q': 10, 'K': 10}
