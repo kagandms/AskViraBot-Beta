@@ -8,7 +8,7 @@ from telegram.ext import ContextTypes
 import database as db
 import state
 from texts import TEXTS, BUTTON_MAPPINGS, SOCIAL_MEDIA_LINKS
-from utils import get_input_back_keyboard_markup, get_main_keyboard_markup, get_weather_cities_keyboard, is_back_button
+from utils import get_input_back_keyboard_markup, get_main_keyboard_markup, get_weather_cities_keyboard, is_back_button, cleanup_context
 from rate_limiter import rate_limit
 
 # --- YARDIMCI FONKSİYONLAR ---
@@ -45,13 +45,10 @@ async def generate_and_send_qr(update: Update, context: ContextTypes.DEFAULT_TYP
     data_lower = data.lower().strip()
     if is_back_button(data):
         # Cleanup
+        await cleanup_context(context, user_id)
         try:
-            state_data = await state.get_data(user_id)
-            if "message_id" in state_data:
-                await context.bot.delete_message(chat_id=user_id, message_id=state_data["message_id"])
             await update.message.delete()
-        except Exception:
-            pass
+        except: pass
 
         from handlers.general import tools_menu_command
         await state.clear_user_states(user_id)
@@ -92,8 +89,10 @@ async def show_developer_info(update: Update, context: ContextTypes.DEFAULT_TYPE
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
+    # Cleanup previous messages
+    await cleanup_context(context, user_id)
+    
     await state.clear_user_states(user_id)
-    await state.set_state(user_id, state.DEVELOPER_MENU_ACTIVE)
     
     dev_text = {
         "tr": "👨‍💻 *Geliştirici Bilgileri*\n\nSosyal medya hesaplarıma aşağıdaki bağlantılardan ulaşabilirsiniz:",
@@ -101,11 +100,13 @@ async def show_developer_info(update: Update, context: ContextTypes.DEFAULT_TYPE
         "ru": "👨‍💻 *Информация о разработчике*\n\nВы можете связаться со мной через соцсети по ссылкам ниже:"
     }
     
-    await update.message.reply_text(
+    msg = await update.message.reply_text(
         dev_text.get(lang, dev_text["en"]),
         reply_markup=get_developer_keyboard(lang),
         parse_mode="Markdown"
     )
+    
+    await state.set_state(user_id, state.DEVELOPER_MENU_ACTIVE, {"message_id": msg.message_id})
 
 async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
