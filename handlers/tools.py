@@ -118,7 +118,9 @@ async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
     if is_back_button(text):
-        await state.clear_user_states(user_id)
+    if is_back_button(text):
+        # State temizliğini menu_command içinde cleanup_context yapacak
+        # await state.clear_user_states(user_id)  <-- BU SATIR HATALIYDI
         if "developer_last_link_msg" in context.user_data:
             try:
                 await context.user_data["developer_last_link_msg"].delete()

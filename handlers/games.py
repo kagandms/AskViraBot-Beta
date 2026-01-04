@@ -215,14 +215,13 @@ async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
     # ÇIKIŞ / GERİ KONTROLÜ
     # ÇIKIŞ / GERİ KONTROLÜ
     if is_back_button(text):
+        # Kullanıcı mesajını sil
         try:
-            if "message_id" in game_state:
-                await context.bot.delete_message(chat_id=user_id, message_id=game_state["message_id"])
             await update.message.delete()
-        except Exception:
-            pass
-            
-        await state.clear_user_states(user_id)
+        except Exception: pass
+        
+        # State temizliğini games_menu halledecek
+        # await state.clear_user_states(user_id) 
         await games_menu(update, context)
         return
         
