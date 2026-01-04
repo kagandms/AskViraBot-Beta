@@ -28,12 +28,20 @@ async def pdf_converter_menu(update: Update, context: ContextTypes.DEFAULT_TYPE)
     from utils import cleanup_context
     await cleanup_context(context, user_id)
     
+    # Delete user's button press
+    try:
+        await update.message.delete()
+    except: pass
+    
     await state.clear_user_states(user_id)
     
-    await update.message.reply_text(
+    sent_msg = await update.message.reply_text(
         TEXTS["pdf_converter_menu_prompt"][lang],
         reply_markup=get_pdf_keyboard_markup(lang)
     )
+    
+    # Track message for cleanup
+    await state.set_state(user_id, "pdf_menu", {"message_id": sent_msg.message_id})
 
 async def prompt_text_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id

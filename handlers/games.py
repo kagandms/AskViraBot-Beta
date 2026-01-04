@@ -46,6 +46,11 @@ async def show_player_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     # Cleanup previous context (e.g. game room menu)
     await cleanup_context(context, user_id)
     
+    # Delete user's button press
+    try:
+        await update.message.delete()
+    except: pass
+    
     # İstatistikleri çek
     xox_stats = await asyncio.to_thread(db.get_user_xox_stats, user_id)
     tkm_stats = await asyncio.to_thread(db.get_user_tkm_stats, user_id)
@@ -340,18 +345,36 @@ async def finish_get_xox_game(update, context, board, winner, lang, user_id, dif
 # --- DİĞER OYUNLAR ---
 @rate_limit("games")
 async def dice_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    lang = await asyncio.to_thread(db.get_user_lang, update.effective_user.id)
+    from utils import send_temp_message
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
     number = random.randint(1, 6)
-    await asyncio.to_thread(db.log_dice_roll, update.effective_user.id, number)
-    await update.message.reply_text(TEXTS["dice_rolled"][lang].format(number=number))
+    await asyncio.to_thread(db.log_dice_roll, user_id, number)
+    
+    # Delete user's button press
+    try:
+        await update.message.delete()
+    except: pass
+    
+    # Send temp message that auto-deletes after 2 seconds
+    await send_temp_message(update, user_id, TEXTS["dice_rolled"][lang].format(number=number), delay=2.0)
 
 @rate_limit("games")
 async def coinflip_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    lang = await asyncio.to_thread(db.get_user_lang, update.effective_user.id)
+    from utils import send_temp_message
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
     result = random.choice(["heads", "tails"])
-    await asyncio.to_thread(db.log_coinflip, update.effective_user.id, result)
+    await asyncio.to_thread(db.log_coinflip, user_id, result)
     translations = {"tr": {"heads": "Yazı", "tails": "Tura"}, "en": {"heads": "Heads", "tails": "Tails"}, "ru": {"heads": "Орёл", "tails": "Решка"}}
-    await update.message.reply_text(TEXTS["coinflip_result"][lang].format(result=translations[lang][result]))
+    
+    # Delete user's button press
+    try:
+        await update.message.delete()
+    except: pass
+    
+    # Send temp message that auto-deletes after 2 seconds
+    await send_temp_message(update, user_id, TEXTS["coinflip_result"][lang].format(result=translations[lang][result]), delay=2.0)
 
 # --- TAŞ KAĞIT MAKAS (GÜNCELLENDİ) ---
 @rate_limit("games")
@@ -489,6 +512,14 @@ async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
     # Geri kontrolü
     if is_back_button(text):
+        # Cleanup previous context (slot welcome/result message)
+        await cleanup_context(context, user_id)
+        
+        # Delete user's back button press
+        try:
+            await update.message.delete()
+        except: pass
+        
         await state.clear_user_states(user_id)
         await games_menu(update, context)
         return
@@ -693,6 +724,11 @@ async def blackjack_start(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     
     # Cleanup previous context
     await cleanup_context(context, user_id)
+    
+    # Delete user's button press
+    try:
+        await update.message.delete()
+    except: pass
     
     # Deste oluştur ve kartları dağıt
     deck = create_deck()

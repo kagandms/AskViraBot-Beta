@@ -27,12 +27,20 @@ async def video_downloader_menu(update: Update, context: ContextTypes.DEFAULT_TY
     from utils import cleanup_context
     await cleanup_context(context, user_id)
     
+    # Delete user's button press
+    try:
+        await update.message.delete()
+    except: pass
+    
     await state.clear_user_states(user_id)
     
-    await update.message.reply_text(
+    sent_msg = await update.message.reply_text(
         TEXTS["video_downloader_menu_prompt"][lang],
         reply_markup=get_video_downloader_keyboard_markup(lang)
     )
+    
+    # Track message for cleanup
+    await state.set_state(user_id, "video_menu", {"message_id": sent_msg.message_id})
 
 async def set_video_platform(update: Update, context: ContextTypes.DEFAULT_TYPE, platform: str):
     user_id = update.effective_user.id

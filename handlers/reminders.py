@@ -20,15 +20,17 @@ async def reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     from utils import cleanup_context
     await cleanup_context(context, user_id)
     
-    await state.clear_user_states(user_id)
-    await state.set_state(user_id, state.REMINDER_MENU_ACTIVE)
-    await update.message.reply_text(TEXTS["reminder_menu_prompt"][lang], reply_markup=get_reminder_keyboard_markup(lang))
+    # Delete user's button press
+    try:
+        await update.message.delete()
+    except: pass
     
-    # Mesaj ID'sini kaydetmek gerekebilir, ama mevcut yapıda reply_text dönüş değerini almıyor.
-    # Şimdilik temizliği yaptık. İlerde reminder menüsünden çıkışta bu mesajı silmek istiyorsak ID kaydetmeliyiz.
-    # Ancak reminder_menu genellikle altta kalıyor veya yeni menü gelince üstte kalıyor. 
-    # Kullanıcı isteği: "araçlar menüsüne hosgeldiniz mesajı silinmeli". Bu request bunu sağlıyor (entry cleanup).
-    # Exit cleanup için ayrıca bakacağız.
+    await state.clear_user_states(user_id)
+    
+    sent_msg = await update.message.reply_text(TEXTS["reminder_menu_prompt"][lang], reply_markup=get_reminder_keyboard_markup(lang))
+    
+    # Track message for cleanup
+    await state.set_state(user_id, state.REMINDER_MENU_ACTIVE, {"message_id": sent_msg.message_id})
 
 async def show_reminders_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
