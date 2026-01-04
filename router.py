@@ -45,6 +45,7 @@ BUTTON_HANDLERS = [
     ("coinflip", games.coinflip_command),
     ("tkm_main", games.tkm_start),
     ("blackjack_main", games.blackjack_start),
+    ("player_stats", games.show_player_stats),
     
     # === ARAÇLAR ===
     ("time", tools.time_command),

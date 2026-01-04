@@ -24,6 +24,41 @@ async def games_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         reply_markup=get_games_keyboard_markup(lang)
     )
 
+# --- OYUNCU İSTATİSTİKLERİ ---
+@rate_limit("games")
+async def show_player_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Oyuncunun oyun istatistiklerini gösterir"""
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # İstatistikleri çek
+    xox_stats = await asyncio.to_thread(db.get_user_xox_stats, user_id)
+    tkm_stats = await asyncio.to_thread(db.get_user_tkm_stats, user_id)
+    bj_stats = await asyncio.to_thread(db.get_user_blackjack_stats, user_id)
+    
+    # Başlıklar
+    headers = {
+        "tr": {"title": "📊 *Oyun İstatistikleriniz*", "win": "✅ Kazanma", "lose": "❌ Kaybetme", "draw": "🤝 Berabere", "total": "Toplam"},
+        "en": {"title": "📊 *Your Game Stats*", "win": "✅ Wins", "lose": "❌ Losses", "draw": "🤝 Draws", "total": "Total"},
+        "ru": {"title": "📊 *Ваша Статистика*", "win": "✅ Победы", "lose": "❌ Поражения", "draw": "🤝 Ничьи", "total": "Всего"}
+    }
+    h = headers.get(lang, headers["en"])
+    
+    def format_stats(name, stats):
+        return (
+            f"*{name}*\n"
+            f"  {h['win']}: {stats['wins']} | {h['lose']}: {stats['losses']} | {h['draw']}: {stats['draws']}\n"
+            f"  {h['total']}: {stats['total']}"
+        )
+    
+    msg = f"{h['title']}\n\n"
+    msg += f"❌⭕ {format_stats('XOX', xox_stats)}\n\n"
+    msg += f"🪨📄✂️ {format_stats('Taş-Kağıt-Makas', tkm_stats)}\n\n"
+    msg += f"🃏 {format_stats('Blackjack', bj_stats)}"
+    
+    await update.message.reply_text(msg, reply_markup=get_games_keyboard_markup(lang), parse_mode="Markdown")
+
+
 # --- XOX (TIC TAC TOE) - REPLY KEYBOARD VERSION ---
 # ... (Helper functions remain same until xox_start) ...
 def get_xox_board_reply_markup(board):

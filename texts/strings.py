@@ -551,11 +551,11 @@ FORMAT_SELECTION_BUTTONS = {
 }
 
 # --- YENİ OYUN MENÜSÜ ---
-# Blackjack eklendi
+# Blackjack ve İstatistik eklendi
 GAMES_BUTTONS = {
-    "tr": [["❌⭕ XOX", "🎲 Zar"], ["🪙 Yazı Tura", "🪨📄✂️ T-K-M"], ["🃏 Blackjack (21)"], ["🔙 Ana Menü"]],
-    "en": [["❌⭕ XOX", "🎲 Dice"], ["🪙 Coinflip", "🪨📄✂️ R-P-S"], ["🃏 Blackjack (21)"], ["🔙 Main Menu"]],
-    "ru": [["❌⭕ XOX", "🎲 Кубик"], ["🪙 Монета", "🪨📄✂️ К-Б-Н"], ["🃏 Блэкджек (21)"], ["🔙 Главное Меню"]]
+    "tr": [["❌⭕ XOX", "🎲 Zar"], ["🪙 Yazı Tura", "🪨📄✂️ T-K-M"], ["🃏 Blackjack (21)", "📊 İstatistiklerim"], ["🔙 Ana Menü"]],
+    "en": [["❌⭕ XOX", "🎲 Dice"], ["🪙 Coinflip", "🪨📄✂️ R-P-S"], ["🃏 Blackjack (21)", "📊 My Stats"], ["🔙 Main Menu"]],
+    "ru": [["❌⭕ XOX", "🎲 Кубик"], ["🪙 Монета", "🪨📄✂️ К-Б-Н"], ["🃏 Блэкджек (21)", "📊 Статистика"], ["🔙 Главное Меню"]]
 }
 
 # --- NOTLAR MENÜSÜ ---
@@ -628,6 +628,7 @@ AUTO_MAPPINGS = {
     "coinflip": generate_mappings_from_buttons({"tr": [["🪙 Yazı Tura"]], "en": [["🪙 Coinflip"]], "ru": [["🪙 Монета"]]}),
     "tkm_main": generate_mappings_from_buttons({"tr": [["🪨📄✂️ T-K-M"]], "en": [["🪨📄✂️ R-P-S"]], "ru": [["🪨📄✂️ К-Б-Н"]]}),
     "blackjack_main": generate_mappings_from_buttons({"tr": [["🃏 Blackjack (21)"]], "en": [["🃏 Blackjack (21)"]], "ru": [["🃏 Блэкджек (21)"]]}),
+    "player_stats": generate_mappings_from_buttons({"tr": [["📊 İstatistiklerim"]], "en": [["📊 My Stats"]], "ru": [["📊 Статистика"]]}),
     
     # Notlar menüsü
     "add_note_button": generate_mappings_from_buttons({"tr": [["➕ Not Ekle"]], "en": [["➕ Add Note"]], "ru": [["➕ Добавить"]]}),

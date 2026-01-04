@@ -277,6 +277,48 @@ def log_blackjack_game(user_id: int | str, player_score: int, dealer_score: int,
     except Exception as e:
         logger.error(f"Blackjack log hatası (User: {user_id}): {e}")
 
+# --- OYUNCU İSTATİSTİKLERİ ---
+def get_user_xox_stats(user_id: int | str) -> dict[str, int]:
+    """XOX istatistiklerini getirir: wins, losses, draws, total"""
+    if not supabase: return {"wins": 0, "losses": 0, "draws": 0, "total": 0}
+    try:
+        response = supabase.table("xox_logs").select("winner").eq("user_id", str(user_id)).execute()
+        data = response.data if response.data else []
+        wins = sum(1 for r in data if r.get("winner") == "X")
+        losses = sum(1 for r in data if r.get("winner") == "O")
+        draws = sum(1 for r in data if r.get("winner") == "Draw")
+        return {"wins": wins, "losses": losses, "draws": draws, "total": len(data)}
+    except Exception as e:
+        logger.error(f"XOX stats hatası (User: {user_id}): {e}")
+        return {"wins": 0, "losses": 0, "draws": 0, "total": 0}
+
+def get_user_tkm_stats(user_id: int | str) -> dict[str, int]:
+    """TKM istatistiklerini getirir: wins, losses, draws, total"""
+    if not supabase: return {"wins": 0, "losses": 0, "draws": 0, "total": 0}
+    try:
+        response = supabase.table("tkm_logs").select("result").eq("user_id", str(user_id)).execute()
+        data = response.data if response.data else []
+        wins = sum(1 for r in data if r.get("result") == "win")
+        losses = sum(1 for r in data if r.get("result") == "lose")
+        draws = sum(1 for r in data if r.get("result") == "draw")
+        return {"wins": wins, "losses": losses, "draws": draws, "total": len(data)}
+    except Exception as e:
+        logger.error(f"TKM stats hatası (User: {user_id}): {e}")
+        return {"wins": 0, "losses": 0, "draws": 0, "total": 0}
+
+def get_user_blackjack_stats(user_id: int | str) -> dict[str, int]:
+    """Blackjack istatistiklerini getirir: wins, losses, draws, total"""
+    if not supabase: return {"wins": 0, "losses": 0, "draws": 0, "total": 0}
+    try:
+        response = supabase.table("blackjack_logs").select("result").eq("user_id", str(user_id)).execute()
+        data = response.data if response.data else []
+        wins = sum(1 for r in data if r.get("result") == "win")
+        losses = sum(1 for r in data if r.get("result") == "lose")
+        draws = sum(1 for r in data if r.get("result") == "draw")
+        return {"wins": wins, "losses": losses, "draws": draws, "total": len(data)}
+    except Exception as e:
+        logger.error(f"Blackjack stats hatası (User: {user_id}): {e}")
+        return {"wins": 0, "losses": 0, "draws": 0, "total": 0}
 
 # --- METRO FAVORİLERİ ---
 def get_metro_favorites(user_id: int | str) -> list[dict[str, Any]]:
