@@ -237,7 +237,6 @@ def main():
     # --- POLLING MODE (Local development) ---
     else:
         logger.info("📡 POLLING MODE (No RENDER_EXTERNAL_URL found)")
-        from keep_alive import keep_alive
         keep_alive()
         app.run_polling()
 
