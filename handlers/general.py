@@ -30,10 +30,16 @@ async def tools_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     await state.clear_user_states(user_id)
     
-    await update.message.reply_text(
+    msg = await update.message.reply_text(
         TEXTS["tools_menu_prompt"][lang],
         reply_markup=get_tools_keyboard_markup(lang)
     )
+    # Mesaj ID'sini kaydet (Geri dönüldüğünde silmek için)
+    # Burada özel bir state yok but Tools menüsü 'aktif' sayılabilir.
+    # Genel amaçlı bir 'message_id' saklayabiliriz veya dummy bir state atayabiliriz.
+    # En temiz yöntem: Hangi menüde olduğumuzu belirten bir state kullanmak.
+    # Şimdilik temizlik için sadece message_id'yi kaydedelim.
+    await state.set_state(user_id, state.TOOLS_MENU_ACTIVE if hasattr(state, "TOOLS_MENU_ACTIVE") else "tools_menu", {"message_id": msg.message_id})
 
 
 async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -54,17 +60,20 @@ async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     # Eğer callback query (buton) üzerinden geldiyse
     if update.callback_query:
         # Menüyü yeni mesaj olarak gönder (eski mesajı düzenlemek bazen karışıklık yaratır)
-        await context.bot.send_message(
+        msg = await context.bot.send_message(
             chat_id=update.effective_chat.id,
             text=TEXTS["menu_prompt"][lang],
             reply_markup=get_main_keyboard_markup(lang, user_id)
         )
     # Normal mesaj (/menu veya metin) üzerinden geldiyse
     else:
-        await update.message.reply_text(
+        msg = await update.message.reply_text(
             TEXTS["menu_prompt"][lang],
             reply_markup=get_main_keyboard_markup(lang, user_id)
         )
+    
+    # Menü mesajının ID'sini kaydet
+    await state.set_state(user_id, "main_menu", {"message_id": msg.message_id})
 
 
 async def set_language(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
