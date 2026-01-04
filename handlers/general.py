@@ -5,7 +5,7 @@ import database as db
 import state
 from texts import TEXTS
 from config import BOT_NAME
-from utils import get_main_keyboard_markup, get_tools_keyboard_markup
+from utils import get_main_keyboard_markup, get_tools_keyboard_markup, cleanup_context
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Bot başlatma komutu."""
@@ -22,14 +22,11 @@ async def tools_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
     # Cleanup previous state/messages
+    await cleanup_context(context, user_id)
     try:
-        current_data = await state.get_data(user_id)
-        if current_data and "message_id" in current_data:
-             await context.bot.delete_message(chat_id=user_id, message_id=current_data["message_id"])
         if update.message:
             await update.message.delete()
-    except Exception:
-        pass
+    except Exception: pass
 
     await state.clear_user_states(user_id)
     
@@ -46,14 +43,11 @@ async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
     # Cleanup
+    await cleanup_context(context, user_id)
     try:
-        current_data = await state.get_data(user_id)
-        if current_data and "message_id" in current_data:
-             await context.bot.delete_message(chat_id=user_id, message_id=current_data["message_id"])
         if update.message:
             await update.message.delete()
-    except Exception:
-        pass
+    except Exception: pass
         
     await state.clear_user_states(user_id)
     

@@ -475,7 +475,15 @@ async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not any(k in text for k in spin_keywords):
         return
     
-    # Başlangıç mesajı
+    # Kullanıcının "Çevir" mesajını sil (Temizlik)
+    try:
+        await update.message.delete()
+    except: pass
+        
+    # Önceki slot sonucunu/mesajını sil
+    await cleanup_context(context, user_id)
+    
+    # Başlangıç mesajı - Yeni mesaj olarak gönder
     msg_template = "🎰 *SLOT MAKİNESİ*\n\n╔═══════════╗\n║ {r1} │ {r2} │ {r3} ║\n╚═══════════╝\n\n{status}"
     
     initial_status = {"tr": "Çevriliyor...", "en": "Spinning...", "ru": "Крутится..."}
@@ -483,6 +491,9 @@ async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         msg_template.format(r1="❓", r2="❓", r3="❓", status=initial_status.get(lang, "Spinning...")),
         parse_mode="Markdown"
     )
+    
+    # Yeni mesajın ID'sini kaydet ki sonra silebilelim
+    await state.set_state(user_id, state.PLAYING_SLOT, {"message_id": spinning_msg.message_id})
     
     # --- NİHAİ SONUÇLARI BELİRLE ---
     reel1 = random.choice(SLOT_SYMBOLS)
