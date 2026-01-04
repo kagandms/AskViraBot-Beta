@@ -150,10 +150,15 @@ async def xox_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "ru": "🎮 Игра XOX\n\nВыберите уровень сложности:"
     }
     
-    await update.message.reply_text(
+    sent_message = await update.message.reply_text(
         difficulty_prompt.get(lang, difficulty_prompt["en"]),
         reply_markup=get_xox_difficulty_reply_markup(lang)
     )
+    
+    # Update state with message id (requires fetching current state first if we want to preserve other fields, but here we are initializing)
+    # Actually, we set initial state just above. Let's update it.
+    initial_game_state["message_id"] = sent_message.message_id
+    await state.set_state(user_id, state.PLAYING_XOX, initial_game_state)
 
 async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """XOX hamlelerini ve seçimlerini yönetir"""
@@ -169,7 +174,15 @@ async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
         return
 
     # ÇIKIŞ / GERİ KONTROLÜ
+    # ÇIKIŞ / GERİ KONTROLÜ
     if is_back_button(text):
+        try:
+            if "message_id" in game_state:
+                await context.bot.delete_message(chat_id=user_id, message_id=game_state["message_id"])
+            await update.message.delete()
+        except Exception:
+            pass
+            
         await state.clear_user_states(user_id)
         await games_menu(update, context)
         return
@@ -293,7 +306,10 @@ async def tkm_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await state.set_state(user_id, state.PLAYING_TKM)
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     buttons = TKM_BUTTONS.get(lang, TKM_BUTTONS["en"])
-    await update.message.reply_text(TEXTS["tkm_welcome"][lang], reply_markup=ReplyKeyboardMarkup(buttons, resize_keyboard=True))
+    sent_msg = await update.message.reply_text(TEXTS["tkm_welcome"][lang], reply_markup=ReplyKeyboardMarkup(buttons, resize_keyboard=True))
+    
+    # Set state with message ID
+    await state.set_state(user_id, state.PLAYING_TKM, {"message_id": sent_msg.message_id})
 
 async def tkm_play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
@@ -303,6 +319,15 @@ async def tkm_play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         user_move_raw = update.message.text.lower().strip()
         
         if is_back_button(user_move_raw):
+            try:
+                # Retrieve state data to get message ID
+                st_data = await state.get_data(user_id)
+                if "message_id" in st_data:
+                    await context.bot.delete_message(chat_id=user_id, message_id=st_data["message_id"])
+                await update.message.delete()
+            except Exception:
+                pass
+                
             await games_menu(update, context)
             return
 
@@ -458,7 +483,15 @@ async def blackjack_start(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         await finish_blackjack(update, context, player_hand, dealer_hand, deck, lang, user_id)
         return
     
-    await update.message.reply_text(msg, reply_markup=get_blackjack_keyboard(lang), parse_mode="Markdown")
+    sent_message = await update.message.reply_text(msg, reply_markup=get_blackjack_keyboard(lang), parse_mode="Markdown")
+    
+    # Store message ID for cleanup
+    await state.set_state(user_id, state.PLAYING_BLACKJACK, {
+        "deck": deck,
+        "player_hand": player_hand,
+        "dealer_hand": dealer_hand,
+        "message_id": sent_message.message_id
+    })
 
 async def handle_blackjack_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Blackjack hamlelerini işle"""
@@ -471,7 +504,16 @@ async def handle_blackjack_message(update: Update, context: ContextTypes.DEFAULT
         return
     
     # Geri kontrolü
+    # Geri kontrolü
     if is_back_button(text):
+        # Cleanup messages
+        try:
+            if "message_id" in game_data:
+                await context.bot.delete_message(chat_id=user_id, message_id=game_data["message_id"])
+            await update.message.delete()
+        except Exception:
+            pass
+
         await state.clear_user_states(user_id)
         await games_menu(update, context)
         return

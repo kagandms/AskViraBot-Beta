@@ -52,8 +52,9 @@ async def prompt_new_note(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     await state.clear_user_states(user_id)
-    await state.set_state(user_id, state.WAITING_FOR_NEW_NOTE_INPUT)
-    await update.message.reply_text(TEXTS["prompt_new_note"][lang], reply_markup=get_input_back_keyboard_markup(lang))
+    sent_message = await update.message.reply_text(TEXTS["prompt_new_note"][lang], reply_markup=get_input_back_keyboard_markup(lang))
+    
+    await state.set_state(user_id, state.WAITING_FOR_NEW_NOTE_INPUT, {"message_id": sent_message.message_id})
 
 async def handle_new_note_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
@@ -65,6 +66,15 @@ async def handle_new_note_input(update: Update, context: ContextTypes.DEFAULT_TY
     is_cancel_command = is_back_button(text)
 
     if is_cancel_command:
+        # Cleanup
+        try:
+            state_data = await state.get_data(user_id)
+            if "message_id" in state_data:
+                await context.bot.delete_message(chat_id=user_id, message_id=state_data["message_id"])
+            await update.message.delete()
+        except Exception:
+            pass
+            
         await state.clear_user_states(user_id)
         await notes_menu(update, context)
         return

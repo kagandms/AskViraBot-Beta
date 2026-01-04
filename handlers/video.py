@@ -37,10 +37,13 @@ async def set_video_platform(update: Update, context: ContextTypes.DEFAULT_TYPE,
     # Store platform in persistent state data
     await state.set_state(user_id, state.WAITING_FOR_FORMAT_SELECTION, {"platform": platform})
     
-    await update.message.reply_text(
+    sent_message = await update.message.reply_text(
         TEXTS["format_selection_prompt"][lang],
         reply_markup=get_format_selection_keyboard_markup(lang)
     )
+    
+    # Store message ID in state data
+    await state.set_state(user_id, state.WAITING_FOR_FORMAT_SELECTION, {"platform": platform, "message_id": sent_message.message_id})
 
 async def set_download_format(update: Update, context: ContextTypes.DEFAULT_TYPE, download_format: str):
     user_id = update.effective_user.id
@@ -65,10 +68,13 @@ async def set_download_format(update: Update, context: ContextTypes.DEFAULT_TYPE
     }
     platform_display = platform_names.get(platform, platform)
     
-    await update.message.reply_text(
+    sent_message = await update.message.reply_text(
         TEXTS["video_downloader_prompt_link"][lang].format(platform=platform_display),
         reply_markup=get_input_back_keyboard_markup(lang)
     )
+    
+    # Store message ID
+    await state.set_state(user_id, state.WAITING_FOR_VIDEO_LINK, {"platform": platform, "format": download_format, "message_id": sent_message.message_id})
 
 async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
@@ -86,6 +92,14 @@ async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_
     
     url_lower = url.lower()
     if is_back_button(url_lower):
+        # Cleanup
+        try:
+            if "message_id" in download_info:
+                await context.bot.delete_message(chat_id=user_id, message_id=download_info["message_id"])
+            await update.message.delete()
+        except Exception:
+            pass
+
         await state.clear_user_states(user_id)
         await video_downloader_menu(update, context)
         return True

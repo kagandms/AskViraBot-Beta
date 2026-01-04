@@ -35,24 +35,26 @@ async def prompt_text_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     await state.clear_user_states(user_id)
     # Store mode in persistent state data
-    await state.set_state(user_id, state.WAITING_FOR_PDF_CONVERSION_INPUT, {"pdf_mode": "text"})
-    
-    await update.message.reply_text(
+    sent_message = await update.message.reply_text(
         TEXTS["prompt_text_for_pdf"][lang],
         reply_markup=get_input_back_keyboard_markup(lang)
     )
+    
+    # Store mode in persistent state data
+    await state.set_state(user_id, state.WAITING_FOR_PDF_CONVERSION_INPUT, {"pdf_mode": "text", "message_id": sent_message.message_id})
 
 async def prompt_file_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     await state.clear_user_states(user_id)
     # Store mode in persistent state data
-    await state.set_state(user_id, state.WAITING_FOR_PDF_CONVERSION_INPUT, {"pdf_mode": "file"})
-    
-    await update.message.reply_text(
+    sent_message = await update.message.reply_text(
         TEXTS["prompt_file_for_pdf"][lang],
         reply_markup=get_input_back_keyboard_markup(lang)
     )
+    
+    # Store mode in persistent state data
+    await state.set_state(user_id, state.WAITING_FOR_PDF_CONVERSION_INPUT, {"pdf_mode": "file", "message_id": sent_message.message_id})
 
 async def handle_pdf_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
@@ -64,6 +66,14 @@ async def handle_pdf_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     
     text_content = update.message.text.lower() if update.message.text else ""
     if is_back_button(text_content):
+        # Cleanup
+        try:
+            if "message_id" in state_data:
+                await context.bot.delete_message(chat_id=user_id, message_id=state_data["message_id"])
+            await update.message.delete()
+        except Exception:
+            pass
+
         from handlers.general import tools_menu_command
         await state.clear_user_states(user_id)
         await tools_menu_command(update, context)
