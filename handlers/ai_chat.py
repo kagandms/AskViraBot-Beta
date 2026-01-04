@@ -88,6 +88,11 @@ async def ai_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     from utils import cleanup_context
     await cleanup_context(context, user_id)
     
+    # Delete user's button press
+    try:
+        await update.message.delete()
+    except: pass
+    
     await state.clear_user_states(user_id)
     
     remaining = await get_user_remaining_quota_async(user_id)
@@ -127,22 +132,41 @@ async def start_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     # Initialize with empty conversation history
     await state.set_state(user_id, state.AI_CHAT_ACTIVE, {"messages": []})
     
-    await update.message.reply_text(
+    # Delete user's button press
+    try:
+        await update.message.delete()
+    except: pass
+    
+    sent_msg = await update.message.reply_text(
         TEXTS["ai_chat_started"][lang],
         reply_markup=get_ai_chat_keyboard(lang)
     )
+    
+    # Track message for cleanup
+    await state.set_state(user_id, state.AI_CHAT_ACTIVE, {"messages": [], "message_id": sent_msg.message_id})
 
 async def end_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """AI sohbet modunu bitir"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
+    # Cleanup previous context
+    from utils import cleanup_context, send_temp_message
+    await cleanup_context(context, user_id)
+    
+    # Delete user's "end chat" message
+    try:
+        await update.message.delete()
+    except: pass
+    
     await state.clear_user_states(user_id)
     
-    await update.message.reply_text(
-        TEXTS["ai_chat_ended"][lang],
-        reply_markup=get_main_keyboard_markup(lang, user_id)
-    )
+    # Send temporary notification (auto-deletes after 3 seconds)
+    await send_temp_message(update, user_id, TEXTS["ai_chat_ended"][lang], delay=3.0)
+    
+    # Go back to main menu
+    from handlers.general import menu_command
+    await menu_command(update, context)
 
 async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """AI sohbet modundaki mesajları işle"""

@@ -21,6 +21,11 @@ async def show_language_keyboard(update, context):
     # Cleanup previous context
     await cleanup_context(context, user_id)
     
+    # Delete user's button press
+    try:
+        await update.message.delete()
+    except: pass
+    
     language_keyboard = ReplyKeyboardMarkup([["🇹🇷 Türkçe", "🇬🇧 English", "🇷🇺 Русский"]], resize_keyboard=True)
     sent_msg = await update.message.reply_text("Lütfen bir dil seçin:", reply_markup=language_keyboard)
     

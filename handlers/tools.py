@@ -92,6 +92,11 @@ async def show_developer_info(update: Update, context: ContextTypes.DEFAULT_TYPE
     # Cleanup previous messages
     await cleanup_context(context, user_id)
     
+    # Delete user's button press
+    try:
+        await update.message.delete()
+    except: pass
+    
     await state.clear_user_states(user_id)
     
     dev_text = {

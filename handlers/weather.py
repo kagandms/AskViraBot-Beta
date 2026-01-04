@@ -26,6 +26,11 @@ async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     from utils import cleanup_context
     await cleanup_context(context, user_id)
     
+    # Delete user's button press
+    try:
+        await update.message.delete()
+    except: pass
+    
     api_key = OPENWEATHERMAP_API_KEY
     if not api_key:
         await update.message.reply_text(

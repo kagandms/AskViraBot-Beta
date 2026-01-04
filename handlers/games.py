@@ -20,6 +20,11 @@ async def games_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     # Önceki oyun mesajlarını temizle
     await cleanup_context(context, user_id)
     
+    # Delete user's button press
+    try:
+        await update.message.delete()
+    except: pass
+    
     await state.clear_user_states(user_id)
     await state.set_state(user_id, state.GAMES_MENU_ACTIVE)
     
