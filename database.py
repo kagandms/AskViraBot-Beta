@@ -263,6 +263,20 @@ def log_dice_roll(user_id: int | str, result: int) -> None:
     except Exception as e:
         logger.error(f"Dice log hatası (User: {user_id}): {e}")
 
+def log_blackjack_game(user_id: int | str, player_score: int, dealer_score: int, result: str) -> None:
+    """Blackjack oyun sonucunu loglar."""
+    if not supabase: return
+    try:
+        data = {
+            "user_id": str(user_id),
+            "player_score": player_score,
+            "dealer_score": dealer_score,
+            "result": result
+        }
+        supabase.table("blackjack_logs").insert(data).execute()
+    except Exception as e:
+        logger.error(f"Blackjack log hatası (User: {user_id}): {e}")
+
 
 # --- METRO FAVORİLERİ ---
 def get_metro_favorites(user_id: int | str) -> list[dict[str, Any]]:

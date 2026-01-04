@@ -44,6 +44,7 @@ BUTTON_HANDLERS = [
     ("dice", games.dice_command),
     ("coinflip", games.coinflip_command),
     ("tkm_main", games.tkm_start),
+    ("blackjack_main", games.blackjack_start),
     
     # === ARAÇLAR ===
     ("time", tools.time_command),

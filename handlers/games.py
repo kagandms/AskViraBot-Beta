@@ -355,3 +355,211 @@ async def tkm_play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         logging.getLogger(__name__).error(f"TKM Error: {e}")
         await update.message.reply_text(TEXTS["error_occurred"][lang])
         await state.clear_user_states(user_id)
+
+# --- BLACKJACK (21) ---
+CARD_VALUES = {'A': 11, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 10, 'Q': 10, 'K': 10}
+CARD_SUITS = ['♠️', '♥️', '♦️', '♣️']
+CARD_RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+
+def create_deck():
+    """52 kartlık deste oluştur"""
+    deck = [(rank, suit) for suit in CARD_SUITS for rank in CARD_RANKS]
+    random.shuffle(deck)
+    return deck
+
+def card_to_str(card):
+    """Kartı görsel string'e çevir"""
+    return f"{card[0]}{card[1]}"
+
+def hand_to_str(hand):
+    """Eli görsel string'e çevir"""
+    return " ".join([card_to_str(c) for c in hand])
+
+def calculate_score(hand):
+    """El skorunu hesapla (As: 1 veya 11)"""
+    score = 0
+    aces = 0
+    for card in hand:
+        rank = card[0]
+        score += CARD_VALUES[rank]
+        if rank == 'A':
+            aces += 1
+    # As'ları 1 olarak say eğer 21'i aşıyorsa
+    while score > 21 and aces:
+        score -= 10
+        aces -= 1
+    return score
+
+def get_blackjack_keyboard(lang):
+    """Blackjack oyun klavyesi (Hit/Stand)"""
+    texts = {
+        "tr": [["🃏 Kart Çek (Hit)", "✋ Dur (Stand)"], ["🔙 Oyun Odası"]],
+        "en": [["🃏 Hit", "✋ Stand"], ["🔙 Game Room"]],
+        "ru": [["🃏 Ещё (Hit)", "✋ Хватит (Stand)"], ["🔙 Игровая Комната"]]
+    }
+    return ReplyKeyboardMarkup(texts.get(lang, texts["en"]), resize_keyboard=True)
+
+def format_blackjack_state(player_hand, dealer_hand, lang, hide_dealer=True):
+    """Oyun durumunu formatla"""
+    player_score = calculate_score(player_hand)
+    
+    labels = {
+        "tr": {"you": "🎴 Senin Elin", "dealer": "🏦 Krupiye", "score": "Skor"},
+        "en": {"you": "🎴 Your Hand", "dealer": "🏦 Dealer", "score": "Score"},
+        "ru": {"you": "🎴 Твои Карты", "dealer": "🏦 Дилер", "score": "Счёт"}
+    }
+    l = labels.get(lang, labels["en"])
+    
+    if hide_dealer and len(dealer_hand) >= 2:
+        dealer_display = f"{card_to_str(dealer_hand[0])} 🂠"
+        dealer_score_text = "?"
+    else:
+        dealer_display = hand_to_str(dealer_hand)
+        dealer_score_text = str(calculate_score(dealer_hand))
+    
+    return (
+        f"{l['dealer']}: {dealer_display} ({l['score']}: {dealer_score_text})\n"
+        f"{l['you']}: {hand_to_str(player_hand)} ({l['score']}: {player_score})"
+    )
+
+@rate_limit("games")
+async def blackjack_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Blackjack oyununu başlat"""
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Deste oluştur ve kartları dağıt
+    deck = create_deck()
+    player_hand = [deck.pop(), deck.pop()]
+    dealer_hand = [deck.pop(), deck.pop()]
+    
+    # State kaydet
+    await state.clear_user_states(user_id)
+    await state.set_state(user_id, state.PLAYING_BLACKJACK, {
+        "deck": deck,
+        "player_hand": player_hand,
+        "dealer_hand": dealer_hand
+    })
+    
+    player_score = calculate_score(player_hand)
+    
+    welcome_texts = {
+        "tr": "🃏 *Blackjack (21)*\n\nKart çekerek 21'e yaklaşmaya çalış!\n21'i geçersen kaybedersin.\n\n",
+        "en": "🃏 *Blackjack (21)*\n\nTry to get as close to 21 as possible!\nGo over 21 and you lose.\n\n",
+        "ru": "🃏 *Блэкджек (21)*\n\nПопробуй приблизиться к 21!\nПревысишь 21 — проиграешь.\n\n"
+    }
+    
+    msg = welcome_texts.get(lang, welcome_texts["en"])
+    msg += format_blackjack_state(player_hand, dealer_hand, lang, hide_dealer=True)
+    
+    # Blackjack kontrolü (ilk 2 kart = 21)
+    if player_score == 21:
+        msg += "\n\n🎉 BLACKJACK!"
+        await finish_blackjack(update, context, player_hand, dealer_hand, deck, lang, user_id)
+        return
+    
+    await update.message.reply_text(msg, reply_markup=get_blackjack_keyboard(lang), parse_mode="Markdown")
+
+async def handle_blackjack_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Blackjack hamlelerini işle"""
+    user_id = update.effective_user.id
+    text = update.message.text.lower()
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    game_data = await state.get_data(user_id)
+    if not game_data:
+        return
+    
+    # Geri kontrolü
+    if is_back_button(text):
+        await state.clear_user_states(user_id)
+        await games_menu(update, context)
+        return
+    
+    deck = game_data["deck"]
+    player_hand = game_data["player_hand"]
+    dealer_hand = game_data["dealer_hand"]
+    
+    # HIT (Kart Çek)
+    if any(k in text for k in ["hit", "çek", "ещё", "kart"]):
+        player_hand.append(deck.pop())
+        player_score = calculate_score(player_hand)
+        
+        # Bust kontrolü
+        if player_score > 21:
+            await finish_blackjack(update, context, player_hand, dealer_hand, deck, lang, user_id, bust=True)
+            return
+        
+        # State güncelle
+        game_data["player_hand"] = player_hand
+        game_data["deck"] = deck
+        await state.set_state(user_id, state.PLAYING_BLACKJACK, game_data)
+        
+        msg = format_blackjack_state(player_hand, dealer_hand, lang, hide_dealer=True)
+        
+        if player_score == 21:
+            msg += "\n\n21! ✨"
+        
+        await update.message.reply_text(msg, reply_markup=get_blackjack_keyboard(lang))
+        return
+    
+    # STAND (Dur)
+    if any(k in text for k in ["stand", "dur", "хватит", "✋"]):
+        await finish_blackjack(update, context, player_hand, dealer_hand, deck, lang, user_id)
+        return
+    
+    # Geçersiz giriş
+    invalid_texts = {
+        "tr": "Lütfen 'Kart Çek' veya 'Dur' butonlarını kullan.",
+        "en": "Please use 'Hit' or 'Stand' buttons.",
+        "ru": "Используйте кнопки 'Ещё' или 'Хватит'."
+    }
+    await update.message.reply_text(invalid_texts.get(lang, invalid_texts["en"]))
+
+async def finish_blackjack(update, context, player_hand, dealer_hand, deck, lang, user_id, bust=False):
+    """Blackjack oyununu bitir"""
+    player_score = calculate_score(player_hand)
+    
+    result_texts = {
+        "tr": {"bust": "💥 Battın! 21'i geçtin.", "win": "🎉 Kazandın!", "lose": "😞 Kaybettin!", "tie": "🤝 Berabere!", "dealer_bust": "🎉 Krupiye battı, sen kazandın!"},
+        "en": {"bust": "💥 Bust! You went over 21.", "win": "🎉 You win!", "lose": "😞 You lose!", "tie": "🤝 It's a tie!", "dealer_bust": "🎉 Dealer busts, you win!"},
+        "ru": {"bust": "💥 Перебор! Ты превысил 21.", "win": "🎉 Ты выиграл!", "lose": "😞 Ты проиграл!", "tie": "🤝 Ничья!", "dealer_bust": "🎉 У дилера перебор, ты выиграл!"}
+    }
+    r = result_texts.get(lang, result_texts["en"])
+    
+    result = ""
+    
+    if bust:
+        result = r["bust"]
+        game_result = "lose"
+    else:
+        # Krupiye oynamalı (16 veya altında kart çekmeli)
+        while calculate_score(dealer_hand) < 17:
+            dealer_hand.append(deck.pop())
+        
+        dealer_score = calculate_score(dealer_hand)
+        
+        if dealer_score > 21:
+            result = r["dealer_bust"]
+            game_result = "win"
+        elif player_score > dealer_score:
+            result = r["win"]
+            game_result = "win"
+        elif player_score < dealer_score:
+            result = r["lose"]
+            game_result = "lose"
+        else:
+            result = r["tie"]
+            game_result = "draw"
+    
+    # Sonucu göster
+    msg = format_blackjack_state(player_hand, dealer_hand, lang, hide_dealer=False)
+    msg += f"\n\n{result}"
+    
+    await update.message.reply_text(msg, reply_markup=get_games_keyboard_markup(lang))
+    
+    # Log
+    await asyncio.to_thread(db.log_blackjack_game, user_id, player_score, calculate_score(dealer_hand), game_result)
+    
+    await asyncio.sleep(0.5)
+    await state.clear_user_states(user_id)

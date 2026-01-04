@@ -89,6 +89,9 @@ async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYP
     if await state.check_state(user_id, state.PLAYING_TKM):
         await games.tkm_play(update, context)
         return
+    if await state.check_state(user_id, state.PLAYING_BLACKJACK):
+        await games.handle_blackjack_message(update, context)
+        return
     if await state.check_state(user_id, state.WAITING_FOR_PDF_CONVERSION_INPUT):
         if update.message.document or update.message.photo or update.message.text:
             await pdf.handle_pdf_input(update, context)
