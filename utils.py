@@ -126,3 +126,28 @@ def format_remaining_time(remaining_seconds: float, lang: str) -> str:
     seconds = int(remaining_seconds % 60)
     if days > 0: return TEXTS["remaining_time_format"][lang].format(days=days, hours=hours, minutes=minutes, seconds=seconds)
     else: return TEXTS["remaining_time_format_short"][lang].format(hours=hours, minutes=minutes, seconds=seconds)
+
+async def cleanup_context(context, user_id):
+    """
+    Cleans up messages from previous context if stored in state data.
+    """
+    try:
+        import state 
+        import logging
+        data = await state.get_data(user_id)
+        
+        # Tekil message_id temizliği (eski sistem)
+        if "message_id" in data:
+            try:
+                await context.bot.delete_message(chat_id=user_id, message_id=data["message_id"])
+            except Exception: pass
+            
+        # Çoklu message_ids temizliği (yeni sistem)
+        if "message_ids" in data and isinstance(data["message_ids"], list):
+            for mid in data["message_ids"]:
+                try:
+                    await context.bot.delete_message(chat_id=user_id, message_id=mid)
+                except Exception: pass
+    except Exception as e:
+        # logging.error(f"Cleanup error: {e}")
+        pass

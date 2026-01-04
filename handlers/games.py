@@ -6,7 +6,7 @@ from telegram.ext import ContextTypes
 import database as db
 import state
 from texts import TEXTS, TKM_BUTTONS, BUTTON_MAPPINGS, GAMES_BUTTONS
-from utils import get_games_keyboard_markup, is_back_button
+from utils import get_games_keyboard_markup, is_back_button, cleanup_context
 from rate_limiter import rate_limit
 
 # --- OYUNLAR MENÜSÜ ---
@@ -16,6 +16,10 @@ async def games_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Önceki oyun mesajlarını temizle
+    await cleanup_context(context, user_id)
+    
     await state.clear_user_states(user_id)
     await state.set_state(user_id, state.GAMES_MENU_ACTIVE)
     
@@ -445,11 +449,14 @@ async def slot_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         "ru": "🎰 *Слот Машина*\n\n3 одинаковых символа = Победа!\n7️⃣ 7️⃣ 7️⃣ = ДЖЕКПОТ!\n\nНажми кнопку чтобы крутить!"
     }
     
-    await update.message.reply_text(
+    sent_msg = await update.message.reply_text(
         welcome.get(lang, welcome["en"]),
         reply_markup=get_slot_keyboard(lang),
         parse_mode="Markdown"
     )
+    
+    # Mesaj ID'sini state'e kaydet (Cleanup için)
+    await state.set_state(user_id, state.PLAYING_SLOT, {"message_id": sent_msg.message_id})
 
 async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Slot makinesini çevir (Animasyonlu)"""
@@ -559,14 +566,24 @@ async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await asyncio.to_thread(db.log_slot_game, user_id, f"{reel1}{reel2}{reel3}", win_type)
     
     # Final mesaj
+    # Final mesaj - Kesinlikle güncellenmeli
+    final_text = msg_template.format(r1=reel1, r2=reel2, r3=reel3, status=status_text.get(lang, status_text["en"]))
     try:
         await spinning_msg.edit_text(
-            msg_template.format(r1=reel1, r2=reel2, r3=reel3, status=status_text.get(lang, status_text["en"])),
+            final_text,
             reply_markup=get_slot_keyboard(lang),
             parse_mode="Markdown"
         )
-    except Exception:
-        pass
+    except Exception as e:
+        # Edit başarısız olursa (örneğin mesaj silindiyse) yeni mesaj at
+        logging.getLogger(__name__).error(f"Slot final update error: {e}")
+        try:
+            await update.message.reply_text(
+                final_text,
+                reply_markup=get_slot_keyboard(lang),
+                parse_mode="Markdown"
+            )
+        except: pass
 
 # --- BLACKJACK (21) ---
 CARD_VALUES = {'A': 11, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 10, 'Q': 10, 'K': 10}
