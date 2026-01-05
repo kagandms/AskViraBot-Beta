@@ -110,6 +110,11 @@ async def shownotes_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron (Dil ve Notlar)
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Cleanup user trigger
+    try:
+        await update.message.delete()
+    except: pass
     notes = await asyncio.to_thread(db.get_notes, user_id)
     
     # Önceki "notları göster" mesajını sil
