@@ -75,6 +75,12 @@ async def prompt_reminder_input(update: Update, context: ContextTypes.DEFAULT_TY
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Delete user's trigger button
+    try:
+        await update.message.delete()
+    except: pass
+    
     await state.clear_user_states(user_id)
     sent_msg = await update.message.reply_text(TEXTS["remind_prompt_input"][lang], reply_markup=get_input_back_keyboard_markup(lang))
     await state.set_state(user_id, state.WAITING_FOR_REMINDER_INPUT, {"message_id": sent_msg.message_id})
@@ -84,8 +90,10 @@ async def process_reminder_input(update: Update, context: ContextTypes.DEFAULT_T
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     text = input_string if input_string else update.message.text
+    text_lower = text.lower().strip()
 
-    if text.lower() in BUTTON_MAPPINGS["menu"]:
+    # GERİ BUTONU KONTROLÜ (Hatırlatıcı menüsüne dön)
+    if text_lower in BUTTON_MAPPINGS["menu"]:
         # Cleanup
         try:
             state_data = await state.get_data(user_id)
@@ -97,6 +105,22 @@ async def process_reminder_input(update: Update, context: ContextTypes.DEFAULT_T
 
         await state.clear_user_states(user_id)
         await reminder_menu(update, context)
+        return
+    
+    # ARAÇLAR MENÜSÜ BUTONU KONTROLÜ
+    if text_lower in BUTTON_MAPPINGS.get("back_to_tools", set()) or "araçlar" in text_lower:
+        # Cleanup
+        try:
+            state_data = await state.get_data(user_id)
+            if "message_id" in state_data:
+                await context.bot.delete_message(chat_id=user_id, message_id=state_data["message_id"])
+            await update.message.delete()
+        except Exception:
+            pass
+
+        await state.clear_user_states(user_id)
+        from handlers.general import tools_menu_command
+        await tools_menu_command(update, context)
         return
 
     match = re.match(r"^(\d{1,2}:\d{2})\s*(?:(\d{4}-\d{2}-\d{2})\s*)?(.*)$", text.strip())
@@ -159,6 +183,13 @@ async def delete_reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Delete user's trigger button (eğer message varsa - callback değilse)
+    if update.message:
+        try:
+            await update.message.delete()
+        except: pass
+    
     reminders = await asyncio.to_thread(db.get_all_reminders_db)
     user_reminders = [r for r in reminders if str(r.get("user_id")) == str(user_id)]
     
