@@ -19,6 +19,11 @@ async def notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     await state.clear_user_states(user_id)
     await state.set_state(user_id, state.NOTES_IN_MENU)
     
+    # Delete user's button press (Notes Main Button)
+    try:
+        await update.message.delete()
+    except: pass
+    
     # Önceki "notları göster" mesajını sil
     prev_msg_id = context.user_data.get('show_notes_msg_id')
     if prev_msg_id:

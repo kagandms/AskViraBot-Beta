@@ -347,6 +347,10 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
     # DİKKAT: text_lower kullanma! "Favoriye Ekle" ile çakışıyor.
     # O yüzden direkt "⭐ FAV" (Büyük harf) kontrolü yapıyoruz.
     if text.startswith("⭐ FAV"):
+        # Cleanup
+        try:
+            await update.message.delete()
+        except: pass
         await use_favorite(update, context, text, lang, user_id)
         return
 
@@ -361,6 +365,10 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
     # 2.6 FAVORİLER MENÜSÜ BUTONLARI (Alt menü butonları)
     # "Favori İstasyonlar" butonu
     if any(kw in text_lower for kw in ["favori istasyonlar", "favorite stations", "избранные станции", "🚀"]):
+        # Cleanup
+        try:
+            await update.message.delete()
+        except: pass
         await show_favorites_list(update, context, lang)
         return
     if any(kw in text_lower for kw in ["favorileri düzenle", "edit favorites", "ред. избранное"]):
@@ -370,6 +378,10 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
     # 2.7 ANA FAVORİLER BUTONU KONTROLÜ (En sona bırakıldı ki diğer ⭐'ları yutmasın)
     fav_keywords = ["favorilerim", "my favorites", "избранное", "⭐"]
     if any(kw in text_lower for kw in fav_keywords):
+        # Cleanup
+        try:
+            await update.message.delete()
+        except: pass
         await show_favorites(update, context, lang)
         return
 
@@ -396,6 +408,16 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
             # Tam eşleşme kontrolü (M1 vs M11 karışıklığını önler)
             if text == f"🚇 {name}":
                 selected_line = line
+                # Cleanup user selection message
+                try:
+                    await update.message.delete()
+                except: pass
+                
+                # Cleanup previous list message
+                if "message_id" in current_selection:
+                     try:
+                        await context.bot.delete_message(chat_id=user_id, message_id=current_selection["message_id"])
+                     except: pass
                 break
         
         if selected_line:
@@ -419,6 +441,17 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
             # Tam eşleşme kontrolü
             if text == f"📍 {name}":
                 selected_station = station
+                
+                # Cleanup user selection message
+                try:
+                    await update.message.delete()
+                except: pass
+                
+                # Cleanup previous list message
+                if "message_id" in current_selection:
+                     try:
+                        await context.bot.delete_message(chat_id=user_id, message_id=current_selection["message_id"])
+                     except: pass
                 break
         
         if selected_station:

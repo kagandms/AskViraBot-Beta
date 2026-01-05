@@ -31,6 +31,12 @@ async def qrcode_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await generate_and_send_qr(update, context, data)
     else:
         await state.clear_user_states(user_id)
+        
+        # Cleanup
+        try:
+            await update.message.delete()
+        except: pass
+        
         sent_message = await update.message.reply_text(
             TEXTS["qrcode_prompt_input"][lang],
             reply_markup=get_input_back_keyboard_markup(lang)

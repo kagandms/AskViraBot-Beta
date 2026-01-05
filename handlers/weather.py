@@ -63,6 +63,19 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
         if city_name != original_city_name:
             break
 
+    # Delete city selection message
+    try:
+        if update.message:
+            await update.message.delete()
+    except: pass
+    
+    # Also delete the prompt "Which city?" if we are in flow
+    try:
+        user_state = await state.get_data(user_id) # Get state before it might be cleared? No, we need message_id
+        if user_state and "message_id" in user_state:
+            await context.bot.delete_message(chat_id=user_id, message_id=user_state["message_id"])
+    except: pass
+
     city_name_lower = city_name.lower().strip()
     if is_back_button(city_name_lower):
         # Cleanup
