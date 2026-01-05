@@ -252,6 +252,59 @@ async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
         await games_menu(update, context)
         return
         
+    # OYUN SEÇİMİ (Ana Menüden Gelen Komutlar)
+    elif text_lower in ["blackjack", "21", "блэкджек"]:
+        # Cleanup
+        try:
+            await update.message.delete()
+        except: pass
+        await blackjack_start(update, context)
+        
+    elif text_lower in ["xox", "tic tac toe", "крестики-нолики"]:
+        # Cleanup
+        try:
+            await update.message.delete()
+        except: pass
+        await xox_start_menu(update, context)
+        
+    elif text_lower in ["taş-kağıt-makas", "rock-paper-scissors", "камень-ножницы-бумага", "tkm"]:
+        # Cleanup
+        try:
+            await update.message.delete()
+        except: pass
+        await tkm_start(update, context)
+        
+    elif text_lower in ["zar at", "roll dice", "бросить кости", "🎲"]:
+        # Cleanup
+        try:
+            await update.message.delete()
+        except: pass
+        await dice_game(update, context)
+        
+    elif text_lower in ["yazı tura", "coin flip", "подбросить монетку", "🪙"]:
+        # Cleanup
+        try:
+            await update.message.delete()
+        except: pass
+        await coinflip_game(update, context)
+        
+    elif text_lower in ["slot makinesi", "slot machine", "слот машина", "🎰"]:
+        # Cleanup
+        try:
+            await update.message.delete()
+        except: pass
+        await slot_game(update, context)
+        
+    elif text_lower in ["📊 istatistikler", "📊 stats", "📊 статистика"]:
+        # Cleanup
+        try:
+            await update.message.delete()
+        except: pass
+        await show_stats(update, context)
+        
+    else:
+        # Bilinmeyen komut
+        pass
     # ZORLUK SEÇİMİ
     if not game_state.get("active"):
         text_lower = text.lower()
@@ -473,59 +526,7 @@ async def tkm_play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 
             await games_menu(update, context)
             return
-     elif text_lower == "back":
-        # Handled by main.py usually, but if here...
-        pass
-    
-    # Oyun Seçimleri
-    elif text_lower in ["blackjack", "21", "блэкджек"]:
-        # Cleanup
-        try:
-            await update.message.delete()
-        except: pass
-        await blackjack_start(update, context)
-        
-    elif text_lower in ["xox", "tic tac toe", "крестики-нолики"]:
-        # Cleanup
-        try:
-            await update.message.delete()
-        except: pass
-        await xox_start_menu(update, context)
-        
-    elif text_lower in ["taş-kağıt-makas", "rock-paper-scissors", "камень-ножницы-бумага", "tkm"]:
-        # Cleanup
-        try:
-            await update.message.delete()
-        except: pass
-        await tkm_start(update, context)
-        
-    elif text_lower in ["zar at", "roll dice", "бросить кости", "🎲"]:
-        # Cleanup
-        try:
-            await update.message.delete()
-        except: pass
-        await dice_game(update, context)
-        
-    elif text_lower in ["yazı tura", "coin flip", "подбросить монетку", "🪙"]:
-        # Cleanup
-        try:
-            await update.message.delete()
-        except: pass
-        await coinflip_game(update, context)
-        
-    elif text_lower in ["slot makinesi", "slot machine", "слот машина", "🎰"]:
-        # Cleanup
-        try:
-            await update.message.delete()
-        except: pass
-        await slot_game(update, context)
-        
-    elif text_lower in ["📊 istatistikler", "📊 stats", "📊 статистика"]:
-        # Cleanup
-        try:
-            await update.message.delete()
-        except: pass
-        await show_stats(update, context)
+
         user_move = None
         rock_keywords = ["taş", "rock", "камень", "🪨"]
         paper_keywords = ["kağıt", "paper", "бумага", "📄", "📃", "📝"] 
