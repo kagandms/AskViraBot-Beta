@@ -381,6 +381,13 @@ async def finish_get_xox_game(update, context, board, winner, lang, user_id, dif
     elif winner == "O": msg = TEXTS["xox_lose"][lang]
     else: msg = TEXTS["xox_draw"][lang]
     
+    # Clean up previous board message if it exists
+    try:
+        game_state = await state.get_data(user_id)
+        if game_state and "message_id" in game_state:
+            await context.bot.delete_message(chat_id=user_id, message_id=game_state["message_id"])
+    except: pass
+    
     await update.message.reply_text(
         msg,
         reply_markup=get_xox_board_reply_markup(board)
@@ -391,6 +398,8 @@ async def finish_get_xox_game(update, context, board, winner, lang, user_id, dif
     await asyncio.sleep(0.5)
     await state.clear_user_states(user_id)
     await games_menu(update, context)
+
+
 
 # --- DİĞER OYUNLAR ---
 @rate_limit("games")
@@ -962,12 +971,13 @@ async def finish_blackjack(update, context, player_hand, dealer_hand, deck, lang
                 chat_id=user_id,
                 message_id=message_id,
                 text=msg,
-                reply_markup=get_games_keyboard_markup(lang)
+                reply_markup=get_games_keyboard_markup(lang),
+                parse_mode="Markdown"
             )
         except Exception:
-            await update.message.reply_text(msg, reply_markup=get_games_keyboard_markup(lang))
+            await update.message.reply_text(msg, reply_markup=get_games_keyboard_markup(lang), parse_mode="Markdown")
     else:
-        await update.message.reply_text(msg, reply_markup=get_games_keyboard_markup(lang))
+        await update.message.reply_text(msg, reply_markup=get_games_keyboard_markup(lang), parse_mode="Markdown")
     
     # Log
     await asyncio.to_thread(db.log_blackjack_game, user_id, player_score, calculate_score(dealer_hand), game_result)
