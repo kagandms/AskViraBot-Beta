@@ -154,7 +154,7 @@ async def deletenotes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         context.user_data.pop('show_notes_msg_id', None)
     
     if not notes:
-        await update.message.reply_text(TEXTS["no_notes"][lang]) 
+        await update.message.reply_text(TEXTS["no_notes"][lang], reply_markup=get_notes_keyboard_markup(lang)) 
         return
     
     # Persistent page index
