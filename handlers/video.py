@@ -50,6 +50,11 @@ async def set_video_platform(update: Update, context: ContextTypes.DEFAULT_TYPE,
     # Store platform in persistent state data
     await state.set_state(user_id, state.WAITING_FOR_FORMAT_SELECTION, {"platform": platform})
     
+    # Cleanup user trigger
+    try:
+        await update.message.delete()
+    except: pass
+    
     sent_message = await update.message.reply_text(
         TEXTS["format_selection_prompt"][lang],
         reply_markup=get_format_selection_keyboard_markup(lang)
@@ -80,6 +85,11 @@ async def set_download_format(update: Update, context: ContextTypes.DEFAULT_TYPE
         "instagram": "Instagram"
     }
     platform_display = platform_names.get(platform, platform)
+    
+    # Cleanup user trigger
+    try:
+        await update.message.delete()
+    except: pass
     
     sent_message = await update.message.reply_text(
         TEXTS["video_downloader_prompt_link"][lang].format(platform=platform_display),

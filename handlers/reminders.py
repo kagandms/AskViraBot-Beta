@@ -36,6 +36,12 @@ async def show_reminders_command(update: Update, context: ContextTypes.DEFAULT_T
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    # Cleanup user trigger
+    try:
+        await update.message.delete()
+    except: pass
+    
     reminders = await asyncio.to_thread(db.get_all_reminders_db)
     user_reminders = [r for r in reminders if str(r.get("user_id")) == str(user_id)]
     
@@ -95,6 +101,10 @@ async def process_reminder_input(update: Update, context: ContextTypes.DEFAULT_T
 
     match = re.match(r"^(\d{1,2}:\d{2})\s*(?:(\d{4}-\d{2}-\d{2})\s*)?(.*)$", text.strip())
     if not match or not match.group(3).strip():
+        # Cleanup invalid input message
+        try:
+             await update.message.delete()
+        except: pass
         await update.message.reply_text(TEXTS["remind_usage"][lang], reply_markup=get_reminder_keyboard_markup(lang))
         return
 

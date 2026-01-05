@@ -47,6 +47,12 @@ async def prompt_text_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     await state.clear_user_states(user_id)
+    
+    # Cleanup user trigger
+    try:
+        await update.message.delete()
+    except: pass
+    
     # Store mode in persistent state data
     sent_message = await update.message.reply_text(
         TEXTS["prompt_text_for_pdf"][lang],
@@ -60,6 +66,12 @@ async def prompt_file_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     await state.clear_user_states(user_id)
+    
+    # Cleanup user trigger
+    try:
+        await update.message.delete()
+    except: pass
+    
     # Store mode in persistent state data
     sent_message = await update.message.reply_text(
         TEXTS["prompt_file_for_pdf"][lang],
