@@ -64,6 +64,12 @@ async def prompt_new_note(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     await state.clear_user_states(user_id)
+    
+    # Cleanup user trigger
+    try:
+        await update.message.delete()
+    except: pass
+    
     sent_message = await update.message.reply_text(TEXTS["prompt_new_note"][lang], reply_markup=get_input_back_keyboard_markup(lang))
     
     await state.set_state(user_id, state.WAITING_FOR_NEW_NOTE_INPUT, {"message_id": sent_message.message_id})
@@ -186,6 +192,12 @@ async def deletenotes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 async def select_note_to_delete_prompt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
+    
+    # Cleanup user trigger
+    try:
+        await update.message.delete()
+    except: pass
+    
     # Init page 0
     await state.clear_user_states(user_id)
     await state.set_state(user_id, state.DELETING_NOTES, {"delete_notes_page": 0})
