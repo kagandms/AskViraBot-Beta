@@ -227,32 +227,14 @@ def main():
     for handler in handlers_list:
         app.add_handler(handler)
     
-    # --- WEBHOOK MODE (Render/Production) ---
+    # --- PRODUCTION MODE (Render) ---
+    # Using polling + Flask health check for reliability on free tier
+    # Flask runs on PORT for UptimeRobot, bot uses polling for Telegram
     if WEBHOOK_URL:
-        logger.info(f"🚀 WEBHOOK MODE - URL: {WEBHOOK_URL}")
-        logger.info(f"🌐 Starting on port {PORT}")
-        
-        # Use python-telegram-bot's built-in webhook support with health check
-        # The webhook runs on /{BOT_TOKEN}, and we add a health check on /
-        from starlette.applications import Starlette
-        from starlette.responses import PlainTextResponse
-        from starlette.routing import Route
-        
-        async def health_check(request):
-            return PlainTextResponse("Bot is alive!")
-        
-        # Create custom starlette app with health check route
-        starlette_app = Starlette(routes=[
-            Route("/", health_check, methods=["GET", "HEAD"]),
-        ])
-        
-        app.run_webhook(
-            listen="0.0.0.0",
-            port=PORT,
-            url_path=BOT_TOKEN,
-            webhook_url=f"{WEBHOOK_URL}/{BOT_TOKEN}",
-            other_routes=starlette_app.routes  # Add health check routes
-        )
+        logger.info(f"🚀 PRODUCTION MODE - Polling + Health Check")
+        logger.info(f"🌐 Health check on port {PORT}")
+        keep_alive()  # Flask server for UptimeRobot
+        app.run_polling(drop_pending_updates=True)
     
     # --- POLLING MODE (Local development) ---
     else:
