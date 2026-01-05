@@ -144,6 +144,12 @@ async def deletenotes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     notes = await asyncio.to_thread(db.get_notes, user_id)
     
+    # Kullanıcı butonunu sil (Eğer message varsa - callback değilse)
+    if update.message:
+        try:
+            await update.message.delete()
+        except: pass
+    
     # Önceki "notları göster" mesajını sil
     prev_msg_id = context.user_data.get('show_notes_msg_id')
     if prev_msg_id:
@@ -261,6 +267,12 @@ async def edit_notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     notes = await asyncio.to_thread(db.get_notes, user_id)
+    
+    # Kullanıcı butonunu sil (Eğer message varsa - callback değilse)
+    if update.message:
+        try:
+            await update.message.delete()
+        except: pass
     
     await state.clear_user_states(user_id)
     await state.set_state(user_id, state.EDITING_NOTES)
