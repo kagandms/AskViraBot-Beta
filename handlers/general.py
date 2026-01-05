@@ -13,7 +13,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await state.clear_user_states(user_id)
     # DB İŞLEMİ: Asenkron
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
-    await update.message.reply_text(TEXTS["start"][lang].format(bot_name=BOT_NAME))
+    await update.message.reply_text(TEXTS["start"][lang].format(bot_name=BOT_NAME), parse_mode="Markdown")
 
 
 async def tools_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
