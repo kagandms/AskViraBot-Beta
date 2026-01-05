@@ -389,6 +389,10 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
 
     # 2.9 SİLME BUTONU KONTROLÜ (🗑️ FAV...)
     if text.startswith("🗑️ FAV"):
+        # Cleanup
+        try:
+            await update.message.delete()
+        except: pass
         await delete_favorite(update, context, text, lang, user_id)
         return
 
