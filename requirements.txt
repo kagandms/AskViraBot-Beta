@@ -1,4 +1,5 @@
 python-telegram-bot[webhooks]
+starlette
 flask
 supabase
 python-dotenv
