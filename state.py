@@ -28,6 +28,7 @@ DEVELOPER_MENU_ACTIVE = "developer_menu_active"
 METRO_SELECTION = "metro_selection" # Data: selection dict
 ADMIN_MENU_ACTIVE = "admin_menu_active"
 DEVELOPER_MENU_ACTIVE = "developer_menu_active"
+AI_MENU_ACTIVE = "ai_menu_active"
 
 # --- ASYNC HELPERS ---
 

@@ -109,7 +109,7 @@ async def ai_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
     
     # Mesaj ID'sini kaydet
-    await state.set_state(user_id, state.AI_CHAT_ACTIVE, {"message_id": sent_msg.message_id})
+    await state.set_state(user_id, state.AI_MENU_ACTIVE, {"message_id": sent_msg.message_id})
 
 async def start_ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """AI sohbet modunu başlat"""
