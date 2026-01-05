@@ -232,12 +232,26 @@ def main():
         logger.info(f"🚀 WEBHOOK MODE - URL: {WEBHOOK_URL}")
         logger.info(f"🌐 Starting on port {PORT}")
         
-        # Use python-telegram-bot's built-in webhook support
+        # Use python-telegram-bot's built-in webhook support with health check
+        # The webhook runs on /{BOT_TOKEN}, and we add a health check on /
+        from starlette.applications import Starlette
+        from starlette.responses import PlainTextResponse
+        from starlette.routing import Route
+        
+        async def health_check(request):
+            return PlainTextResponse("Bot is alive!")
+        
+        # Create custom starlette app with health check route
+        starlette_app = Starlette(routes=[
+            Route("/", health_check, methods=["GET", "HEAD"]),
+        ])
+        
         app.run_webhook(
             listen="0.0.0.0",
             port=PORT,
             url_path=BOT_TOKEN,
-            webhook_url=f"{WEBHOOK_URL}/{BOT_TOKEN}"
+            webhook_url=f"{WEBHOOK_URL}/{BOT_TOKEN}",
+            other_routes=starlette_app.routes  # Add health check routes
         )
     
     # --- POLLING MODE (Local development) ---
