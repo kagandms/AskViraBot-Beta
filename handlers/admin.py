@@ -63,6 +63,11 @@ async def handle_admin_message(update: Update, context: ContextTypes.DEFAULT_TYP
     import logging
     logging.info(f"Admin Action: User {user_id} sent '{text}'")
     
+    # Cleanup user message
+    try:
+        await update.message.delete()
+    except: pass
+    
     # Geri butonu
     if is_back_button(text):
         await state.clear_user_states(user_id)
