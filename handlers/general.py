@@ -27,6 +27,13 @@ async def tools_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
         if update.message:
             await update.message.delete()
     except Exception: pass
+    
+    # 1. Önceki Tools menüsü mesajını sil (Varsa)
+    tools_state = await state.get_data(user_id)
+    if "tools_message_id" in tools_state:
+        try:
+            await context.bot.delete_message(chat_id=user_id, message_id=tools_state["tools_message_id"])
+        except Exception: pass
 
     await state.clear_user_states(user_id)
     
@@ -34,12 +41,8 @@ async def tools_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
         TEXTS["tools_menu_prompt"][lang],
         reply_markup=get_tools_keyboard_markup(lang)
     )
-    # Mesaj ID'sini kaydet (Geri dönüldüğünde silmek için)
-    # Burada özel bir state yok but Tools menüsü 'aktif' sayılabilir.
-    # Genel amaçlı bir 'message_id' saklayabiliriz veya dummy bir state atayabiliriz.
-    # En temiz yöntem: Hangi menüde olduğumuzu belirten bir state kullanmak.
-    # Şimdilik temizlik için sadece message_id'yi kaydedelim.
-    await state.set_state(user_id, state.TOOLS_MENU_ACTIVE if hasattr(state, "TOOLS_MENU_ACTIVE") else "tools_menu", {"message_id": msg.message_id})
+    # Mesaj ID'sini özel 'tools_message_id' olarak kaydet
+    await state.set_state(user_id, state.TOOLS_MENU_ACTIVE if hasattr(state, "TOOLS_MENU_ACTIVE") else "tools_menu", {"tools_message_id": msg.message_id})
 
 
 async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
