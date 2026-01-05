@@ -902,7 +902,8 @@ async def handle_blackjack_message(update: Update, context: ContextTypes.DEFAULT
                     chat_id=user_id,
                     message_id=game_data["message_id"],
                     text=msg,
-                    reply_markup=get_blackjack_keyboard(lang)
+                    reply_markup=get_blackjack_keyboard(lang),
+                    parse_mode="Markdown"
                 )
             except Exception:
                 # Fallback to new message if edit fails
