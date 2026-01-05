@@ -2,7 +2,7 @@
 # Bu dosya, buton-handler eşleştirmelerini merkezi olarak yönetir.
 # Yeni buton eklemek için sadece BUTTON_HANDLERS listesine bir tuple eklemek yeterli.
 
-from handlers import general, notes, reminders, games, tools, admin, ai_chat, metro, pdf, video, weather
+from handlers import general, notes, reminders, games, tools, admin, ai_chat, metro, pdf, video, weather, economy, shazam
 
 # --- ÖZEL HANDLER'LAR ---
 # Bazı butonlar özel parametre veya mantık gerektirdiği için lambda kullanılır
@@ -73,6 +73,13 @@ BUTTON_HANDLERS = [
     ("pdf_converter_main_button", pdf.pdf_converter_menu),
     ("weather_main_button", weather.weather_command),
     
+    # === EKONOMİ ===
+    ("daily_bonus", economy.daily_bonus_command),
+    ("balance", economy.balance_command),
+    
+    # === SHAZAM ===
+    ("shazam_main_button", shazam.start_shazam_mode),
+
     # === PDF SUB-MENÜ ===
     ("text_to_pdf_button", pdf.prompt_text_for_pdf),
     ("image_to_pdf_button", pdf.prompt_file_for_pdf),

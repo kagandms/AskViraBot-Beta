@@ -485,6 +485,71 @@ TEXTS = {
         "ru": "❌ Сервис AI временно недоступен. Попробуйте позже."
     },
     
+    "ai_api_error": {
+        "tr": "❌ AI servisi şu an kullanılamıyor. Lütfen daha sonra tekrar deneyin.",
+        "en": "❌ AI service is currently unavailable. Please try again later.",
+        "ru": "❌ Сервис AI временно недоступен. Попробуйте позже."
+    },
+    
+    # --- SHAZAM (MÜZİK TANIMA) ---
+    "shazam_menu_prompt": {
+        "tr": "🎵 *Shazam - Müzik Bulucu*\n\nBulmak istediğiniz şarkı için:\n🎤 *Ses/Müzik* dosyasını gönderin,\n🎥 *Video* dosyasını gönderin,\n🔗 *Instagram/TikTok/YouTube* linkini yapıştırın.",
+        "en": "🎵 *Shazam - Music Finder*\n\nTo find a song:\n🎤 Send an *Audio/Voice* file,\n🎥 Send a *Video* file,\n🔗 Paste an *Instagram/TikTok/YouTube* link.",
+        "ru": "🎵 *Shazam - Поиск Музыки*\n\nЧтобы найти песню:\n🎤 Отправьте *Аудио/Голосовое* сообщение,\n🎥 Отправьте *Видео* файл,\n🔗 Вставьте ссылку *Instagram/TikTok/YouTube*."
+    },
+    "shazam_processing": {
+        "tr": "🎧 Müzik dinleniyor... Lütfen bekleyin.",
+        "en": "🎧 Listening to music... Please wait.",
+        "ru": "🎧 Слушаю музыку... Пожалуйста, подождите."
+    },
+    "shazam_not_found": {
+        "tr": "❌ Müzik tanımlanamadı. Kayıt çok kısa veya kalitesiz olabilir.",
+        "en": "❌ Music not recognized. Recording might be too short or low quality.",
+        "ru": "❌ Музыка не распознана. Запись может быть слишком короткой или низкого качества."
+    },
+    "shazam_result_caption": {
+        "tr": "🎵 *{title}*\n👤 {artist}\n💿 {album}",
+        "en": "🎵 *{title}*\n👤 {artist}\n💿 {album}",
+        "ru": "🎵 *{title}*\n👤 {artist}\n💿 {album}"
+    },
+    
+    # --- EKONOMİ SİSTEMİ ---
+    "daily_bonus_already_claimed": {
+        "tr": "⏳ Günlük bonusunu bugün zaten aldın. Yarın tekrar gel!",
+        "en": "⏳ You have already claimed your daily bonus today. Come back tomorrow!",
+        "ru": "⏳ Вы уже получили ежедневный бонус сегодня. Возвращайтесь завтра!"
+    },
+    "daily_bonus_success": {
+        "tr": "🎉 *Günlük Bonus Alındı!*\n\n💰 Kazanılan: *{reward} Coin*\n🔥 Seri: *{streak}. Gün*\n\nYarın daha fazla kazanmak için gelmeyi unutma!",
+        "en": "🎉 *Daily Bonus Claimed!*\n\n💰 Earned: *{reward} Coins*\n🔥 Streak: *Day {streak}*\n\nDon't forget to come back tomorrow for more!",
+        "ru": "🎉 *Ежедневный бонус получен!*\n\n💰 Заработано: *{reward} монет*\n🔥 Серия: *День {streak}*\n\nНе забудьте вернуться завтра, чтобы получить больше!"
+    },
+    "wallet_status": {
+        "tr": "💳 *Cüzdan Durumu*\n\n💰 Bakiye: *{coins} Coin*",
+        "en": "💳 *Wallet Status*\n\n💰 Balance: *{coins} Coins*",
+        "ru": "💳 *Состояние кошелька*\n\n💰 Баланс: *{coins} монет*"
+    },
+    "insufficient_funds": {
+        "tr": "❌ Yetersiz bakiye! Bu işlem için {amount} coin gerekiyor.\nMevcut: {balance}",
+        "en": "❌ Insufficient funds! You need {amount} coins for this.\nCurrent: {balance}",
+        "ru": "❌ Недостаточно средств! Вам нужно {amount} монет.\nТекущий баланс: {balance}"
+    },
+    "bet_placed": {
+        "tr": "✅ Bahis kabul edildi: *{amount} Coin*",
+        "en": "✅ Bet placed: *{amount} Coins*",
+        "ru": "✅ Ставка принята: *{amount} монет*"
+    },
+    "coin_earned": {
+        "tr": "💰 *{amount} Coin* kazandın!",
+        "en": "💰 You won *{amount} Coins*!",
+        "ru": "💰 Вы выиграли *{amount} монет*!"
+    },
+    "game_fee": {
+        "tr": "🎫 Giriş ücreti: *{amount} Coin*",
+        "en": "🎫 Entry fee: *{amount} Coins*",
+        "ru": "🎫 Входная плата: *{amount} монет*"
+    },
+
     # --- METRO İSTANBUL ---
     "metro_menu_prompt": {
         "tr": "🚇 *Metro İstanbul*\n\n🚆 Hangi hatta seyahat edeceksiniz?\n\n_ℹ️ Veriler İBB'den alınmaktadır._",
@@ -531,9 +596,9 @@ MAIN_BUTTONS = {
 }
 
 TOOLS_BUTTONS = {
-    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu", "📥 Video İndir"], ["🚇 Canlı Metro İstanbul", "🔙 Ana Menü"]],
-    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather", "📥 Video Download"], ["🚇 Live Metro Istanbul", "🔙 Main Menu"]],
-    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода", "📥 Скачать Видео"], ["🚇 Метро Стамбул", "🔙 Главное Меню"]]
+    "tr": [["📝 Notlar", "⏰ Hatırlatıcı"], ["📷 QR Kod", "📄 PDF Dönüştürücü"], ["☀️ Hava Durumu", "🚇 Canlı Metro İstanbul"], ["📥 Video İndir", "🎵 Shazam"], ["🔙 Ana Menü"]],
+    "en": [["📝 Notes", "⏰ Reminder"], ["📷 QR Code", "📄 PDF Converter"], ["☀️ Weather", "🚇 Live Metro Istanbul"], ["📥 Video Download", "🎵 Shazam"], ["🔙 Main Menu"]],
+    "ru": [["📝 Заметки", "⏰ Напоминание"], ["📷 QR-код", "📄 Конвертер PDF"], ["☀️ Погода", "🚇 Метро Стамбул"], ["📥 Скачать Видео", "🎵 Shazam"], ["🔙 Главное Меню"]]
 }
 
 # --- VIDEO DOWNLOADER MENÜSÜ ---
@@ -553,9 +618,9 @@ FORMAT_SELECTION_BUTTONS = {
 # --- YENİ OYUN MENÜSÜ ---
 # Blackjack, İstatistik ve Slot eklendi
 GAMES_BUTTONS = {
-    "tr": [["❌⭕ XOX", "🎲 Zar"], ["🪙 Yazı Tura", "🪨📄✂️ T-K-M"], ["🃏 Blackjack (21)", "🎰 Slot"], ["📊 İstatistiklerim"], ["🔙 Ana Menü"]],
-    "en": [["❌⭕ XOX", "🎲 Dice"], ["🪙 Coinflip", "🪨📄✂️ R-P-S"], ["🃏 Blackjack (21)", "🎰 Slot"], ["📊 My Stats"], ["🔙 Main Menu"]],
-    "ru": [["❌⭕ XOX", "🎲 Кубик"], ["🪙 Монета", "🪨📄✂️ К-Б-Н"], ["🃏 Блэкджек (21)", "🎰 Слот"], ["📊 Статистика"], ["🔙 Главное Меню"]]
+    "tr": [["❌⭕ XOX", "🎲 Zar"], ["🪙 Yazı Tura", "🪨📄✂️ T-K-M"], ["🃏 Blackjack (21)", "🎰 Slot"], ["🎁 Günlük Bonus", "💰 Cüzdan"], ["📊 İstatistiklerim"], ["🔙 Ana Menü"]],
+    "en": [["❌⭕ XOX", "🎲 Dice"], ["🪙 Coinflip", "🪨📄✂️ R-P-S"], ["🃏 Blackjack (21)", "🎰 Slot"], ["🎁 Daily Bonus", "💰 Wallet"], ["📊 My Stats"], ["🔙 Main Menu"]],
+    "ru": [["❌⭕ XOX", "🎲 Кубик"], ["🪙 Монета", "🪨📄✂️ К-Б-Н"], ["🃏 Блэкджек (21)", "🎰 Слот"], ["🎁 Ежедневный Бонус", "💰 Кошелек"], ["📊 Статистика"], ["🔙 Главное Меню"]]
 }
 
 # --- NOTLAR MENÜSÜ ---

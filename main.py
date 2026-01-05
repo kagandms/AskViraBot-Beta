@@ -12,7 +12,7 @@ from utils import get_main_keyboard_markup
 from rate_limiter import is_rate_limited, get_remaining_cooldown
 
 # Handler'ları içe aktar
-from handlers import general, notes, reminders, games, tools, admin, ai_chat, metro, pdf, video, weather
+from handlers import general, notes, reminders, games, tools, admin, ai_chat, metro, pdf, video, weather, economy, shazam
 from keep_alive import keep_alive
 
 # --- LOGLAMA YAPILANDIRMASI ---
@@ -104,6 +104,12 @@ async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYP
         return
     if await state.check_state(user_id, state.WAITING_FOR_VIDEO_LINK):
         await video.download_and_send_media(update, context)
+        return
+    if await state.check_state(user_id, state.WAITING_FOR_BJ_BET):
+        await games.handle_blackjack_bet(update, context)
+        return
+    if await state.check_state(user_id, state.WAITING_FOR_SHAZAM):
+        await shazam.handle_shazam_input(update, context)
         return
     if await state.check_state(user_id, state.AI_CHAT_ACTIVE):
         await ai_chat.handle_ai_message(update, context)
@@ -197,6 +203,10 @@ def main():
         CommandHandler("addnote", notes.addnote_command),
         CommandHandler("editnote", notes.edit_notes_menu),
         CommandHandler("shownotes", notes.shownotes_command),
+        
+        # Economy
+        CommandHandler("daily", economy.daily_bonus_command),
+        CommandHandler("balance", economy.balance_command),
         
         # Games
         CommandHandler("games", games.games_menu),
