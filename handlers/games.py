@@ -240,74 +240,25 @@ async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
         return
 
     # ÇIKIŞ / GERİ KONTROLÜ
-    # ÇIKIŞ / GERİ KONTROLÜ
     if is_back_button(text):
         # Kullanıcı mesajını sil
         try:
             await update.message.delete()
         except Exception: pass
         
-        # State temizliğini games_menu halledecek
-        # await state.clear_user_states(user_id) 
+        # Önceki mesajı da sil
+        if "message_id" in game_state:
+            try:
+                await context.bot.delete_message(chat_id=user_id, message_id=game_state["message_id"])
+            except: pass
+        
+        await state.clear_user_states(user_id)
         await games_menu(update, context)
         return
         
-    # OYUN SEÇİMİ (Ana Menüden Gelen Komutlar)
-    elif text_lower in ["blackjack", "21", "блэкджек"]:
-        # Cleanup
-        try:
-            await update.message.delete()
-        except: pass
-        await blackjack_start(update, context)
-        
-    elif text_lower in ["xox", "tic tac toe", "крестики-нолики"]:
-        # Cleanup
-        try:
-            await update.message.delete()
-        except: pass
-        await xox_start_menu(update, context)
-        
-    elif text_lower in ["taş-kağıt-makas", "rock-paper-scissors", "камень-ножницы-бумага", "tkm"]:
-        # Cleanup
-        try:
-            await update.message.delete()
-        except: pass
-        await tkm_start(update, context)
-        
-    elif text_lower in ["zar at", "roll dice", "бросить кости", "🎲"]:
-        # Cleanup
-        try:
-            await update.message.delete()
-        except: pass
-        await dice_game(update, context)
-        
-    elif text_lower in ["yazı tura", "coin flip", "подбросить монетку", "🪙"]:
-        # Cleanup
-        try:
-            await update.message.delete()
-        except: pass
-        await coinflip_game(update, context)
-        
-    elif text_lower in ["slot makinesi", "slot machine", "слот машина", "🎰"]:
-        # Cleanup
-        try:
-            await update.message.delete()
-        except: pass
-        await slot_game(update, context)
-        
-    elif text_lower in ["📊 istatistikler", "📊 stats", "📊 статистика"]:
-        # Cleanup
-        try:
-            await update.message.delete()
-        except: pass
-        await show_stats(update, context)
-        
-    else:
-        # Bilinmeyen komut
-        pass
     # ZORLUK SEÇİMİ
+    text_lower = text.lower()
     if not game_state.get("active"):
-        text_lower = text.lower()
         selected_diff = None
         
         if "kolay" in text_lower or "easy" in text_lower or "легко" in text_lower:
