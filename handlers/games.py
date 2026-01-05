@@ -267,13 +267,43 @@ async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
         if selected_diff:
             game_state["difficulty"] = selected_diff
             game_state["active"] = True
-            # Update state in DB
-            await state.set_state(user_id, state.PLAYING_XOX, game_state)
             
-            await update.message.reply_text(
-                f"{TEXTS['xox_welcome'][lang]}",
+            # Zorluk metinleri
+            diff_texts = {
+                "easy": {"tr": "Kolay", "en": "Easy", "ru": "Легко"},
+                "medium": {"tr": "Orta", "en": "Medium", "ru": "Средне"},
+                "hard": {"tr": "Zor", "en": "Hard", "ru": "Сложно"}
+            }
+            d_text = diff_texts[selected_diff].get(lang, diff_texts[selected_diff]["en"])
+            
+            # Cleanup: Delete user's "Easy/Medium/Hard" message
+            try:
+                await update.message.delete()
+            except: pass
+            
+            # Cleanup: Delete "Select Difficulty" prompt
+            # (Retrieve ID from state or context if available, or just cleanup_context)
+            # Since we are in the same handler session, we can use cleanup_context if it targets the right things.
+            # But cleanup_context uses stored "message_id".
+            # Initial state had "message_id" of prompt.
+            if "message_id" in game_state:
+                try:
+                    await context.bot.delete_message(chat_id=user_id, message_id=game_state["message_id"])
+                except: pass
+            
+            # Send Welcome with Mode
+            # "XOX (...) - Kolay oyununa hoş geldin!"
+            welcome_text = f"{TEXTS['xox_welcome'][lang]} - {d_text}"
+            
+            board_msg = await update.message.reply_text(
+                welcome_text,
                 reply_markup=get_xox_board_reply_markup(game_state["board"])
             )
+            
+            # Save Board Message ID for future updates
+            game_state["message_id"] = board_msg.message_id
+            await state.set_state(user_id, state.PLAYING_XOX, game_state)
+            
         else:
             await update.message.reply_text(TEXTS["xox_invalid_move"][lang])
         return
@@ -322,12 +352,27 @@ async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
             
     # OYUN DEVAM -> DB GÜNCELLE
     game_state["board"] = board
-    await state.set_state(user_id, state.PLAYING_XOX, game_state)
     
-    await update.message.reply_text(
+    # 1. Kullanıcı hamle mesajını sil ("1", "5" vb)
+    try:
+        await update.message.delete()
+    except: pass
+    
+    # 2. Eski board mesajını sil
+    if "message_id" in game_state:
+        try:
+            await context.bot.delete_message(chat_id=user_id, message_id=game_state["message_id"])
+        except: pass
+        
+    # 3. Yeni board gönder
+    new_board_msg = await update.message.reply_text(
         TEXTS["xox_bot_moved"][lang] if "xox_bot_moved" in TEXTS else "Bot played.",
         reply_markup=get_xox_board_reply_markup(board)
     )
+    
+    # 4. Yeni ID'yi kaydet
+    game_state["message_id"] = new_board_msg.message_id
+    await state.set_state(user_id, state.PLAYING_XOX, game_state)
 
 async def finish_get_xox_game(update, context, board, winner, lang, user_id, difficulty):
     """Oyunu bitir"""
