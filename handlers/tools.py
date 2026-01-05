@@ -128,26 +128,12 @@ async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT
             try:
                 await context.user_data["developer_last_link_msg"].delete()
             except Exception: pass
-            
+            # del context.user_data["developer_last_link_msg"] # Optional safety
+
         try:
             await update.message.delete()
         except: pass
-            
-        await tools_menu(update, context) # Changed to tools_menu as per navigation flow? Or games_menu? 
-        # Wait, dev menu is under tools? Or main?
-        # router says: ("developer_main_button", tools.show_developer_info). 
-        # Usually back goes to Main Menu unless specified.
-        # tools.py L164 (social media back) deletes message.
-        # Let's keep existing navigation but add deletion.
-        # Existing code called 'games_menu'? No, code was cut off in view.
-        # Let's check imports.
-        # Assuming general.menu_command is standard back.
-        from handlers.general import menu_command
-        await menu_command(update, context)
-        return True
-            except Exception:
-                pass
-            del context.user_data["developer_last_link_msg"]
+        
         from handlers.general import menu_command
         await menu_command(update, context)
         return True
