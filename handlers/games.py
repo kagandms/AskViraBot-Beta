@@ -5,7 +5,7 @@ from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKe
 from telegram.ext import ContextTypes
 import database as db
 import state
-from texts import TEXTS, TKM_BUTTONS, BUTTON_MAPPINGS, GAMES_BUTTONS
+from texts import TEXTS, TKM_BUTTONS, BUTTON_MAPPINGS, GAMES_BUTTONS, GAME_MODE_BUTTONS, BET_BUTTONS
 from utils import get_games_keyboard_markup, is_back_button, cleanup_context
 from rate_limiter import rate_limit
 
@@ -438,9 +438,30 @@ async def coinflip_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     await update.message.reply_text(TEXTS["coinflip_result"][lang].format(result=translations[lang][result]), reply_markup=get_games_keyboard_markup(lang))
 
 # --- TAŞ KAĞIT MAKAS (GÜNCELLENDİ) ---
+
+# Helper: Get game mode keyboard
+def get_game_mode_keyboard(lang):
+    buttons = GAME_MODE_BUTTONS.get(lang, GAME_MODE_BUTTONS["en"])
+    return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
+
+# Helper: Get bet keyboard
+def get_bet_keyboard_generic(lang):
+    buttons = BET_BUTTONS.get(lang, BET_BUTTONS["en"])
+    return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
+
+# Game Names for display
+GAME_NAMES = {
+    "tkm": {"tr": "Taş Kağıt Makas", "en": "Rock Paper Scissors", "ru": "Камень Ножницы Бумага"},
+    "slot": {"tr": "Slot Makinesi", "en": "Slot Machine", "ru": "Слот Машина"},
+    "blackjack": {"tr": "Blackjack (21)", "en": "Blackjack (21)", "ru": "Блэкджек (21)"}
+}
+
 @rate_limit("games")
 async def tkm_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """TKM oyunu için mod seçimi göster"""
     user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
     # Cleanup
     await cleanup_context(context, user_id)
     
@@ -450,13 +471,172 @@ async def tkm_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     except: pass
     
     await state.clear_user_states(user_id)
-    await state.set_state(user_id, state.PLAYING_TKM)
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
-    buttons = TKM_BUTTONS.get(lang, TKM_BUTTONS["en"])
-    sent_msg = await update.message.reply_text(TEXTS["tkm_welcome"][lang], reply_markup=ReplyKeyboardMarkup(buttons, resize_keyboard=True))
+    await state.set_state(user_id, state.WAITING_FOR_GAME_MODE, {"game": "tkm"})
     
-    # Set state with message ID
-    await state.set_state(user_id, state.PLAYING_TKM, {"message_id": sent_msg.message_id})
+    game_name = GAME_NAMES["tkm"].get(lang, GAME_NAMES["tkm"]["en"])
+    msg_text = TEXTS["game_mode_select"][lang].format(game_name=game_name)
+    
+    sent_msg = await update.message.reply_text(
+        msg_text,
+        reply_markup=get_game_mode_keyboard(lang),
+        parse_mode="Markdown"
+    )
+    await state.set_state(user_id, state.WAITING_FOR_GAME_MODE, {"game": "tkm", "message_id": sent_msg.message_id})
+
+async def handle_game_mode_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handles Fun/Coin mode selection for all games"""
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    text = update.message.text.lower() if update.message.text else ""
+    
+    # Get current game from state data
+    state_data = await state.get_data(user_id)
+    game = state_data.get("game", "")
+    
+    # Back check
+    if is_back_button(text):
+        await cleanup_context(context, user_id)
+        try:
+            await update.message.delete()
+        except: pass
+        await state.clear_user_states(user_id)
+        await games_menu(update, context)
+        return
+    
+    # Delete user input
+    try:
+        await update.message.delete()
+    except: pass
+    
+    # Check for "Fun" mode
+    fun_keywords = ["eğlencesine", "just for fun", "для удовольствия", "🎮"]
+    coin_keywords = ["coinle", "with coins", "за монеты", "💰"]
+    
+    is_fun_mode = any(k in text for k in fun_keywords)
+    is_coin_mode = any(k in text for k in coin_keywords)
+    
+    if is_fun_mode:
+        # Start game in fun mode (no coins)
+        await state.clear_user_states(user_id)
+        if game == "tkm":
+            await start_tkm_game(update, context, bet_amount=0)
+        elif game == "slot":
+            await start_slot_game(update, context, bet_amount=0)
+        elif game == "blackjack":
+            await start_blackjack_game(update, context, bet_amount=0)
+    elif is_coin_mode:
+        # Show bet selection
+        coins = await asyncio.to_thread(db.get_user_coins, user_id)
+        if coins < 50:
+            msg = TEXTS["insufficient_funds"][lang].format(amount=50, balance=coins)
+            await update.message.reply_text(msg)
+            await state.clear_user_states(user_id)
+            await games_menu(update, context)
+            return
+        
+        # Set appropriate bet state
+        if game == "tkm":
+            await state.set_state(user_id, state.WAITING_FOR_TKM_BET)
+        elif game == "slot":
+            await state.set_state(user_id, state.WAITING_FOR_SLOT_BET)
+        elif game == "blackjack":
+            await state.set_state(user_id, state.WAITING_FOR_BJ_BET)
+        
+        msg_text = TEXTS["bet_select_prompt"][lang].format(balance=coins)
+        sent_msg = await update.message.reply_text(
+            msg_text,
+            reply_markup=get_bet_keyboard_generic(lang),
+            parse_mode="Markdown"
+        )
+        
+        # Store message_id for cleanup
+        await state.set_state(user_id, 
+            state.WAITING_FOR_TKM_BET if game == "tkm" else 
+            state.WAITING_FOR_SLOT_BET if game == "slot" else 
+            state.WAITING_FOR_BJ_BET, 
+            {"message_id": sent_msg.message_id}
+        )
+    else:
+        # Invalid selection - ignore
+        pass
+
+async def handle_tkm_bet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle TKM bet amount selection"""
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    text = update.message.text if update.message.text else ""
+    
+    # Back check
+    if is_back_button(text):
+        await cleanup_context(context, user_id)
+        try:
+            await update.message.delete()
+        except: pass
+        await state.clear_user_states(user_id)
+        await games_menu(update, context)
+        return
+    
+    # Delete user input
+    try:
+        await update.message.delete()
+    except: pass
+    
+    # Parse bet amount
+    amount = parse_bet_amount(text, user_id)
+    if amount is None:
+        amount = await get_all_in_amount(text, user_id)
+    
+    if amount is None or amount <= 0:
+        await update.message.reply_text("❌ Geçersiz miktar / Invalid amount")
+        return
+    
+    coins = await asyncio.to_thread(db.get_user_coins, user_id)
+    if amount > coins:
+        msg = TEXTS["insufficient_funds"][lang].format(amount=amount, balance=coins)
+        await update.message.reply_text(msg)
+        return
+    
+    # Deduct bet
+    await asyncio.to_thread(db.add_user_coins, user_id, -amount)
+    
+    # Start game
+    await state.clear_user_states(user_id)
+    await start_tkm_game(update, context, bet_amount=amount)
+
+def parse_bet_amount(text: str, user_id: int) -> int | None:
+    """Extract numeric bet amount from text"""
+    import re
+    match = re.search(r'\d+', text)
+    if match:
+        return int(match.group())
+    return None
+
+async def get_all_in_amount(text: str, user_id: int) -> int | None:
+    """Check if user wants all-in and return their balance"""
+    all_in_keywords = ["hepsini", "all in", "ва-банк", "🎯"]
+    if any(k in text.lower() for k in all_in_keywords):
+        return await asyncio.to_thread(db.get_user_coins, user_id)
+    return None
+
+async def start_tkm_game(update: Update, context: ContextTypes.DEFAULT_TYPE, bet_amount: int = 0) -> None:
+    """Actually start the TKM game"""
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    await state.set_state(user_id, state.PLAYING_TKM, {"bet_amount": bet_amount})
+    
+    buttons = TKM_BUTTONS.get(lang, TKM_BUTTONS["en"])
+    
+    welcome_text = TEXTS["tkm_welcome"][lang]
+    if bet_amount > 0:
+        welcome_text += f"\n\n💰 Bahsin: *{bet_amount} Coin* (Kazanırsan x2)"
+    
+    sent_msg = await update.message.reply_text(
+        welcome_text, 
+        reply_markup=ReplyKeyboardMarkup(buttons, resize_keyboard=True),
+        parse_mode="Markdown"
+    )
+    await state.set_state(user_id, state.PLAYING_TKM, {"message_id": sent_msg.message_id, "bet_amount": bet_amount})
 
 async def tkm_play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
@@ -519,9 +699,28 @@ async def tkm_play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             result_status = "lose"
             
         await asyncio.to_thread(db.log_tkm_game, user_id, user_move, bot_move_standard, result_status)
+        
+        # --- COIN PROCESSING ---
+        st_data = await state.get_data(user_id)
+        bet_amount = st_data.get("bet_amount", 0)
+        
+        if bet_amount > 0:
+            if result_status == "win":
+                # x2 multiplier
+                winnings = bet_amount * 2
+                await asyncio.to_thread(db.add_user_coins, user_id, winnings)
+                result_msg += "\n\n" + TEXTS["game_win_coins"][lang].format(amount=winnings, multiplier=2)
+            elif result_status == "draw":
+                # Refund bet
+                await asyncio.to_thread(db.add_user_coins, user_id, bet_amount)
+                result_msg += "\n\n" + TEXTS["game_draw_refund"][lang].format(amount=bet_amount)
+            else:  # lose
+                # Bet already deducted
+                result_msg += "\n\n" + TEXTS["game_lose_coins"][lang].format(amount=bet_amount)
+        # -----------------------
 
         await state.clear_user_states(user_id)
-        await update.message.reply_text(result_msg, reply_markup=get_games_keyboard_markup(lang))
+        await update.message.reply_text(result_msg, reply_markup=get_games_keyboard_markup(lang), parse_mode="Markdown")
         
     except Exception as e:
         logging.getLogger(__name__).error(f"TKM Error: {e}")
@@ -545,7 +744,7 @@ def get_slot_keyboard(lang):
 
 @rate_limit("games")
 async def slot_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Slot makinesini başlat"""
+    """Slot makinesi için mod seçimi göster"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
@@ -558,13 +757,77 @@ async def slot_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     except: pass
     
     await state.clear_user_states(user_id)
-    await state.set_state(user_id, state.PLAYING_SLOT)
+    await state.set_state(user_id, state.WAITING_FOR_GAME_MODE, {"game": "slot"})
     
-    welcome = {
-        "tr": "🎰 *Slot Makinesi*\n\n3 aynı sembol = Kazandın!\n7️⃣ 7️⃣ 7️⃣ = JACKPOT!\n\nÇevirmek için butona bas!",
-        "en": "🎰 *Slot Machine*\n\n3 matching symbols = You win!\n7️⃣ 7️⃣ 7️⃣ = JACKPOT!\n\nPress the button to spin!",
-        "ru": "🎰 *Слот Машина*\n\n3 одинаковых символа = Победа!\n7️⃣ 7️⃣ 7️⃣ = ДЖЕКПОТ!\n\nНажми кнопку чтобы крутить!"
-    }
+    game_name = GAME_NAMES["slot"].get(lang, GAME_NAMES["slot"]["en"])
+    msg_text = TEXTS["game_mode_select"][lang].format(game_name=game_name)
+    
+    sent_msg = await update.message.reply_text(
+        msg_text,
+        reply_markup=get_game_mode_keyboard(lang),
+        parse_mode="Markdown"
+    )
+    await state.set_state(user_id, state.WAITING_FOR_GAME_MODE, {"game": "slot", "message_id": sent_msg.message_id})
+
+async def handle_slot_bet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle Slot bet amount selection"""
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    text = update.message.text if update.message.text else ""
+    
+    # Back check
+    if is_back_button(text):
+        await cleanup_context(context, user_id)
+        try:
+            await update.message.delete()
+        except: pass
+        await state.clear_user_states(user_id)
+        await games_menu(update, context)
+        return
+    
+    # Delete user input
+    try:
+        await update.message.delete()
+    except: pass
+    
+    # Parse bet amount
+    amount = parse_bet_amount(text, user_id)
+    if amount is None:
+        amount = await get_all_in_amount(text, user_id)
+    
+    if amount is None or amount <= 0:
+        await update.message.reply_text("❌ Geçersiz miktar / Invalid amount")
+        return
+    
+    coins = await asyncio.to_thread(db.get_user_coins, user_id)
+    if amount > coins:
+        msg = TEXTS["insufficient_funds"][lang].format(amount=amount, balance=coins)
+        await update.message.reply_text(msg)
+        return
+    
+    # Start game (bet will be deducted per spin)
+    await state.clear_user_states(user_id)
+    await start_slot_game(update, context, bet_amount=amount)
+
+async def start_slot_game(update: Update, context: ContextTypes.DEFAULT_TYPE, bet_amount: int = 0) -> None:
+    """Actually start the Slot game"""
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    
+    await state.set_state(user_id, state.PLAYING_SLOT, {"bet_amount": bet_amount})
+    
+    if bet_amount > 0:
+        welcome = {
+            "tr": f"🎰 *Slot Makinesi*\n\n💰 Spin başı: *{bet_amount} Coin*\n\n🎲 2 aynı = x2 | 3 aynı = x5 | Jackpot = x50\n\nÇevirmek için butona bas!",
+            "en": f"🎰 *Slot Machine*\n\n💰 Per spin: *{bet_amount} Coins*\n\n🎲 2 match = x2 | 3 match = x5 | Jackpot = x50\n\nPress button to spin!",
+            "ru": f"🎰 *Слот Машина*\n\n💰 За спин: *{bet_amount} монет*\n\n🎲 2 совпадения = x2 | 3 = x5 | Джекпот = x50\n\nНажми кнопку!"
+        }
+    else:
+        welcome = {
+            "tr": "🎰 *Slot Makinesi (Eğlence)*\n\n3 aynı sembol = Kazandın!\n7️⃣ 7️⃣ 7️⃣ = JACKPOT!\n\nÇevirmek için butona bas!",
+            "en": "🎰 *Slot Machine (Fun Mode)*\n\n3 matching symbols = You win!\n7️⃣ 7️⃣ 7️⃣ = JACKPOT!\n\nPress the button to spin!",
+            "ru": "🎰 *Слот Машина (Для удовольствия)*\n\n3 одинаковых = Победа!\n7️⃣ 7️⃣ 7️⃣ = ДЖЕКПОТ!\n\nНажми кнопку!"
+        }
     
     sent_msg = await update.message.reply_text(
         welcome.get(lang, welcome["en"]),
@@ -572,8 +835,7 @@ async def slot_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         parse_mode="Markdown"
     )
     
-    # Mesaj ID'sini state'e kaydet (Cleanup için)
-    await state.set_state(user_id, state.PLAYING_SLOT, {"message_id": sent_msg.message_id})
+    await state.set_state(user_id, state.PLAYING_SLOT, {"message_id": sent_msg.message_id, "bet_amount": bet_amount})
 
 async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Slot makinesini çevir (Animasyonlu)"""
@@ -606,17 +868,20 @@ async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     except: pass
     
     # --- BETTING LOGIC ---
-    SPIN_COST = 100
-    current_coins = await asyncio.to_thread(db.get_user_coins, user_id)
+    st_data = await state.get_data(user_id)
+    bet_amount = st_data.get("bet_amount", 0)
     
-    if current_coins < SPIN_COST:
-        msg = TEXTS["insufficient_funds"][lang].format(amount=SPIN_COST, balance=current_coins)
-        # Show alert as ephemeral or reply
-        await update.message.reply_text(msg)
-        return
+    # If betting mode, check and deduct funds per spin
+    if bet_amount > 0:
+        current_coins = await asyncio.to_thread(db.get_user_coins, user_id)
         
-    # Deduct cost
-    await asyncio.to_thread(db.add_user_coins, user_id, -SPIN_COST)
+        if current_coins < bet_amount:
+            msg = TEXTS["insufficient_funds"][lang].format(amount=bet_amount, balance=current_coins)
+            await update.message.reply_text(msg)
+            return
+            
+        # Deduct bet for this spin
+        await asyncio.to_thread(db.add_user_coins, user_id, -bet_amount)
     # ---------------------
 
     slots = ["🍒", "🍋", "🍇", "🍊", "💎", "7️⃣"]
@@ -663,27 +928,37 @@ async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # 3. Sonuç Mesajı ve Ödül
     result_line = "   ".join(final_result)
     
-    reward = 0
+    multiplier = 0
+    outcome_text = ""
+    
     if final_result == ["7️⃣", "7️⃣", "7️⃣"]:
-        reward = SPIN_COST * 50 # 5000 Coin
+        multiplier = 50
         outcome_text = "JACKPOT!!! 💰💰💰"
     elif final_result[0] == final_result[1] == final_result[2]:
-        reward = SPIN_COST * 5 # 500 Coin
+        multiplier = 5
         outcome_text = "WIN!! 🎉"
     elif final_result[0] == final_result[1] or final_result[1] == final_result[2] or final_result[0] == final_result[2]:
-        reward = SPIN_COST * 2 # 200 Coin
+        multiplier = 2
         outcome_text = "Nice! 2 Match 👍"
     else:
         outcome_text = "Lost... 📉"
+    
+    # Calculate reward based on bet_amount
+    reward = 0
+    win_msg = ""
+    
+    if bet_amount > 0:  # Coin mode
+        if multiplier > 0:
+            reward = bet_amount * multiplier
+            await asyncio.to_thread(db.add_user_coins, user_id, reward)
+            win_msg = TEXTS["game_win_coins"][lang].format(amount=reward, multiplier=multiplier)
+        else:
+            win_msg = TEXTS["game_lose_coins"][lang].format(amount=bet_amount)
         
-    # Ödül ekle
-    if reward > 0:
-        await asyncio.to_thread(db.add_user_coins, user_id, reward)
-        win_msg = TEXTS["coin_earned"][lang].format(amount=reward)
-    else:
-        win_msg = ""
-        
-    final_text = f"🎰 *Slot Machine*\n\n   {result_line}\n\n{outcome_text}\n{win_msg}\n\nBalance: {current_coins - SPIN_COST + reward}"
+        new_balance = await asyncio.to_thread(db.get_user_coins, user_id)
+        final_text = f"🎰 *Slot Machine*\n\n   {result_line}\n\n{outcome_text}\n{win_msg}\n\n💰 Bakiye: {new_balance}"
+    else:  # Fun mode
+        final_text = f"🎰 *Slot Machine (Fun)*\n\n   {result_line}\n\n{outcome_text}"
 
     if message_id:
         try:
@@ -908,7 +1183,7 @@ def get_bet_keyboard(lang):
 
 @rate_limit("games")
 async def blackjack_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Blackjack bahis ekranını başlat"""
+    """Blackjack için mod seçimi göster"""
     user_id = update.effective_user.id
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
@@ -920,31 +1195,27 @@ async def blackjack_start(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         await update.message.delete()
     except: pass
     
-    # Check balance
-    coins = await asyncio.to_thread(db.get_user_coins, user_id)
-    if coins < 50:
-         # Not even min bet
-         msg = TEXTS["insufficient_funds"][lang].format(amount=50, balance=coins)
-         await update.message.reply_text(msg)
-         return
-    
     await state.clear_user_states(user_id)
-    await state.set_state(user_id, state.WAITING_FOR_BJ_BET)
+    await state.set_state(user_id, state.WAITING_FOR_GAME_MODE, {"game": "blackjack"})
     
-    msg_dict = {
-        "tr": f"🃏 *Blackjack Bahis*\n\n💰 Mevcut Bakiye: *{coins}*\n\nLütfen bahis miktarını seç:",
-        "en": f"🃏 *Blackjack Betting*\n\n💰 Current Balance: *{coins}*\n\nPlease select your bet amount:",
-        "ru": f"🃏 *Блэкджек Ставка*\n\n💰 Текущий баланс: *{coins}*\n\nПожалуйста, выберите сумму ставки:"
-    }
+    game_name = GAME_NAMES["blackjack"].get(lang, GAME_NAMES["blackjack"]["en"])
+    msg_text = TEXTS["game_mode_select"][lang].format(game_name=game_name)
     
     sent_msg = await update.message.reply_text(
-        msg_dict.get(lang, msg_dict["en"]),
-        reply_markup=get_bet_keyboard(lang),
+        msg_text,
+        reply_markup=get_game_mode_keyboard(lang),
         parse_mode="Markdown"
     )
+    await state.set_state(user_id, state.WAITING_FOR_GAME_MODE, {"game": "blackjack", "message_id": sent_msg.message_id})
+
+async def start_blackjack_game(update: Update, context: ContextTypes.DEFAULT_TYPE, bet_amount: int = 0) -> None:
+    """Actually start the Blackjack game - Fun mode or after bet selection"""
+    user_id = update.effective_user.id
+    lang = await asyncio.to_thread(db.get_user_lang, user_id)
     
-    # Save message ID for cleanup
-    await state.set_state(user_id, state.WAITING_FOR_BJ_BET, {"message_id": sent_msg.message_id})
+    # If betting mode, coins already deducted
+    await blackjack_deal(update, context, bet_amount)
+
 
 async def handle_blackjack_bet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Blackjack bahis miktarını işle"""

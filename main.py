@@ -105,6 +105,15 @@ async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYP
     if await state.check_state(user_id, state.WAITING_FOR_VIDEO_LINK):
         await video.download_and_send_media(update, context)
         return
+    if await state.check_state(user_id, state.WAITING_FOR_GAME_MODE):
+        await games.handle_game_mode_selection(update, context)
+        return
+    if await state.check_state(user_id, state.WAITING_FOR_TKM_BET):
+        await games.handle_tkm_bet(update, context)
+        return
+    if await state.check_state(user_id, state.WAITING_FOR_SLOT_BET):
+        await games.handle_slot_bet(update, context)
+        return
     if await state.check_state(user_id, state.WAITING_FOR_BJ_BET):
         await games.handle_blackjack_bet(update, context)
         return

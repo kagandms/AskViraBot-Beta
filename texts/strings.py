@@ -549,6 +549,33 @@ TEXTS = {
         "en": "🎫 Entry fee: *{amount} Coins*",
         "ru": "🎫 Входная плата: *{amount} монет*"
     },
+    
+    # --- OYUN MOD SEÇİMİ ---
+    "game_mode_select": {
+        "tr": "🎮 *{game_name}*\n\nNasıl oynamak istersin?",
+        "en": "🎮 *{game_name}*\n\nHow would you like to play?",
+        "ru": "🎮 *{game_name}*\n\nКак вы хотите играть?"
+    },
+    "bet_select_prompt": {
+        "tr": "💰 *Bahis Miktarı*\n\n💳 Mevcut Bakiye: *{balance} Coin*\n\nKaç coin ile oynamak istiyorsun?",
+        "en": "💰 *Bet Amount*\n\n💳 Current Balance: *{balance} Coins*\n\nHow many coins do you want to bet?",
+        "ru": "💰 *Сумма ставки*\n\n💳 Текущий баланс: *{balance} монет*\n\nСколько монет вы хотите поставить?"
+    },
+    "game_win_coins": {
+        "tr": "🎉 Kazandın! *+{amount} Coin* (x{multiplier})",
+        "en": "🎉 You won! *+{amount} Coins* (x{multiplier})",
+        "ru": "🎉 Вы выиграли! *+{amount} монет* (x{multiplier})"
+    },
+    "game_lose_coins": {
+        "tr": "😔 Kaybettin! *-{amount} Coin*",
+        "en": "😔 You lost! *-{amount} Coins*",
+        "ru": "😔 Вы проиграли! *-{amount} монет*"
+    },
+    "game_draw_refund": {
+        "tr": "🤝 Berabere! Bahsin iade edildi: *{amount} Coin*",
+        "en": "🤝 Draw! Your bet was refunded: *{amount} Coins*",
+        "ru": "🤝 Ничья! Ваша ставка возвращена: *{amount} монет*"
+    },
 
     # --- METRO İSTANBUL ---
     "metro_menu_prompt": {
@@ -660,6 +687,20 @@ REMINDER_BUTTONS = {
     "en": [["➕ Add Reminder"], ["📋 Show Reminders"], ["🗑️ Delete Reminder"], ["🔙 Tools Menu"]],
     "ru": [["➕ Добавить Напоминание"], ["📋 Показать Напоминания"], ["🗑️ Удалить Напоминание"], ["🔙 Меню Инструментов"]]
 }
+
+# --- OYUN MOD SEÇİMİ ---
+GAME_MODE_BUTTONS = {
+    "tr": [["🎮 Eğlencesine", "💰 Coinle"], ["🔙 Oyun Odası"]],
+    "en": [["🎮 Just for Fun", "💰 With Coins"], ["🔙 Game Room"]],
+    "ru": [["🎮 Для удовольствия", "💰 За монеты"], ["🔙 Игровая Комната"]]
+}
+
+BET_BUTTONS = {
+    "tr": [["50 💰", "100 💰"], ["200 💰", "500 💰"], ["🎯 Hepsini Koy!"], ["🔙 Oyun Odası"]],
+    "en": [["50 💰", "100 💰"], ["200 💰", "500 💰"], ["🎯 All In!"], ["🔙 Game Room"]],
+    "ru": [["50 💰", "100 💰"], ["200 💰", "500 💰"], ["🎯 Ва-банк!"], ["🔙 Игровая Комната"]]
+}
+
 
 # --- TÜRKÇE LOWERCASE HELPER ---
 # common.py'den import edildi (turkish_lower)
