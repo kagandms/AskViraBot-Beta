@@ -91,7 +91,8 @@ async def handle_shazam_input(update: Update, context: ContextTypes.DEFAULT_TYPE
     # Back check
     if is_back_button(text):
         await state.clear_user_states(user_id)
-        await tools.tools_menu(update, context) # Return to tools
+        from handlers.general import tools_menu_command
+        await tools_menu_command(update, context) # Return to tools
         return
 
     # Delete user input
