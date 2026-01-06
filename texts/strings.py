@@ -8,13 +8,14 @@ from .common import (
 from .localization import i18n
 import os
 
-# Load locales
-# Assuming the bot is run from the root directory
-if os.path.exists("locales"):
-    i18n.load_locales("locales")
+# Load locales using absolute path based on file location
+_current_dir = os.path.dirname(os.path.abspath(__file__))
+_locales_dir = os.path.join(os.path.dirname(_current_dir), "locales")
+
+if os.path.exists(_locales_dir):
+    i18n.load_locales(_locales_dir)
 else:
-    # Fallback to check relative to this file if needed, or just warn
-    pass
+    print(f"⚠️ Locales directory not found: {_locales_dir}")
 
 # --- TEXTS ---
 # Reconstructed from JSON
