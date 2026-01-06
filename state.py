@@ -49,6 +49,11 @@ async def check_state(user_id: int | str, state_name: str) -> bool:
         return True
     return False
 
+async def get_state(user_id: int | str) -> str | None:
+    """Kullanıcının aktif durum adını döndürür. Yoksa None."""
+    s = await asyncio.to_thread(db.get_user_state, user_id)
+    return s.get("state_name") if s else None
+
 async def get_data(user_id: int | str) -> dict:
     """Kullanıcının o anki durumuna ait veriyi (JSON) döndürür."""
     s = await asyncio.to_thread(db.get_user_state, user_id)
