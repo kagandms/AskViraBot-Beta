@@ -14,3 +14,5 @@ yt-dlp
 openai
 shazamio
 audioop-lts
+pydantic
+pydantic-settings
