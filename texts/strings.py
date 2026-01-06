@@ -685,6 +685,7 @@ AUTO_MAPPINGS = {
     "pdf_converter_main_button": generate_mappings_from_buttons({"tr": [["📄 PDF Dönüştürücü"]], "en": [["📄 PDF Converter"]], "ru": [["📄 Конвертер PDF"]]}),
     "weather_main_button": generate_mappings_from_buttons({"tr": [["☀️ Hava Durumu"]], "en": [["☀️ Weather"]], "ru": [["☀️ Погода"]]}),
     "video_downloader_main_button": generate_mappings_from_buttons({"tr": [["📥 Video İndir"]], "en": [["📥 Video Download"]], "ru": [["📥 Скачать Видео"]]}),
+    "shazam_main_button": generate_mappings_from_buttons({"tr": [["🎵 Shazam"]], "en": [["🎵 Shazam"]], "ru": [["🎵 Shazam"]]}),
     "metro_main_button": generate_mappings_from_buttons({"tr": [["🚇 Canlı Metro İstanbul"]], "en": [["🚇 Live Metro Istanbul"]], "ru": [["🚇 Метро Стамбул"]]}),
     
     # Oyunlar menüsü
@@ -695,6 +696,8 @@ AUTO_MAPPINGS = {
     "blackjack_main": generate_mappings_from_buttons({"tr": [["🃏 Blackjack (21)"]], "en": [["🃏 Blackjack (21)"]], "ru": [["🃏 Блэкджек (21)"]]}),
     "player_stats": generate_mappings_from_buttons({"tr": [["📊 İstatistiklerim"]], "en": [["📊 My Stats"]], "ru": [["📊 Статистика"]]}),
     "slot_main": generate_mappings_from_buttons({"tr": [["🎰 Slot"]], "en": [["🎰 Slot"]], "ru": [["🎰 Слот"]]}),
+    "daily_bonus": generate_mappings_from_buttons({"tr": [["🎁 Günlük Bonus"]], "en": [["🎁 Daily Bonus"]], "ru": [["🎁 Ежедневный Бонус"]]}),
+    "balance": generate_mappings_from_buttons({"tr": [["💰 Cüzdan"]], "en": [["💰 Wallet"]], "ru": [["💰 Кошелек"]]}),
     
     # Notlar menüsü
     "add_note_button": generate_mappings_from_buttons({"tr": [["➕ Not Ekle"]], "en": [["➕ Add Note"]], "ru": [["➕ Добавить"]]}),
