@@ -38,9 +38,8 @@ def handle_errors(func):
         try:
             return await func(update, context, *args, **kwargs)
         except Exception as e:
-            user_id = update.effective_user.id if update.effective_user else "Unknown"
-            logger.error(f"Handler Error (User: {user_id}): {e}", exc_info=True)
-            # Optional: Send friendly error message to user
-            # from texts.localization import i18n
-            # await update.message.reply_text("Bir hata oluştu / An error occurred.")
+            # Manually inject error into context so global handler logic is mimicked
+            context.error = e
+            from utils.errors import global_error_handler
+            await global_error_handler(update, context)
     return wrapper
