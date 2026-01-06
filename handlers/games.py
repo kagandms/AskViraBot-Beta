@@ -959,6 +959,9 @@ async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         final_text = f"🎰 *Slot Machine*\n\n   {result_line}\n\n{outcome_text}\n{win_msg}\n\n💰 Bakiye: {new_balance}"
     else:  # Fun mode
         final_text = f"🎰 *Slot Machine (Fun)*\n\n   {result_line}\n\n{outcome_text}"
+    
+    # Log game
+    await asyncio.to_thread(db.log_slot_game, user_id, f"{final_result[0]}{final_result[1]}{final_result[2]}", "win" if multiplier > 0 else "lose")
 
     if message_id:
         try:
@@ -972,128 +975,12 @@ async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         except: 
             await update.message.reply_text(final_text, reply_markup=get_slot_keyboard(lang), parse_mode="Markdown")
     else:
-        await update.message.reply_text(msg, reply_markup=get_games_keyboard_markup(lang), parse_mode="Markdown")
+        await update.message.reply_text(final_text, reply_markup=get_slot_keyboard(lang), parse_mode="Markdown")
     
-    # Kullanıcının "Çevir" mesajını sil (Temizlik)
-    try:
-        await update.message.delete()
-    except: pass
-        
-    # Önceki slot sonucunu/mesajını sil
-    await cleanup_context(context, user_id)
-    
-    # Başlangıç mesajı - Yeni mesaj olarak gönder
-    msg_template = "🎰 *SLOT MAKİNESİ*\n\n╔═══════════╗\n║ {r1} │ {r2} │ {r3} ║\n╚═══════════╝\n\n{status}"
-    
-    initial_status = {"tr": "Çevriliyor...", "en": "Spinning...", "ru": "Крутится..."}
-    spinning_msg = await update.message.reply_text(
-        msg_template.format(r1="❓", r2="❓", r3="❓", status=initial_status.get(lang, "Spinning...")),
-        parse_mode="Markdown"
-    )
-    
-    # Yeni mesajın ID'sini kaydet ki sonra silebilelim
-    await state.set_state(user_id, state.PLAYING_SLOT, {"message_id": spinning_msg.message_id})
-    
-    # --- NİHAİ SONUÇLARI BELİRLE ---
-    reel1 = random.choice(SLOT_SYMBOLS)
-    reel2 = random.choice(SLOT_SYMBOLS)
-    reel3 = random.choice(SLOT_SYMBOLS)
-    
-    # Animasyon durumları
-    status_text = initial_status.get(lang, "Spinning...")
-    
-    # Animasyon durumları
-    spinning_text = initial_status.get(lang, "Spinning...")
-    
-    # 1. Aşama: Hepsi dönüyor (2.3 saniye)
-    # 0.4s * 6 = 2.4s (yaklaşık 2.3s)
-    for _ in range(6):
-        await asyncio.sleep(0.4)
-        try:
-            await spinning_msg.edit_text(
-                msg_template.format(r1=random.choice(SLOT_SYMBOLS), r2=random.choice(SLOT_SYMBOLS), r3=random.choice(SLOT_SYMBOLS), status=spinning_text),
-                parse_mode="Markdown"
-            )
-        except Exception: pass
+    # Keep state with bet_amount for next spin
+    st_data["message_id"] = message_id
+    await state.set_state(user_id, state.PLAYING_SLOT, st_data)
 
-    # 1. Çark Durdu (reel1 sabit, diğerleri dönüyor)
-    # 2. Aşama: 2. ve 3. çark dönüyor (2.3 saniye)
-    for _ in range(6):
-        await asyncio.sleep(0.4)
-        try:
-            await spinning_msg.edit_text(
-                msg_template.format(r1=reel1, r2=random.choice(SLOT_SYMBOLS), r3=random.choice(SLOT_SYMBOLS), status=spinning_text),
-                parse_mode="Markdown"
-            )
-        except Exception: pass
-        
-    # 2. Çark Durdu (reel1 ve reel2 sabit, 3. dönüyor)
-    # 3. Aşama: Sadece 3. çark dönüyor (2.3 saniye)
-    for _ in range(6):
-        await asyncio.sleep(0.4)
-        try:
-            await spinning_msg.edit_text(
-                msg_template.format(r1=reel1, r2=reel2, r3=random.choice(SLOT_SYMBOLS), status=spinning_text),
-                parse_mode="Markdown"
-            )
-        except Exception: pass
-    
-    # 3. Çark Durdu - FİNAL SONUÇ ÖNCESİ KISA BEKLEME
-    await asyncio.sleep(0.4)
-    
-    # Sonucu belirle
-    if reel1 == reel2 == reel3:
-        if reel1 == SLOT_JACKPOT:
-            status_text = {
-                "tr": "🎉🎉🎉 *JACKPOT!* 🎉🎉🎉\n\n💎 Büyük ödülü kazandın!",
-                "en": "🎉🎉🎉 *JACKPOT!* 🎉🎉🎉\n\n💎 You hit the big prize!",
-                "ru": "🎉🎉🎉 *ДЖЕКПОТ!* 🎉🎉🎉\n\n💎 Ты сорвал куш!"
-            }
-            win_type = "jackpot"
-        else:
-            status_text = {
-                "tr": "🎉 *Kazandın!* 3 aynı sembol!",
-                "en": "🎉 *You win!* 3 matching symbols!",
-                "ru": "🎉 *Победа!* 3 одинаковых символа!"
-            }
-            win_type = "win"
-    elif reel1 == reel2 or reel2 == reel3 or reel1 == reel3:
-        status_text = {
-            "tr": "😊 2 aynı sembol! Az kaldı...",
-            "en": "😊 2 matching! So close...",
-            "ru": "😊 2 одинаковых! Почти..."
-        }
-        win_type = "close"
-    else:
-        status_text = {
-            "tr": "😔 Kaybettin! Tekrar dene.",
-            "en": "😔 You lose! Try again.",
-            "ru": "😔 Проигрыш! Попробуй ещё."
-        }
-        win_type = "lose"
-    
-    # Log kaydet
-    await asyncio.to_thread(db.log_slot_game, user_id, f"{reel1}{reel2}{reel3}", win_type)
-    
-    # Final mesaj - Kesin garanti çözüm: Eskiyi sil, yeniyi at
-    final_text = msg_template.format(r1=reel1, r2=reel2, r3=reel3, status=status_text.get(lang, status_text["en"]))
-    
-    # 1. Önce dönen mesajı silmeye çalış
-    try:
-        await spinning_msg.delete()
-    except: pass
-    
-    # 2. Sonucu temiz bir mesaj olarak at
-    try:
-        new_result_msg = await update.message.reply_text(
-            final_text,
-            reply_markup=get_slot_keyboard(lang),
-            parse_mode="Markdown"
-        )
-        # Yeni mesajın ID'sini tekil olarak kaydet
-        await state.set_state(user_id, state.PLAYING_SLOT, {"message_id": new_result_msg.message_id})
-    except Exception as e:
-        logging.getLogger(__name__).error(f"Slot result send error: {e}")
 
 # --- BLACKJACK (21) ---
 CARD_VALUES = {'A': 11, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 10, 'Q': 10, 'K': 10}
