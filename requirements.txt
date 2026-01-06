@@ -12,3 +12,4 @@ pytz
 certifi
 yt-dlp
 openai
+shazamio
