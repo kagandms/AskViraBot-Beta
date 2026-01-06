@@ -3,6 +3,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 import database as db
 from texts import TEXTS
+from utils import get_main_keyboard_markup
 
 async def daily_bonus_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Günlük bonus komutu (/daily)"""
@@ -18,15 +19,24 @@ async def daily_bonus_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     except: pass
     
     if not status["can_claim"]:
-        await update.message.reply_text(TEXTS["daily_bonus_already_claimed"][lang])
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=TEXTS["daily_bonus_already_claimed"][lang],
+            reply_markup=get_main_keyboard_markup(lang)
+        )
         return
         
     # Claim bonus
     reward = await asyncio.to_thread(db.claim_daily_bonus, user_id)
-    streak = status["streak"]
+    new_streak = status["streak"] + 1
     
-    msg = TEXTS["daily_bonus_success"][lang].format(reward=reward, streak=streak)
-    await update.message.reply_text(msg, parse_mode="Markdown")
+    msg = TEXTS["daily_bonus_success"][lang].format(reward=reward, streak=new_streak)
+    await context.bot.send_message(
+        chat_id=user_id,
+        text=msg,
+        reply_markup=get_main_keyboard_markup(lang),
+        parse_mode="Markdown"
+    )
 
 async def balance_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Bakiye sorgulama komutu (/balance veya 💰 Cüzdan)"""
@@ -41,4 +51,10 @@ async def balance_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     coins = await asyncio.to_thread(db.get_user_coins, user_id)
     
     msg = TEXTS["wallet_status"][lang].format(coins=coins)
-    await update.message.reply_text(msg, parse_mode="Markdown")
+    await context.bot.send_message(
+        chat_id=user_id,
+        text=msg,
+        reply_markup=get_main_keyboard_markup(lang),
+        parse_mode="Markdown"
+    )
+

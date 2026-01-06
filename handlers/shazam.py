@@ -51,8 +51,6 @@ def format_shazam_result(result, lang):
         
     return {"text": msg, "photo": cover_art}
 
-    return {"text": msg, "photo": cover_art}
-
 
 from utils import is_back_button
 from handlers import tools
