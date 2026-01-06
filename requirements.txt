@@ -13,3 +13,4 @@ certifi
 yt-dlp
 openai
 shazamio
+pyaudioop
