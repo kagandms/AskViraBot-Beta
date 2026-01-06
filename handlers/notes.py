@@ -1,7 +1,11 @@
 import asyncio
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes
+from telegram.ext import ContextTypes
+import logging
 import database as db
+
+logger = logging.getLogger(__name__)
 import state
 from texts import TEXTS, BUTTON_MAPPINGS
 from utils import get_notes_keyboard_markup, get_input_back_keyboard_markup, is_back_button
@@ -22,15 +26,16 @@ async def notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     # Delete user's button press (Notes Main Button)
     try:
         await update.message.delete()
-    except: pass
+    except Exception as e:
+        logger.debug(f"Failed to delete message in notes_menu: {e}")
     
     # Önceki "notları göster" mesajını sil
     prev_msg_id = context.user_data.get('show_notes_msg_id')
     if prev_msg_id:
         try:
             await context.bot.delete_message(chat_id=user_id, message_id=prev_msg_id)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug(f"Failed to delete previous notes message: {e}")
         context.user_data.pop('show_notes_msg_id', None)
     
     if update.callback_query:
@@ -68,7 +73,8 @@ async def prompt_new_note(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     # Cleanup user trigger
     try:
         await update.message.delete()
-    except: pass
+    except Exception as e:
+        logger.debug(f"Failed to delete message in prompt_new_note: {e}")
     
     sent_message = await update.message.reply_text(TEXTS["prompt_new_note"][lang], reply_markup=get_input_back_keyboard_markup(lang))
     
@@ -90,8 +96,8 @@ async def handle_new_note_input(update: Update, context: ContextTypes.DEFAULT_TY
             if "message_id" in state_data:
                 await context.bot.delete_message(chat_id=user_id, message_id=state_data["message_id"])
             await update.message.delete()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug(f"Failed to cleanup new note input messages: {e}")
             
         await state.clear_user_states(user_id)
         await notes_menu(update, context)
@@ -114,7 +120,8 @@ async def shownotes_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     # Cleanup user trigger
     try:
         await update.message.delete()
-    except: pass
+    except Exception as e:
+        logger.debug(f"Failed to delete message in shownotes_command: {e}")
     notes = await asyncio.to_thread(db.get_notes, user_id)
     
     # Önceki "notları göster" mesajını sil
@@ -122,8 +129,8 @@ async def shownotes_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     if prev_msg_id:
         try:
             await context.bot.delete_message(chat_id=user_id, message_id=prev_msg_id)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug(f"Failed to delete previous notes message (shownotes): {e}")
         context.user_data.pop('show_notes_msg_id', None)
     
     if not notes:
@@ -148,15 +155,16 @@ async def deletenotes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     if update.message:
         try:
             await update.message.delete()
-        except: pass
+        except Exception as e:
+            logger.debug(f"Failed to delete message in deletenotes_menu: {e}")
     
     # Önceki "notları göster" mesajını sil
     prev_msg_id = context.user_data.get('show_notes_msg_id')
     if prev_msg_id:
         try:
             await context.bot.delete_message(chat_id=user_id, message_id=prev_msg_id)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug(f"Failed to delete previous notes message (deletenotes): {e}")
         context.user_data.pop('show_notes_msg_id', None)
     
     if not notes:
@@ -207,7 +215,8 @@ async def select_note_to_delete_prompt(update: Update, context: ContextTypes.DEF
     # Cleanup user trigger
     try:
         await update.message.delete()
-    except: pass
+    except Exception as e:
+        logger.debug(f"Failed to delete message in select_note_to_delete_prompt: {e}")
     
     # Init page 0
     await state.clear_user_states(user_id)
@@ -272,7 +281,8 @@ async def edit_notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if update.message:
         try:
             await update.message.delete()
-        except: pass
+        except Exception as e:
+            logger.debug(f"Failed to delete message in edit_notes_menu: {e}")
     
     await state.clear_user_states(user_id)
     await state.set_state(user_id, state.EDITING_NOTES)
@@ -282,8 +292,8 @@ async def edit_notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if prev_msg_id:
         try:
             await context.bot.delete_message(chat_id=user_id, message_id=prev_msg_id)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug(f"Failed to delete previous notes message (editnotes): {e}")
         context.user_data.pop('show_notes_msg_id', None)
     
     if not notes:
@@ -349,8 +359,8 @@ async def handle_edit_note_callback(update: Update, context: ContextTypes.DEFAUL
         # Eski mesajı sil ve yeni mesaj gönder
         try:
             await query.message.delete()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug(f"Failed to delete query message in handle_edit_note_callback: {e}")
         
         # Inline butonlu mesaj
         sent_msg1 = await context.bot.send_message(

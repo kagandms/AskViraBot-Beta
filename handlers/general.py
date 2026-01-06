@@ -1,6 +1,9 @@
 import asyncio
 from telegram import Update
 from telegram.ext import ContextTypes
+import logging
+
+logger = logging.getLogger(__name__)
 import database as db
 import state
 from texts import TEXTS
@@ -30,14 +33,16 @@ async def tools_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     try:
         if update.message:
             await update.message.delete()
-    except Exception: pass
+    except Exception as e:
+        logger.debug(f"Failed to delete message: {e}")
     
     # 1. Önceki Tools menüsü mesajını sil (Varsa)
     tools_state = await state.get_data(user_id)
     if "tools_message_id" in tools_state:
         try:
             await context.bot.delete_message(chat_id=user_id, message_id=tools_state["tools_message_id"])
-        except Exception: pass
+        except Exception as e:
+            logger.debug(f"Failed to delete old tools message: {e}")
 
     await state.clear_user_states(user_id)
     
@@ -60,7 +65,8 @@ async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     try:
         if update.message:
             await update.message.delete()
-    except Exception: pass
+    except Exception as e:
+        logger.debug(f"Failed to delete message: {e}")
         
     await state.clear_user_states(user_id)
     
@@ -114,7 +120,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     try:
         if update.message:
             await update.message.delete()
-    except Exception: pass
+    except Exception as e:
+        logger.debug(f"Failed to delete message: {e}")
     
     help_texts = {
         "tr": """📚 *{bot_name} Nasıl Kullanılır?*

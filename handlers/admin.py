@@ -7,7 +7,10 @@ import asyncio
 from datetime import datetime
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ContextTypes
+import logging
 import database as db
+
+logger = logging.getLogger(__name__)
 from config import ADMIN_IDS, TIMEZONE
 from utils import get_main_keyboard_markup, is_back_button
 import pytz
@@ -39,8 +42,7 @@ async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     await state.set_state(user_id, state.ADMIN_MENU_ACTIVE)
     
     # Debug log
-    import logging
-    logging.info(f"Admin panel opened for user {user_id}, state set to: {state.ADMIN_MENU_ACTIVE}")
+    logger.info(f"Admin panel opened for user {user_id}, state set to: {state.ADMIN_MENU_ACTIVE}")
     
     await update.message.reply_text(
         "🔧 *Admin Paneli*\n\nBir işlem seçin:",
@@ -59,14 +61,14 @@ async def handle_admin_message(update: Update, context: ContextTypes.DEFAULT_TYP
         return False
     
     text = update.message.text.strip()
-    # Debug log (using logging directly to avoid circular import)
-    import logging
-    logging.info(f"Admin Action: User {user_id} sent '{text}'")
+    # Debug log
+    logger.info(f"Admin Action: User {user_id} sent '{text}'")
     
     # Cleanup user message
     try:
         await update.message.delete()
-    except: pass
+    except Exception as e:
+        logger.debug(f"Failed to delete admin message: {e}")
     
     # Geri butonu
     if is_back_button(text):
@@ -165,6 +167,7 @@ async def show_stats(query, context):
             parse_mode="Markdown"
         )
     except Exception as e:
+        logger.error(f"Error in show_stats: {e}", exc_info=True)
         await query.edit_message_text(f"❌ Hata: {e}")
 
 async def start_broadcast(query, context):
@@ -208,8 +211,8 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
         if prompt_msg_id:
             try:
                 await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=prompt_msg_id)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug(f"Failed to delete prompt message: {e}")
         # Admin menüsüne dön (Ana menü yerine)
         await state.clear_user_states(user_id)
         await state.set_state(user_id, state.ADMIN_MENU_ACTIVE)
@@ -227,8 +230,8 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
     if prompt_msg_id:
         try:
             await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=prompt_msg_id)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug(f"Failed to delete prompt message (2): {e}")
     
     # Durum mesajı
     status_msg = await update.message.reply_text("📤 Duyuru gönderiliyor...")
@@ -258,8 +261,8 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
                     parse_mode="Markdown",
                     reply_markup=None
                  )
-             except Exception:
-                 pass
+             except Exception as e:
+                 logger.debug(f"Failed to edit status message: {e}")
 
         users = await asyncio.to_thread(db.get_all_user_ids)
         asyncio.create_task(broadcast_task(users, message))
@@ -297,6 +300,7 @@ async def show_users(query, context):
             parse_mode="Markdown"
         )
     except Exception as e:
+        logger.error(f"Error in show_users: {e}", exc_info=True)
         await query.edit_message_text(f"❌ Hata: {e}")
 
 # --- REPLY KEYBOARD BASED HELPERS ---

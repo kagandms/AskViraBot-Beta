@@ -2,6 +2,8 @@ import asyncio
 from datetime import datetime
 import logging
 import os
+
+logger = logging.getLogger(__name__)
 import qrcode
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes
@@ -35,7 +37,8 @@ async def qrcode_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         # Cleanup
         try:
             await update.message.delete()
-        except: pass
+        except Exception as e:
+            logger.debug(f"Failed to delete message in qrcode_command: {e}")
         
         sent_message = await update.message.reply_text(
             TEXTS["qrcode_prompt_input"][lang],
@@ -54,7 +57,8 @@ async def generate_and_send_qr(update: Update, context: ContextTypes.DEFAULT_TYP
         await cleanup_context(context, user_id)
         try:
             await update.message.delete()
-        except: pass
+        except Exception as e:
+            logger.debug(f"Failed to delete message in generate_and_send_qr: {e}")
 
         from handlers.general import tools_menu_command
         await state.clear_user_states(user_id)
@@ -101,7 +105,8 @@ async def show_developer_info(update: Update, context: ContextTypes.DEFAULT_TYPE
     # Delete user's button press
     try:
         await update.message.delete()
-    except: pass
+    except Exception as e:
+        logger.debug(f"Failed to delete message in show_developer_info: {e}")
     
     await state.clear_user_states(user_id)
     
@@ -133,12 +138,14 @@ async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT
         if "developer_last_link_msg" in context.user_data:
             try:
                 await context.user_data["developer_last_link_msg"].delete()
-            except Exception: pass
+            except Exception as e:
+                logger.debug(f"Failed to delete previous developer link message: {e}")
             # del context.user_data["developer_last_link_msg"] # Optional safety
 
         try:
             await update.message.delete()
-        except: pass
+        except Exception as e:
+            logger.debug(f"Failed to delete message in handle_developer_message: {e}")
         
         from handlers.general import menu_command
         await menu_command(update, context)
@@ -158,8 +165,8 @@ async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT
         if "developer_last_link_msg" in context.user_data:
             try:
                 await context.user_data["developer_last_link_msg"].delete()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug(f"Failed to delete previous developer link message (2): {e}")
         
         msg = await update.message.reply_text(f"🔗 {link}", reply_markup=get_developer_keyboard(lang))
         context.user_data["developer_last_link_msg"] = msg
