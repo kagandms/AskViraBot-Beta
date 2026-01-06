@@ -1,592 +1,98 @@
+
+"""
+database.py - Facade for accessing services.
+This file maintains backward compatibility by exporting functions from the new service layer.
+"""
 import logging
-from typing import Optional, Any
 from config import supabase
 
-# Loglama ayarı: Bu modül için bir logger oluşturuyoruz
+# Loglama ayarı (Deprecated usage via this module, but kept for compatibility)
 logger = logging.getLogger(__name__)
-# --- KULLANICI İŞLEMLERİ ---
-# Dil önbelleği (Cache) - DB yükünü azaltmak için
-_user_lang_cache: dict[str, str] = {}
 
-def get_user_lang(user_id: int | str) -> str:
-    user_id = str(user_id)
-    # 1. Önce cache'e bak
-    if user_id in _user_lang_cache:
-        return _user_lang_cache[user_id]
-        
-    if not supabase: return "en"
-    try:
-        # 2. Cache'de yoksa DB'den çek
-        response = supabase.table("users").select("language").eq("user_id", user_id).execute()
-        if response.data:
-            lang = response.data[0]["language"]
-        else:
-            lang = "en"
-            
-        # 3. Sonucu cache'e kaydet
-        _user_lang_cache[user_id] = lang
-        return lang
-    except Exception as e:
-        logger.error(f"Dil getirme hatası (User: {user_id}): {e}")
-        return "en"
+# --- SERVICES IMPORTS ---
 
-def set_user_lang_db(user_id: int | str, lang: str) -> None:
-    user_id = str(user_id)
-    # 1. Cache'i güncelle
-    _user_lang_cache[user_id] = lang
-    
-    if not supabase: return
-    try:
-        # 2. DB'yi güncelle
-        data = {"user_id": user_id, "language": lang}
-        supabase.table("users").upsert(data).execute()
-    except Exception as e:
-        logger.error(f"Dil kaydetme hatası (User: {user_id}, Lang: {lang}): {e}")
+from services.user_service import (
+    get_user_lang, 
+    set_user_lang_db,
+    set_user_state, 
+    get_user_state, 
+    clear_user_state,
+    get_all_users_count, 
+    get_all_user_ids, 
+    get_recent_users,
+    get_user_model
+)
 
-# --- NOT İŞLEMLERİ (CORE) ---
-def get_user_notes(user_id: int | str) -> list[dict[str, Any]]:
-    """Veritabanından notları ham (dict) formatında çeker."""
-    if not supabase: return []
-    try:
-        response = supabase.table("notes").select("id, content").eq("user_id", str(user_id)).order("id").execute()
-        return [note for note in response.data] 
-    except Exception as e:
-        logger.error(f"Notları getirme hatası (User: {user_id}): {e}")
-        return []
+from services.note_service import (
+    get_user_notes, 
+    add_user_note, 
+    update_user_note, 
+    delete_user_note_by_id,
+    get_all_notes_count,
+    get_notes, 
+    add_note, 
+    delete_note, 
+    update_note
+)
 
-def add_user_note(user_id: int | str, note_content: str) -> None:
-    if not supabase: return
-    try:
-        data = {"user_id": str(user_id), "content": note_content}
-        supabase.table("notes").insert(data).execute()
-    except Exception as e:
-        logger.error(f"Not ekleme hatası (User: {user_id}): {e}")
+from services.economy_service import (
+    get_user_coins, 
+    set_user_coins, 
+    add_user_coins,
+    get_daily_bonus_status, 
+    claim_daily_bonus
+)
 
-def update_user_note(note_id: int, new_content: str) -> bool:
-    if not supabase: return False
-    try:
-        supabase.table("notes").update({"content": new_content}).eq("id", note_id).execute()
-        return True
-    except Exception as e:
-        logger.error(f"Not güncelleme hatası (ID: {note_id}): {e}")
-        return False
+from services.game_service import (
+    log_xox_game, 
+    log_tkm_game, 
+    log_coinflip, 
+    log_dice_roll, 
+    log_blackjack_game, 
+    log_slot_game,
+    get_user_xox_stats, 
+    get_user_tkm_stats, 
+    get_user_blackjack_stats
+)
 
-def delete_user_note_by_id(note_id: int) -> bool:
-    if not supabase: return False
-    try:
-        supabase.table("notes").delete().eq("id", note_id).execute()
-        return True
-    except Exception as e:
-        logger.error(f"Not silme hatası (ID: {note_id}): {e}")
-        return False
+from services.metro_service import (
+    get_metro_favorites, 
+    add_metro_favorite, 
+    remove_metro_favorite
+)
 
-# --- NOT İŞLEMLERİ (UYUMLULUK KATMANI / WRAPPERS) ---
-# handlers/notes.py dosyasının beklediği fonksiyonlar
+from services.ai_service import (
+    get_ai_daily_usage, 
+    set_ai_daily_usage, 
+    increment_ai_usage, 
+    get_ai_total_stats
+)
 
-def get_notes(user_id: int | str) -> list[str]:
-    """Sadece not içeriklerini string listesi olarak döndürür."""
-    raw_notes = get_user_notes(user_id)
-    return [note['content'] for note in raw_notes]
+from services.reminder_service import (
+    get_all_reminders_db, 
+    add_reminder_db, 
+    remove_reminder_db,
+    get_all_reminders_count
+)
 
-def add_note(user_id: int | str, content: str) -> None:
-    """add_user_note fonksiyonuna yönlendirir."""
-    add_user_note(user_id, content)
+from services.activity_service import (
+    log_qr_usage, 
+    log_pdf_usage
+)
 
-def delete_note(user_id: int | str, note_number: int) -> bool:
-    """
-    Sıra numarasına (1, 2, 3...) göre not siler.
-    Önce listeyi çeker, sıra numarasını ID'ye çevirir ve siler.
-    """
-    raw_notes = get_user_notes(user_id)
-    # note_number 1'den başlar, python listesi 0'dan
-    index = note_number - 1
-    
-    if 0 <= index < len(raw_notes):
-        note_id = raw_notes[index]['id']
-        return delete_user_note_by_id(note_id)
-    return False
-
-def update_note(user_id: int | str, note_index: int, new_content: str) -> bool:
-    """
-    Liste indeksine (0, 1, 2...) göre not günceller.
-    """
-    raw_notes = get_user_notes(user_id)
-    
-    if 0 <= note_index < len(raw_notes):
-        note_id = raw_notes[note_index]['id']
-        return update_user_note(note_id, new_content)
-    return False
-
-# --- HATIRLATICI İŞLEMLERİ ---
-def get_all_reminders_db() -> list[dict[str, Any]]:
-    if not supabase: return []
-    try:
-        response = supabase.table("reminders").select("*").execute()
-        return response.data
-    except Exception as e:
-        logger.error(f"Hatırlatıcıları çekme hatası: {e}")
-        return []
-
-def add_reminder_db(reminder_data: dict[str, Any]) -> Optional[int]:
-    """Hatırlatıcı ekler ve eklenen kaydın ID'sini döner."""
-    if not supabase: return None
-    try:
-        data_to_insert = {
-            "user_id": str(reminder_data["user_id"]),
-            "chat_id": str(reminder_data["chat_id"]),
-            "message": reminder_data["message"],
-            "time": reminder_data["time"]
-        }
-        response = supabase.table("reminders").insert(data_to_insert).execute()
-        # Eklenen kaydın ID'sini döndür
-        if response.data and len(response.data) > 0:
-            return response.data[0].get("id")
-        return None
-    except Exception as e:
-        logger.error(f"Hatırlatıcı ekleme hatası: {e}")
-        return None
-
-def remove_reminder_db(reminder_id: int) -> None:
-    if not supabase: return
-    try:
-        supabase.table("reminders").delete().eq("id", reminder_id).execute()
-    except Exception as e:
-        logger.error(f"Hatırlatıcı silme hatası: {e}")
-# --- ADMIN FONKSİYONLARI ---
-def get_all_users_count() -> int:
-    """Toplam kullanıcı sayısını döner"""
-    if not supabase: return 0
-    try:
-        response = supabase.table("users").select("user_id", count="exact").execute()
-        return response.count if response.count else 0
-    except Exception as e:
-        logger.error(f"Kullanıcı sayısı hatası: {e}")
-        return 0
-
-def get_all_notes_count() -> int:
-    """Toplam not sayısını döner"""
-    if not supabase: return 0
-    try:
-        response = supabase.table("notes").select("id", count="exact").execute()
-        return response.count if response.count else 0
-    except Exception as e:
-        logger.error(f"Not sayısı hatası: {e}")
-        return 0
-
-def get_all_reminders_count() -> int:
-    """Toplam hatırlatıcı sayısını döner"""
-    if not supabase: return 0
-    try:
-        response = supabase.table("reminders").select("id", count="exact").execute()
-        return response.count if response.count else 0
-    except Exception as e:
-        logger.error(f"Hatırlatıcı sayısı hatası: {e}")
-        return 0
-
-def get_all_user_ids() -> list[int]:
-    """Tüm kullanıcı ID'lerini döner (broadcast için)"""
-    if not supabase: return []
-    try:
-        response = supabase.table("users").select("user_id").execute()
-        return [int(u['user_id']) for u in response.data] if response.data else []
-    except Exception as e:
-        logger.error(f"Kullanıcı listesi hatası: {e}")
-        return []
-
-def get_recent_users(limit: int = 10) -> list[dict[str, Any]]:
-    """Son eklenen kullanıcıları döner"""
-    if not supabase: return []
-    try:
-        response = supabase.table("users").select("*").order("created_at", desc=True).limit(limit).execute()
-        return response.data if response.data else []
-    except Exception as e:
-        logger.error(f"Son kullanıcılar hatası: {e}")
-        return []
-
-# --- AKTİVİTE LOGLAMA (YENİ) ---
-def log_qr_usage(user_id: int | str, content: str) -> None:
-    """QR kod oluşturma işlemini loglar."""
-    if not supabase: return
-    try:
-        data = {"user_id": str(user_id), "content": content}
-        supabase.table("qr_logs").insert(data).execute()
-    except Exception as e:
-        logger.error(f"QR log hatası (User: {user_id}): {e}")
-
-def log_pdf_usage(user_id: int | str, pdf_type: str) -> None:
-    """PDF dönüştürme işlemini loglar (text, image, document)."""
-    if not supabase: return
-    try:
-        data = {"user_id": str(user_id), "type": pdf_type}
-        supabase.table("pdf_logs").insert(data).execute()
-    except Exception as e:
-        logger.error(f"PDF log hatası (User: {user_id}): {e}")
-
-def log_xox_game(user_id: int | str, winner: str, difficulty: str) -> None:
-    """XOX oyun sonucunu loglar."""
-    if not supabase: return
-    try:
-        data = {"user_id": str(user_id), "winner": winner, "difficulty": difficulty}
-        supabase.table("xox_logs").insert(data).execute()
-    except Exception as e:
-        logger.error(f"XOX log hatası (User: {user_id}): {e}")
-
-def log_tkm_game(user_id: int | str, user_move: str, bot_move: str, result: str) -> None:
-    """TKM oyun sonucunu loglar."""
-    if not supabase: return
-    try:
-        data = {
-            "user_id": str(user_id), 
-            "user_move": user_move, 
-            "bot_move": bot_move, 
-            "result": result
-        }
-        supabase.table("tkm_logs").insert(data).execute()
-    except Exception as e:
-        logger.error(f"TKM log hatası (User: {user_id}): {e}")
-
-def log_coinflip(user_id: int | str, result: str) -> None:
-    """Yazı Tura sonucunu loglar."""
-    if not supabase: return
-    try:
-        data = {"user_id": str(user_id), "result": result}
-        supabase.table("coinflip_logs").insert(data).execute()
-    except Exception as e:
-        logger.error(f"Coinflip log hatası (User: {user_id}): {e}")
-
-def log_dice_roll(user_id: int | str, result: int) -> None:
-    """Zar atma sonucunu loglar."""
-    if not supabase: return
-    try:
-        data = {"user_id": str(user_id), "result": str(result)}
-        supabase.table("dice_logs").insert(data).execute()
-    except Exception as e:
-        logger.error(f"Dice log hatası (User: {user_id}): {e}")
-
-def log_blackjack_game(user_id: int | str, player_score: int, dealer_score: int, result: str) -> None:
-    """Blackjack oyun sonucunu loglar."""
-    if not supabase: return
-    try:
-        data = {
-            "user_id": str(user_id),
-            "player_score": player_score,
-            "dealer_score": dealer_score,
-            "result": result
-        }
-        supabase.table("blackjack_logs").insert(data).execute()
-    except Exception as e:
-        logger.error(f"Blackjack log hatası (User: {user_id}): {e}")
-
-def log_slot_game(user_id: int | str, symbols: str, result: str) -> None:
-    """Slot makinesi oyun sonucunu loglar."""
-    if not supabase: return
-    try:
-        data = {
-            "user_id": str(user_id),
-            "symbols": symbols,
-            "result": result
-        }
-        supabase.table("slot_logs").insert(data).execute()
-    except Exception as e:
-        logger.error(f"Slot log hatası (User: {user_id}): {e}")
-
-# --- OYUNCU İSTATİSTİKLERİ ---
-def get_user_xox_stats(user_id: int | str) -> dict[str, int]:
-    """XOX istatistiklerini getirir: wins, losses, draws, total"""
-    if not supabase: return {"wins": 0, "losses": 0, "draws": 0, "total": 0}
-    try:
-        response = supabase.table("xox_logs").select("winner").eq("user_id", str(user_id)).execute()
-        data = response.data if response.data else []
-        wins = sum(1 for r in data if r.get("winner") == "X")
-        losses = sum(1 for r in data if r.get("winner") == "O")
-        draws = sum(1 for r in data if r.get("winner") == "Draw")
-        return {"wins": wins, "losses": losses, "draws": draws, "total": len(data)}
-    except Exception as e:
-        logger.error(f"XOX stats hatası (User: {user_id}): {e}")
-        return {"wins": 0, "losses": 0, "draws": 0, "total": 0}
-
-def get_user_tkm_stats(user_id: int | str) -> dict[str, int]:
-    """TKM istatistiklerini getirir: wins, losses, draws, total"""
-    if not supabase: return {"wins": 0, "losses": 0, "draws": 0, "total": 0}
-    try:
-        response = supabase.table("tkm_logs").select("result").eq("user_id", str(user_id)).execute()
-        data = response.data if response.data else []
-        wins = sum(1 for r in data if r.get("result") == "win")
-        losses = sum(1 for r in data if r.get("result") == "lose")
-        draws = sum(1 for r in data if r.get("result") == "draw")
-        return {"wins": wins, "losses": losses, "draws": draws, "total": len(data)}
-    except Exception as e:
-        logger.error(f"TKM stats hatası (User: {user_id}): {e}")
-        return {"wins": 0, "losses": 0, "draws": 0, "total": 0}
-
-def get_user_blackjack_stats(user_id: int | str) -> dict[str, int]:
-    """Blackjack istatistiklerini getirir: wins, losses, draws, total"""
-    if not supabase: return {"wins": 0, "losses": 0, "draws": 0, "total": 0}
-    try:
-        response = supabase.table("blackjack_logs").select("result").eq("user_id", str(user_id)).execute()
-        data = response.data if response.data else []
-        wins = sum(1 for r in data if r.get("result") == "win")
-        losses = sum(1 for r in data if r.get("result") == "lose")
-        draws = sum(1 for r in data if r.get("result") == "draw")
-        return {"wins": wins, "losses": losses, "draws": draws, "total": len(data)}
-    except Exception as e:
-        logger.error(f"Blackjack stats hatası (User: {user_id}): {e}")
-        return {"wins": 0, "losses": 0, "draws": 0, "total": 0}
-
-# --- METRO FAVORİLERİ ---
-def get_metro_favorites(user_id: int | str) -> list[dict[str, Any]]:
-    """Kullanıcının metro favorilerini getirir."""
-    if not supabase: return []
-    try:
-        response = supabase.table("metro_favorites").select("*").eq("user_id", str(user_id)).execute()
-        return response.data if response.data else []
-    except Exception as e:
-        logger.error(f"Metro favorileri getirme hatası (User: {user_id}): {e}")
-        return []
-
-
-def add_metro_favorite(user_id: int | str, line_id: int, line_name: str, 
-                       station_id: int, station_name: str, 
-                       direction_id: int, direction_name: str) -> bool:
-    """Kullanıcının metro favorilerine yeni kayıt ekler."""
-    if not supabase: return False
-    try:
-        # Aynı favori varsa ekleme (duplicate kontrolü)
-        existing = supabase.table("metro_favorites").select("id").eq("user_id", str(user_id)).eq("station_id", station_id).eq("direction_id", direction_id).execute()
-        if existing.data:
-            return False  # Zaten var
-        
-        data = {
-            "user_id": str(user_id),
-            "line_id": line_id,
-            "line_name": line_name,
-            "station_id": station_id,
-            "station_name": station_name,
-            "direction_id": direction_id,
-            "direction_name": direction_name
-        }
-        supabase.table("metro_favorites").insert(data).execute()
-        return True
-    except Exception as e:
-        logger.error(f"Metro favori ekleme hatası (User: {user_id}): {e}")
-        return False
-
-
-def remove_metro_favorite(user_id: int, station_id: str, direction_id: str) -> bool:
-    """Metro favorisini siler (Kullanıcı, İstasyon ve Yön eşleşmesine göre)."""
-    if not supabase: return False
-    try:
-        supabase.table("metro_favorites").delete()\
-            .eq("user_id", str(user_id))\
-            .eq("station_id", station_id)\
-            .eq("direction_id", direction_id)\
-            .execute()
-        return True
-    except Exception as e:
-        logger.error(f"Metro favori silme hatası (User: {user_id}, Station: {station_id}): {e}")
-        return False
-
-
-# --- AI GÜNLÜK KULLANIM KALİKİLİĞİ ---
-def get_ai_daily_usage(user_id: int | str, today_str: str) -> int:
-    """Kullanıcının bugünkü AI kullanım sayısını döndürür."""
-    if not supabase: return 0
-    try:
-        response = supabase.table("ai_usage").select("usage_count").eq("user_id", str(user_id)).eq("usage_date", today_str).execute()
-        if response.data:
-            return response.data[0]["usage_count"]
-        return 0
-    except Exception as e:
-        logger.error(f"AI kullanım getirme hatası (User: {user_id}): {e}")
-        return 0
-
-
-def set_ai_daily_usage(user_id: int | str, today_str: str, count: int) -> None:
-    """Kullanıcının bugünkü AI kullanım sayısını ayarlar."""
-    if not supabase: return
-    try:
-        data = {"user_id": str(user_id), "usage_date": today_str, "usage_count": count}
-        supabase.table("ai_usage").upsert(data, on_conflict="user_id,usage_date").execute()
-    except Exception as e:
-        logger.error(f"AI kullanım kaydetme hatası (User: {user_id}): {e}")
-
-
-def increment_ai_usage(user_id: int | str, today_str: str) -> int:
-    """Kullanıcının AI kullanımını 1 artırır ve yeni sayıyı döndürür."""
-    if not supabase: return 0
-    try:
-        current = get_ai_daily_usage(user_id, today_str)
-        new_count = current + 1
-        set_ai_daily_usage(user_id, today_str, new_count)
-        return new_count
-
-    except Exception as e:
-        logger.error(f"AI kullanım artırma hatası (User: {user_id}): {e}")
-        return 0
-
-
-def get_ai_total_stats(today_str: str) -> dict:
-    """Bugünkü toplam AI kullanım istatistiklerini döndürür."""
-    if not supabase: return {"total_messages": 0, "unique_users": 0}
-    try:
-        response = supabase.table("ai_usage").select("usage_count").eq("usage_date", today_str).execute()
-        if response.data:
-            total = sum(row["usage_count"] for row in response.data)
-            unique = len(response.data)
-            return {"total_messages": total, "unique_users": unique}
-        return {"total_messages": 0, "unique_users": 0}
-    except Exception as e:
-        logger.error(f"AI istatistik hatası: {e}")
-        return {"total_messages": 0, "unique_users": 0}
-
-# --- STATE MANAGEMENT (Durum Yönetimi) ---
-def set_user_state(user_id: int | str, state_name: str, state_data: dict = None) -> None:
-    """Kullanıcının durumunu ve verisini kaydeder/günceller."""
-    if not supabase: return
-    if state_data is None:
-        state_data = {}
-    
-    try:
-        data = {
-            "user_id": str(user_id),
-            "state_name": state_name,
-            "state_data": state_data,
-            "updated_at": "now()"
-        }
-        supabase.table("user_states").upsert(data).execute()
-    except Exception as e:
-        logger.error(f"Error setting state for {user_id}: {e}")
-
-def get_user_state(user_id: int | str) -> dict:
-    """Kullanıcının durumunu ve verisini getirir."""
-    if not supabase: return None
-    try:
-        response = supabase.table("user_states").select("*").eq("user_id", str(user_id)).execute()
-        if response.data:
-            return response.data[0]
-        return None
-    except Exception as e:
-        logger.error(f"Error getting state for {user_id}: {e}")
-        return None
-
-def clear_user_state(user_id: int | str) -> None:
-    """Kullanıcının durumunu temizler."""
-    if not supabase: return
-    try:
-        supabase.table("user_states").delete().eq("user_id", str(user_id)).execute()
-    except Exception as e:
-        logger.error(f"Error clearing state for {user_id}: {e}")
-
-# --- EKONOMİ SİSTEMİ (COINS) ---
-
-def get_user_coins(user_id: int | str) -> int:
-    """Kullanıcının coin miktarını döndürür. Admin için sınırsız."""
-    from config import ADMIN_IDS
-    
-    # Admin için sınırsız bakiye
-    if int(user_id) in ADMIN_IDS:
-        return 999999999
-    
-    if not supabase: return 1000
-    try:
-        response = supabase.table("users").select("coins").eq("user_id", str(user_id)).execute()
-        if response.data:
-            coins = response.data[0].get("coins")
-            return coins if coins is not None else 1000
-        return 1000
-    except Exception as e:
-        logger.error(f"Coin getirme hatası (User: {user_id}): {e}")
-        return 1000
-
-def set_user_coins(user_id: int | str, amount: int) -> bool:
-    """Kullanıcının coin miktarını ayarlar."""
-    if not supabase: return False
-    try:
-        supabase.table("users").update({"coins": amount}).eq("user_id", str(user_id)).execute()
-        return True
-    except Exception as e:
-        logger.error(f"Coin güncelleme hatası (User: {user_id}): {e}")
-        return False
-
-def add_user_coins(user_id: int | str, amount: int) -> int:
-    """Kullanıcıya coin ekler (veya çıkarır) ve yeni bakiyeyi döndürür."""
-    if not supabase: return 1000
-    try:
-        current_coins = get_user_coins(user_id)
-        new_coins = current_coins + amount
-        # Negatif bakiyeye izin verme
-        if new_coins < 0:
-            new_coins = 0
-            
-        set_user_coins(user_id, new_coins)
-        return new_coins
-    except Exception as e:
-        logger.error(f"Coin ekleme hatası (User: {user_id}): {e}")
-        return 1000
-
-# --- GÜNLÜK BONUS ---
-
-def get_daily_bonus_status(user_id: int | str) -> dict:
-    """Günlük bonus durumunu döndürür (alınabilir mi, ne zaman alındı)."""
-    if not supabase: return {"can_claim": True, "streak": 1}
-    try:
-        response = supabase.table("daily_bonuses").select("*").eq("user_id", str(user_id)).execute()
-        if not response.data:
-            return {"can_claim": True, "streak": 1}
-        
-        last_claimed = response.data[0]["last_claimed_date"]
-        streak = response.data[0]["streak_count"]
-        
-        from datetime import date, timedelta
-        today = date.today()
-        last_date = date.fromisoformat(last_claimed)
-        
-        if last_date < today:
-            # Check streak (dün alındıysa streak devam eder)
-            if last_date == today - timedelta(days=1):
-                new_streak = streak + 1
-            elif last_date == today: # Bugün zaten alındı
-                new_streak = streak
-            else: # Zincir kırıldı
-                new_streak = 1
-                
-            return {"can_claim": True, "streak": new_streak, "last_claimed": last_claimed}
-            
-        return {"can_claim": False, "streak": streak, "last_claimed": last_claimed}
-        
-    except Exception as e:
-        logger.error(f"Daily bonus status check error: {e}")
-        return {"can_claim": True, "streak": 1}
-
-def claim_daily_bonus(user_id: int | str) -> int:
-    """Günlük bonusu talep eder ve kazanılan miktarı döndürür."""
-    if not supabase: return 0
-    try:
-        status = get_daily_bonus_status(user_id)
-        if not status["can_claim"]:
-            return 0
-            
-        streak = status["streak"]
-        base_reward = 100
-        # Streak bonus: Her gün için +10, maks +500
-        streak_bonus = min((streak - 1) * 10, 500)
-        total_reward = base_reward + streak_bonus
-        
-        # Add coins
-        add_user_coins(user_id, total_reward)
-        
-        # Update daily_bonuses table
-        from datetime import date
-        today_str = date.today().isoformat()
-        
-        data = {
-            "user_id": str(user_id),
-            "last_claimed_date": today_str,
-            "streak_count": streak
-        }
-        supabase.table("daily_bonuses").upsert(data).execute()
-        
-        return total_reward
-    except Exception as e:
-        logger.error(f"Claim daily bonus error: {e}")
-        return 0
+# Export explicitly to satisfy linters/static analysis if needed
+__all__ = [
+    'get_user_lang', 'set_user_lang_db',
+    'set_user_state', 'get_user_state', 'clear_user_state',
+    'get_all_users_count', 'get_all_user_ids', 'get_recent_users', 'get_user_model',
+    'get_user_notes', 'add_user_note', 'update_user_note', 'delete_user_note_by_id',
+    'get_all_notes_count', 'get_notes', 'add_note', 'delete_note', 'update_note',
+    'get_user_coins', 'set_user_coins', 'add_user_coins',
+    'get_daily_bonus_status', 'claim_daily_bonus',
+    'log_xox_game', 'log_tkm_game', 'log_coinflip', 'log_dice_roll', 'log_blackjack_game', 'log_slot_game',
+    'get_user_xox_stats', 'get_user_tkm_stats', 'get_user_blackjack_stats',
+    'get_metro_favorites', 'add_metro_favorite', 'remove_metro_favorite',
+    'get_ai_daily_usage', 'set_ai_daily_usage', 'increment_ai_usage', 'get_ai_total_stats',
+    'get_all_reminders_db', 'add_reminder_db', 'remove_reminder_db', 'get_all_reminders_count',
+    'log_qr_usage', 'log_pdf_usage'
+]

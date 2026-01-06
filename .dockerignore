@@ -1,0 +1,14 @@
+
+__pycache__
+venv/
+.env
+.git/
+.vscode/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+vira_backup_legacy/
+logs/
+test_*.py
+verify_*.py

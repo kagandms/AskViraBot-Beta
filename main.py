@@ -14,6 +14,7 @@ from rate_limiter import is_rate_limited, get_remaining_cooldown
 # Handler'ları içe aktar
 from handlers import general, notes, reminders, games, tools, admin, ai_chat, metro, pdf, video, weather, economy, shazam
 from keep_alive import keep_alive
+from utils import attach_user, handle_errors
 
 # --- LOGLAMA YAPILANDIRMASI ---
 from logger import setup_logging, get_logger
@@ -25,6 +26,37 @@ async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # DB İŞLEMİ: Asenkron yapıldı
     lang = await asyncio.to_thread(db.get_user_lang, user_id)
     await update.message.reply_text(TEXTS["unknown_command"][lang])
+
+from core import router
+
+# --- ROUTER INIT ---
+def init_router():
+    """Register all state handlers to the router."""
+    router.register(state.METRO_BROWSING, metro.handle_metro_message)
+    router.register(state.PLAYING_XOX, games.handle_xox_message)
+    router.register(state.ADMIN_MENU_ACTIVE, admin.handle_admin_message)
+    router.register(state.DEVELOPER_MENU_ACTIVE, tools.handle_developer_message)
+    router.register(state.WAITING_FOR_NEW_NOTE_INPUT, notes.handle_new_note_input)
+    router.register(state.WAITING_FOR_EDIT_NOTE_INPUT, notes.handle_edit_note_input)
+    router.register(state.WAITING_FOR_REMINDER_INPUT, reminders.process_reminder_input)
+    router.register(state.WAITING_FOR_QR_DATA, tools.generate_and_send_qr)
+    router.register(state.PLAYING_TKM, games.tkm_play)
+    router.register(state.PLAYING_BLACKJACK, games.handle_blackjack_message)
+    router.register(state.PLAYING_SLOT, games.slot_spin)
+    router.register(state.WAITING_FOR_PDF_CONVERSION_INPUT, pdf.handle_pdf_input)
+    router.register(state.WAITING_FOR_WEATHER_CITY, weather.get_weather_data)
+    router.register(state.WAITING_FOR_VIDEO_LINK, video.download_and_send_media)
+    router.register(state.WAITING_FOR_GAME_MODE, games.handle_game_mode_selection)
+    router.register(state.WAITING_FOR_TKM_BET, games.handle_tkm_bet)
+    router.register(state.WAITING_FOR_SLOT_BET, games.handle_slot_bet)
+    router.register(state.WAITING_FOR_BJ_BET, games.handle_blackjack_bet)
+    router.register(state.WAITING_FOR_SHAZAM, shazam.handle_shazam_input)
+    router.register(state.AI_CHAT_ACTIVE, ai_chat.handle_ai_message)
+
+    logger.info("✅ State Router Initialized with Handlers")
+
+# Initialize router immediately
+init_router()
 
 # --- ANA BUTON YÖNETİCİSİ (ROUTER) ---
 async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -49,80 +81,20 @@ async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYP
         }
         await update.message.reply_text(rate_limit_msgs.get(lang, rate_limit_msgs["en"]))
         return
-    
-    # DB İŞLEMİ: Router seviyesinde dil kontrolü (Asenkron)
-    # Not: Handler'lar kendi içinde tekrar dil kontrolü yapabilir, 
-    # ama asyncio.to_thread kullandığımız için bu işlem botu kilitlemez.
-    # lang = await asyncio.to_thread(db.get_user_lang, user_id) 
 
-    # Admin Broadcast Kontrolü
+    # Admin Broadcast Kontrolü - Özel Durum (State'den bağımsız araya girebilir)
     if await admin.handle_broadcast_message(update, context):
         return
     
-    # 2. State Kontrolleri
-    if await state.check_state(user_id, state.METRO_BROWSING):
-        await metro.handle_metro_message(update, context)
-        return
-    if await state.check_state(user_id, state.PLAYING_XOX):
-        await games.handle_xox_message(update, context)
-        return
-    if await state.check_state(user_id, state.ADMIN_MENU_ACTIVE):
-        handled = await admin.handle_admin_message(update, context)
+    # 2. State Kontrolleri - ROUTER ISLEMI
+    # Kullanıcının aktif state'ini al
+    user_state = await state.get_state(user_id)
+    if user_state:
+        # Router'a sor: Bu state için bir handler var mı?
+        # Varsa çalıştır ve çık.
+        handled = await router.dispatch(user_state, update, context)
         if handled:
             return
-    if await state.check_state(user_id, state.DEVELOPER_MENU_ACTIVE):
-        handled = await tools.handle_developer_message(update, context)
-        if handled:
-            return
-    if await state.check_state(user_id, state.WAITING_FOR_NEW_NOTE_INPUT):
-        await notes.handle_new_note_input(update, context)
-        return
-    if await state.check_state(user_id, state.WAITING_FOR_EDIT_NOTE_INPUT):
-        await notes.handle_edit_note_input(update, context)
-        return
-    if await state.check_state(user_id, state.WAITING_FOR_REMINDER_INPUT):
-        await reminders.process_reminder_input(update, context)
-        return
-    if await state.check_state(user_id, state.WAITING_FOR_QR_DATA):
-        await tools.generate_and_send_qr(update, context, text_raw)
-        return
-    if await state.check_state(user_id, state.PLAYING_TKM):
-        await games.tkm_play(update, context)
-        return
-    if await state.check_state(user_id, state.PLAYING_BLACKJACK):
-        await games.handle_blackjack_message(update, context)
-        return
-    if await state.check_state(user_id, state.PLAYING_SLOT):
-        await games.slot_spin(update, context)
-        return
-    if await state.check_state(user_id, state.WAITING_FOR_PDF_CONVERSION_INPUT):
-        if update.message.document or update.message.photo or update.message.text:
-            await pdf.handle_pdf_input(update, context)
-        return
-    if await state.check_state(user_id, state.WAITING_FOR_WEATHER_CITY):
-        await weather.get_weather_data(update, context, text_raw)
-        return
-    if await state.check_state(user_id, state.WAITING_FOR_VIDEO_LINK):
-        await video.download_and_send_media(update, context)
-        return
-    if await state.check_state(user_id, state.WAITING_FOR_GAME_MODE):
-        await games.handle_game_mode_selection(update, context)
-        return
-    if await state.check_state(user_id, state.WAITING_FOR_TKM_BET):
-        await games.handle_tkm_bet(update, context)
-        return
-    if await state.check_state(user_id, state.WAITING_FOR_SLOT_BET):
-        await games.handle_slot_bet(update, context)
-        return
-    if await state.check_state(user_id, state.WAITING_FOR_BJ_BET):
-        await games.handle_blackjack_bet(update, context)
-        return
-    if await state.check_state(user_id, state.WAITING_FOR_SHAZAM):
-        await shazam.handle_shazam_input(update, context)
-        return
-    if await state.check_state(user_id, state.AI_CHAT_ACTIVE):
-        await ai_chat.handle_ai_message(update, context)
-        return
 
     # EĞER HİÇBİR STATE'E GİRMEDİYSE VE METİN YOKSA (Beklenmeyen Dosya)
     if not text:

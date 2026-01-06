@@ -7,12 +7,16 @@ from texts import TEXTS
 from config import BOT_NAME
 from utils import get_main_keyboard_markup, get_tools_keyboard_markup, cleanup_context
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+from utils import attach_user, handle_errors
+
+@handle_errors
+@attach_user
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE, user=None) -> None:
     """Bot başlatma komutu."""
-    user_id = update.effective_user.id
-    await state.clear_user_states(user_id)
-    # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    # user is injected by @attach_user
+    await state.clear_user_states(user.user_id)
+    # Direct access to language from user model
+    lang = user.language
     await update.message.reply_text(TEXTS["start"][lang].format(bot_name=BOT_NAME), parse_mode="Markdown")
 
 

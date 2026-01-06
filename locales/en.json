@@ -1,0 +1,297 @@
+{
+  "messages": {
+    "edit_notes_menu_prompt": "✏️ Select the note you want to edit:",
+    "prompt_select_note_to_edit": "✏️ Please select the note you want to edit:",
+    "prompt_new_content_for_note": "📝 Type the NEW content for the selected note:",
+    "note_updated": "✅ Note successfully updated.",
+    "games_menu_prompt": "🎮 Welcome to Game Room! Choose a game:",
+    "tools_menu_prompt": "🛠 Welcome to Tools Menu! Choose a tool:",
+    "start": "👋 Hello! I am {bot_name}. Good to see you again.\n\n⚠️ *This bot is currently in BETA.*\nYour feedback is very valuable to us! Please reach out to the developer for any bugs or suggestions.\n\nYou can access commands by typing /menu.",
+    "menu_prompt": "🏠 You are in the Main Menu. What would you like to do? 👇",
+    "language_set": "Language set to English.",
+    "no_notes": "📂 You have no saved notes yet.",
+    "notes_header": "📝 Your saved notes:\n",
+    "notes_menu_prompt": "Choose an action from the notes menu:",
+    "delete_notes_menu_prompt": "Choose a delete option:",
+    "prompt_select_note_to_delete": "Please select the note you want to delete:",
+    "invalid_note_number": "Invalid note number.",
+    "unknown_command": "❓ Sorry, I didn't understand that command. Please type /menu to see available commands.",
+    "prompt_new_note": "✏️ Please write your note:",
+    "addnote_no_content": "Please write your note after /addnote command.",
+    "note_saved": "✅ Your note has been saved: ",
+    "note_deleted": "🗑️ note deleted",
+    "dice_rolled": "🎲 You rolled: {number}",
+    "coinflip_result": "🪙 It's {result}!",
+    "remind_usage": "ℹ️ Please enter a time and message. Ex: `/remind 14:30 meeting` or `10:00 2025-12-31 new year`",
+    "remind_prompt_input": "✏️ Please enter the time and message for the reminder. Ex: `14:30 meeting` or `10:00 2025-12-31 new year`",
+    "reminder_set": "⏰ Reminder set for {time_str} - {message}\nRemaining time: {remaining_time}",
+    "error_occurred": "❌ An error occurred: ",
+    "qrcode_generated": "✅ QR code generated.\n{data}",
+    "qrcode_prompt_input": "Please type the text, link, or data you want to convert to QR code:",
+    "tkm_welcome": "Welcome to Rock-Paper-Scissors! Choose one of the buttons below:",
+    "tkm_tie": "It's a tie!",
+    "tkm_win": "Congratulations, you won! 🎉",
+    "tkm_lose": "Sorry, you lost! 😞",
+    "tkm_labels_you": "You",
+    "tkm_labels_bot": "Bot",
+    "tkm_invalid_input": "Please only use buttons: Rock, Paper, or Scissors.",
+    "next_page": "Next Page",
+    "previous_page": "Previous Page",
+    "note_button_prefix": "Note ",
+    "back_button_inline": "🔙 Back",
+    "pdf_converter_menu_prompt": "📄 PDF conversion options:",
+    "prompt_text_for_pdf": "✏️ Please type the text you want to convert to PDF:",
+    "prompt_file_for_pdf": "📂 Please send the file (image, DOCX, TXT) you want to convert to PDF:",
+    "pdf_conversion_success": "✅ File successfully converted to PDF.",
+    "pdf_conversion_error": "An error occurred while converting to PDF: {error}",
+    "unsupported_file_type": "Sorry, I cannot convert this file type to PDF. Please send an image (JPG, PNG), DOCX, or TXT file.",
+    "waiting_for_input": "⏳ Waiting for your input...",
+    "docx_conversion_warning": "⚠️ DOCX to PDF conversion might require Microsoft Word or LibreOffice installed on the server. The operation may fail if not present.",
+    "weather_prompt_city": "🏙️ Please enter the name of the city for which you want to get the weather:",
+    "weather_current": "📍 {city}\n🌡️ Temperature: {temp}°C\n❔ Feels like: {feels_like}°C\n✨ Condition: {description}\n💧 Humidity: %{humidity}\n💨 Wind: {wind_speed} m/s",
+    "weather_city_not_found": "❌ Sorry, weather information for '{city}' not found. Please make sure you spelled the city name correctly.",
+    "weather_api_error": "❌ An error occurred while fetching weather information. Please try again later.",
+    "weather_select_city": "🏙️ Select the city for which you want to get the weather:",
+    "weather_forecast_button": "📅 5-Day Forecast",
+    "weather_forecast_title": "📅 *{city} - 5-Day Forecast*",
+    "weather_day_format": "*{day}:* {icon} {max_temp}°C / {min_temp}°C ({desc})",
+    "weather_back_to_current": "🔄 Current Weather",
+    "developer_info_prompt": "👨‍💻 You can reach my social media accounts via the links below:",
+    "reminder_menu_prompt": "Choose an action from the reminders menu:",
+    "no_reminders": "📂 You have no saved reminders yet.",
+    "reminders_header": "⏰ Your saved reminders:\n",
+    "prompt_select_reminder_to_delete": "🗑️ Please select the reminder you want to delete:",
+    "reminder_deleted": "🗑️ reminder deleted.",
+    "invalid_reminder_number": "❌ Invalid reminder number.",
+    "remaining_time_format": "{days} days, {hours} hours, {minutes} minutes, {seconds} seconds",
+    "remaining_time_format_short": "{hours}h {minutes}m {seconds}s",
+    "my_website": "🌐 My Website",
+    "xox_welcome": "Welcome to Tic-Tac-Toe! Click a box to make a move.",
+    "xox_turn_user": "Your turn (X) 👇",
+    "xox_turn_bot": "My turn (O)...",
+    "xox_win": "🎉 Congratulations! You won!",
+    "xox_lose": "🤖 I won! Maybe next time...",
+    "xox_draw": "🤝 It's a draw!",
+    "xox_invalid_move": "This box is taken or game is over.",
+    "xox_bot_moved": "🤖 Bot played! Your turn.",
+    "video_downloader_menu_prompt": "📥 Video Downloader\n\nWhich platform do you want to download from?",
+    "video_downloader_prompt_link": "🔗 Please send the {platform} video link:",
+    "video_downloading": "⏳ Downloading video, please wait...",
+    "video_download_success": "✅ Video downloaded successfully!",
+    "video_download_error": "❌ Could not download video. The link may be invalid or the content may be private.\nError: {error}",
+    "video_file_too_large": "⚠️ Video file is too large (over 50MB). Exceeds Telegram limit.",
+    "video_invalid_link": "⚠️ Invalid link. Please send a valid {platform} link.",
+    "format_selection_prompt": "🎥 Which format do you want to download?",
+    "audio_downloading": "⏳ Downloading audio, please wait...",
+    "audio_download_success": "✅ Audio downloaded successfully!",
+    "ai_menu_prompt": "🤖 *AI Assistant*\n\nYour AI-powered chat assistant.\nAsk questions, get help!\n\n📊 Daily quota: {remaining}/{limit}",
+    "ai_menu_prompt_admin": "🤖 *AI Assistant (Admin)*\n\nYour AI-powered chat assistant.\n\n⚡️ *Status: ♾️ Unlimited Mode*",
+    "ai_chat_started": "🧠 AI chat mode started!\n\nYou can ask me anything. Use the button below to end.",
+    "ai_chat_ended": "👋 AI chat ended. You're back to main menu.",
+    "ai_thinking": "🤔 Thinking...",
+    "ai_limit_reached": "⚠️ You've reached your daily AI message limit (30/30).\nTry again tomorrow!",
+    "ai_remaining_footer": "💬 Quota: {status}",
+    "ai_unlimited_text": "♾️ Unlimited",
+    "ai_error": "❌ An error occurred while AI was responding. Please try again.",
+    "ai_api_error": "❌ AI service is currently unavailable. Please try again later.",
+    "shazam_menu_prompt": "🎵 *Shazam - Music Finder*\n\nTo find a song:\n🎤 Send an *Audio/Voice* file,\n🎥 Send a *Video* file,\n🔗 Paste an *Instagram/TikTok/Twitter* link.",
+    "shazam_processing": "🎧 Listening to music... Please wait.",
+    "shazam_not_found": "❌ Music not recognized. Recording might be too short or low quality.",
+    "shazam_result_caption": "🎵 *{title}*\n👤 {artist}\n💿 {album}",
+    "daily_bonus_already_claimed": "⏳ You have already claimed your daily bonus today. Come back tomorrow!",
+    "daily_bonus_success": "🎉 *Daily Bonus Claimed!*\n\n💰 Earned: *{reward} Coins*\n🔥 Streak: *Day {streak}*\n\nDon't forget to come back tomorrow for more!",
+    "wallet_status": "💳 *Wallet Status*\n\n💰 Balance: *{coins} Coins*",
+    "insufficient_funds": "❌ Insufficient funds! You need {amount} coins for this.\nCurrent: {balance}",
+    "bet_placed": "✅ Bet placed: *{amount} Coins*",
+    "coin_earned": "💰 You won *{amount} Coins*!",
+    "game_fee": "🎫 Entry fee: *{amount} Coins*",
+    "game_mode_select": "🎮 *{game_name}*\n\nHow would you like to play?",
+    "bet_select_prompt": "💰 *Bet Amount*\n\n💳 Current Balance: *{balance} Coins*\n\nHow many coins do you want to bet?",
+    "game_win_coins": "🎉 You won! *+{amount} Coins* (x{multiplier})",
+    "game_lose_coins": "😔 You lost! *-{amount} Coins*",
+    "game_draw_refund": "🤝 Draw! Your bet was refunded: *{amount} Coins*",
+    "metro_menu_prompt": "🚇 *Metro Istanbul*\n\nWhich line will you travel on?\n\n_ℹ️ Data sourced from IBB._",
+    "metro_select_station": "🚇 *{line}*\n\n📍 Which station will you use?",
+    "metro_select_direction": "➡️ Select your destination direction:",
+    "metro_departures_header": "🚇 *{line} - {station}*\n📍 Direction: {direction}\n\n_Upcoming departures:_",
+    "metro_no_departures": "⚠️ No upcoming departures found for this direction.",
+    "metro_api_error": "❌ Could not fetch metro data. Please try again.",
+    "invalid_selection": "⚠️ Invalid selection. Please select an option from the menu."
+  },
+  "buttons": {
+    "MAIN_BUTTONS": [
+      [
+        "🛠 Tools",
+        "🎮 Game Room"
+      ],
+      [
+        "🌐 Change Language",
+        "👨‍💻 Developer"
+      ],
+      [
+        "🤖 AI Assistant (Beta)",
+        "❓ How to Use?"
+      ]
+    ],
+    "TOOLS_BUTTONS": [
+      [
+        "📝 Notes",
+        "⏰ Reminder"
+      ],
+      [
+        "📷 QR Code",
+        "📄 PDF Converter"
+      ],
+      [
+        "☀️ Weather",
+        "🚇 Live Metro Istanbul"
+      ],
+      [
+        "📥 Video Download",
+        "🎵 Shazam"
+      ],
+      [
+        "🔙 Main Menu"
+      ]
+    ],
+    "VIDEO_DOWNLOADER_BUTTONS": [
+      [
+        "📱 TikTok",
+        "🐦 Twitter/X"
+      ],
+      [
+        "📸 Instagram"
+      ],
+      [
+        "🔙 Tools Menu"
+      ]
+    ],
+    "FORMAT_SELECTION_BUTTONS": [
+      [
+        "🎥 Video (MP4)",
+        "🎵 Audio (MP3)"
+      ],
+      [
+        "🔙 Platform Selection"
+      ]
+    ],
+    "GAMES_BUTTONS": [
+      [
+        "❌⭕ XOX",
+        "🎲 Dice"
+      ],
+      [
+        "🪙 Coinflip",
+        "🪨📄✂️ R-P-S"
+      ],
+      [
+        "🃏 Blackjack (21)",
+        "🎰 Slot"
+      ],
+      [
+        "🎁 Daily Bonus",
+        "💰 Wallet"
+      ],
+      [
+        "📊 My Stats"
+      ],
+      [
+        "🔙 Main Menu"
+      ]
+    ],
+    "NOTES_BUTTONS": [
+      [
+        "➕ Add Note",
+        "✏️ Edit Note"
+      ],
+      [
+        "📋 Show All Notes",
+        "🗑️ Delete Note"
+      ],
+      [
+        "🔙 Tools Menu"
+      ]
+    ],
+    "DELETE_NOTES_BUTTONS": [
+      [
+        "✍️ Select Note to Delete"
+      ],
+      [
+        "🔙 Notes Menu"
+      ]
+    ],
+    "TKM_BUTTONS": [
+      [
+        "🪨 Rock"
+      ],
+      [
+        "📄 Paper"
+      ],
+      [
+        "✂️ Scissors"
+      ],
+      [
+        "🔙 Game Room"
+      ]
+    ],
+    "PDF_CONVERTER_BUTTONS": [
+      [
+        "📝 Text to PDF"
+      ],
+      [
+        "🖼️ Image to PDF"
+      ],
+      [
+        "📄 Document to PDF"
+      ],
+      [
+        "🔙 Tools Menu"
+      ]
+    ],
+    "INPUT_BACK_BUTTONS": [
+      [
+        "🔙 Tools Menu"
+      ]
+    ],
+    "REMINDER_BUTTONS": [
+      [
+        "➕ Add Reminder"
+      ],
+      [
+        "📋 Show Reminders"
+      ],
+      [
+        "🗑️ Delete Reminder"
+      ],
+      [
+        "🔙 Tools Menu"
+      ]
+    ],
+    "GAME_MODE_BUTTONS": [
+      [
+        "🎮 Just for Fun",
+        "💰 With Coins"
+      ],
+      [
+        "🔙 Game Room"
+      ]
+    ],
+    "BET_BUTTONS": [
+      [
+        "100 💰",
+        "500 💰",
+        "1000 💰"
+      ],
+      [
+        "5000 💰",
+        "10000 💰"
+      ],
+      [
+        "🎯 All In!"
+      ],
+      [
+        "🔙 Game Room"
+      ]
+    ]
+  }
+}
