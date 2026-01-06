@@ -123,7 +123,7 @@ async def handle_shazam_input(update: Update, context: ContextTypes.DEFAULT_TYPE
             await new_file.download_to_drive(file_path)
             
         # 2. Check for Links
-        elif text and ("http" in text) and any(x in text for x in ["instagram", "tiktok", "youtube", "youtu.be", "shorts"]):
+        elif text and ("http" in text) and any(x in text for x in ["instagram", "tiktok", "twitter", "x.com"]):
             import yt_dlp
             file_path = f"/tmp/temp_shazam_link_{user_id}.mp3"
             

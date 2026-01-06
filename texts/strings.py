@@ -493,9 +493,9 @@ TEXTS = {
     
     # --- SHAZAM (MÜZİK TANIMA) ---
     "shazam_menu_prompt": {
-        "tr": "🎵 *Shazam - Müzik Bulucu*\n\nBulmak istediğiniz şarkı için:\n🎤 *Ses/Müzik* dosyasını gönderin,\n🎥 *Video* dosyasını gönderin,\n🔗 *Instagram/TikTok/YouTube* linkini yapıştırın.",
-        "en": "🎵 *Shazam - Music Finder*\n\nTo find a song:\n🎤 Send an *Audio/Voice* file,\n🎥 Send a *Video* file,\n🔗 Paste an *Instagram/TikTok/YouTube* link.",
-        "ru": "🎵 *Shazam - Поиск Музыки*\n\nЧтобы найти песню:\n🎤 Отправьте *Аудио/Голосовое* сообщение,\n🎥 Отправьте *Видео* файл,\n🔗 Вставьте ссылку *Instagram/TikTok/YouTube*."
+        "tr": "🎵 *Shazam - Müzik Bulucu*\n\nBulmak istediğiniz şarkı için:\n🎤 *Ses/Müzik* dosyasını gönderin,\n🎥 *Video* dosyasını gönderin,\n🔗 *Instagram/TikTok/Twitter* linkini yapıştırın.",
+        "en": "🎵 *Shazam - Music Finder*\n\nTo find a song:\n🎤 Send an *Audio/Voice* file,\n🎥 Send a *Video* file,\n🔗 Paste an *Instagram/TikTok/Twitter* link.",
+        "ru": "🎵 *Shazam - Поиск Музыки*\n\nЧтобы найти песню:\n🎤 Отправьте *Аудио/Голосовое* сообщение,\n🎥 Отправьте *Видео* файл,\n🔗 Вставьте ссылку *Instagram/TikTok/Twitter*."
     },
     "shazam_processing": {
         "tr": "🎧 Müzik dinleniyor... Lütfen bekleyin.",
