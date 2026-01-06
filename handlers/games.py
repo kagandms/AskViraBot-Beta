@@ -1124,7 +1124,7 @@ async def handle_blackjack_bet(update: Update, context: ContextTypes.DEFAULT_TYP
     amount = 0
     coins = await asyncio.to_thread(db.get_user_coins, user_id)
     
-    if "All" in text or "HEPSİ" in text or "ВА-БАНК" in text:
+    if "all" in text.lower() or "hepsini" in text.lower() or "ва-банк" in text.lower() or "🎯" in text:
         amount = coins
     else:
         # Extract number

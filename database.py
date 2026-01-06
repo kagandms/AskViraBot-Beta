@@ -480,7 +480,13 @@ def clear_user_state(user_id: int | str) -> None:
 # --- EKONOMİ SİSTEMİ (COINS) ---
 
 def get_user_coins(user_id: int | str) -> int:
-    """Kullanıcının coin miktarını döndürür."""
+    """Kullanıcının coin miktarını döndürür. Admin için sınırsız."""
+    from config import ADMIN_IDS
+    
+    # Admin için sınırsız bakiye
+    if int(user_id) in ADMIN_IDS:
+        return 999999999
+    
     if not supabase: return 1000
     try:
         response = supabase.table("users").select("coins").eq("user_id", str(user_id)).execute()
