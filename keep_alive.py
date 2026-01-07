@@ -130,6 +130,40 @@ def slot_spin():
         print(f"Server Error: {e}")
         return jsonify({"error": str(e), "success": False}), 500
 
+# --- API: XOX GAME ---
+@app.route('/api/games/xox/result', methods=['POST'])
+def xox_result():
+    try:
+        data = request.get_json(force=True, silent=True)
+        if not data:
+            return jsonify({"error": "Invalid JSON", "success": False}), 400
+            
+        init_data = data.get('initData')
+        winner = data.get('winner')
+        difficulty = data.get('difficulty', 'easy')
+        
+        # Validate Data
+        user_data = validate_telegram_data(init_data)
+        if not user_data:
+            # For development, allow bypass if needed (but secure for prod)
+            if os.environ.get("FLASK_ENV") == "development":
+                user_id = 12345
+            else:
+                return jsonify({"error": "Unauthorized / Invalid Data", "success": False}), 401
+        else:
+            user_id = user_data['id']
+        
+        # Log game result
+        db.log_xox_game(user_id, winner, difficulty)
+        
+        response = jsonify({"success": True})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+        
+    except Exception as e:
+        print(f"Server Error: {e}")
+        return jsonify({"error": str(e), "success": False}), 500
+
 @app.route('/api/test', methods=['GET'])
 def test_api():
     return jsonify({"status": "ok", "message": "API is reachable"})
