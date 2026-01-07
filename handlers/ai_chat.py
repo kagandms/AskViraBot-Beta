@@ -312,7 +312,6 @@ def setup(app):
     
     # 2. Router
     router.register(state.AI_CHAT_ACTIVE, handle_ai_message)
-    router.register(state.AI_MENU_ACTIVE, ai_menu)
     
     # 3. Buttons
     register_button("ai_main_button", ai_menu)

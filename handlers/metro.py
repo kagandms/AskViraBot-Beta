@@ -60,102 +60,25 @@ async def close_http_session():
 
 # --- API HELPER FUNCTIONS ---
 
+
+from .metro_data import METRO_LINES, METRO_STATIONS, METRO_DIRECTIONS
+
 async def fetch_lines(force_refresh=False):
-    """Fetch all metro lines with caching"""
-    global _lines_cache
-    
-    # Check cache first
-    now = datetime.now()
-    if not force_refresh and _lines_cache["data"] and _lines_cache["expires"] and now < _lines_cache["expires"]:
-        logger.debug("Returning cached metro lines")
-        return _lines_cache["data"]
-    
-    try:
-        session = await get_http_session()
-        async with session.get(f"{METRO_API_BASE}/GetLines") as response:
-            data = await response.json()
-            if data.get("Success"):
-                result = data.get("Data", [])
-                # Update cache
-                _lines_cache["data"] = result
-                _lines_cache["expires"] = now + LINES_CACHE_TTL
-                logger.debug("Fetched and cached metro lines from API")
-                return result
-    except Exception as e:
-        logger.error(f"Metro API Error (GetLines): {e}")
-        # Return cached data if available, even if expired
-        if _lines_cache["data"]:
-            logger.debug("Returning expired cache due to API error")
-            return _lines_cache["data"]
-    return []
+    """Fetch all metro lines (Static Data)"""
+    return METRO_LINES
+
+
 
 
 async def fetch_stations_by_line(line_id: int, force_refresh=False):
-    """Fetch stations for a specific line with caching"""
-    global _stations_cache
-    
-    # Check cache first
-    now = datetime.now()
-    cache_key = str(line_id)
-    if not force_refresh and cache_key in _stations_cache:
-        cached = _stations_cache[cache_key]
-        if cached["expires"] and now < cached["expires"]:
-            logger.debug(f"Returning cached stations for line {line_id}")
-            return cached["data"]
-    
-    try:
-        session = await get_http_session()
-        async with session.get(f"{METRO_API_BASE}/GetStationById/{line_id}") as response:
-            data = await response.json()
-            if data.get("Success"):
-                result = data.get("Data", [])
-                # Update cache
-                _stations_cache[cache_key] = {
-                    "data": result,
-                    "expires": now + STATIONS_CACHE_TTL
-                }
-                logger.debug(f"Fetched and cached stations for line {line_id}")
-                return result
-    except Exception as e:
-        logger.error(f"Metro API Error (GetStationById): {e}")
-        # Return cached data if available
-        if cache_key in _stations_cache:
-            return _stations_cache[cache_key]["data"]
-    return []
+    """Fetch stations for a specific line (Static Data)"""
+    return METRO_STATIONS.get(str(line_id), [])
 
 
 async def fetch_directions_by_line(line_id: int, force_refresh=False):
-    """Fetch directions for a specific line with caching"""
-    global _directions_cache
-    
-    # Check cache first
-    now = datetime.now()
-    cache_key = str(line_id)
-    if not force_refresh and cache_key in _directions_cache:
-        cached = _directions_cache[cache_key]
-        if cached["expires"] and now < cached["expires"]:
-            logger.debug(f"Returning cached directions for line {line_id}")
-            return cached["data"]
-            
-    try:
-        session = await get_http_session()
-        async with session.get(f"{METRO_API_BASE}/GetDirectionById/{line_id}") as response:
-            data = await response.json()
-            if data.get("Success"):
-                result = data.get("Data", [])
-                # Update cache
-                _directions_cache[cache_key] = {
-                    "data": result,
-                    "expires": now + DIRECTIONS_CACHE_TTL
-                }
-                return result
-    except Exception as e:
-        logger.error(f"Metro API Error (GetDirectionById): {e}")
-        # Return cached if available
-        if cache_key in _directions_cache:
-             return _directions_cache[cache_key]["data"]
-             
-    return []
+    """Fetch directions for a specific line (Static Data)"""
+    return METRO_DIRECTIONS.get(str(line_id), [])
+
 
 
 async def fetch_timetable(station_id: int, direction_id: int):

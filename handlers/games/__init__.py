@@ -135,7 +135,7 @@ def setup(app):
     app.add_handler(CommandHandler("xox", xox_start))
     app.add_handler(CommandHandler("dice", dice_command))
     app.add_handler(CommandHandler("coinflip", coinflip_command))
-    app.add_handler(CommandHandler(" blackjack", blackjack_start))
+    app.add_handler(CommandHandler("blackjack", blackjack_start))
     app.add_handler(CommandHandler("slot", slot_start))
     app.add_handler(CommandHandler("stats", show_player_stats))
     

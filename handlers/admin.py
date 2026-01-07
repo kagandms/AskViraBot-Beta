@@ -37,6 +37,12 @@ async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         await update.message.reply_text("⛔ Bu komuta erişim yetkiniz yok.")
         return
     
+    # Clean up command/button click
+    try:
+        await update.message.delete()
+    except Exception:
+        pass
+    
     # State başlat
     await state.clear_user_states(user_id)
     await state.set_state(user_id, state.ADMIN_MENU_ACTIVE)
