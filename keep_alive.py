@@ -65,59 +65,75 @@ def validate_telegram_data(init_data):
 # --- API: SLOT GAME ---
 @app.route('/api/games/slot/spin', methods=['POST'])
 def slot_spin():
-    data = request.json
-    init_data = data.get('initData')
-    bet_amount = data.get('bet', 100)
-    
-    user_data = validate_telegram_data(init_data)
-    if not user_data:
-        return jsonify({"error": "Unauthorized", "success": False}), 401
-    
-    user_id = user_data['id']
-    
-    # 1. Check Balance
-    current_coins = db.get_user_coins(user_id) # Synchronous call to db module
-    if current_coins < bet_amount:
-         return jsonify({"error": "Insufficient funds", "success": False, "balance": current_coins}), 400
-         
-    # 2. Deduct Bet
-    db.update_user_coins(user_id, -bet_amount)
-    
-    # 3. Game Logic (RNG)
-    import random
-    rows = 3
-    # Symbols: 🍒, 🍋, 🍇, 💎, 7️⃣
-    # Weights could be adjusted for complexity
-    # Simple logic: 3 random symbols
-    symbols = ["🍒", "🍋", "🍇", "💎", "7️⃣"]
-    result = [random.choice(symbols) for _ in range(rows)]
-    
-    # Determine Win
-    win_amount = 0
-    is_win = False
-    
-    # Logic: 3 same = Win
-    if result[0] == result[1] == result[2]:
-        is_win = True
-        s = result[0]
-        if s == "🍒": win_amount = bet_amount * 3
-        elif s == "🍋": win_amount = bet_amount * 5
-        elif s == "🍇": win_amount = bet_amount * 10
-        elif s == "💎": win_amount = bet_amount * 20
-        elif s == "7️⃣": win_amount = bet_amount * 50
+    try:
+        data = request.get_json(force=True, silent=True)
+        if not data:
+             return jsonify({"error": "Invalid JSON", "success": False}), 400
+             
+        init_data = data.get('initData')
+        bet_amount = data.get('bet', 100)
         
-        # Add Win
-        db.update_user_coins(user_id, win_amount)
-    
-    new_balance = db.get_user_coins(user_id)
-    
-    return jsonify({
-        "success": True,
-        "result": result, # e.g. ["🍒", "🍒", "🍒"]
-        "is_win": is_win,
-        "win_amount": win_amount,
-        "new_balance": new_balance
-    })
+        # Validate Data
+        user_data = validate_telegram_data(init_data)
+        if not user_data:
+            # For development, allow bypass if needed (but secure for prod)
+            # Remove this bypass in strict production
+            if os.environ.get("FLASK_ENV") == "development":
+                 user_id = 12345
+            else:
+                 return jsonify({"error": "Unauthorized / Invalid Data", "success": False}), 401
+        else:
+            user_id = user_data['id']
+        
+        # 1. Check Balance
+        current_coins = db.get_user_coins(user_id) 
+        if current_coins < bet_amount:
+             return jsonify({"error": "Insufficient funds", "success": False, "balance": current_coins}), 200 # 200 OK but success=False logic
+             
+        # 2. Deduct Bet
+        db.update_user_coins(user_id, -bet_amount)
+        
+        # 3. Game Logic (RNG)
+        import random
+        rows = 3
+        symbols = ["🍒", "🍋", "🍇", "💎", "7️⃣"]
+        result = [random.choice(symbols) for _ in range(rows)]
+        
+        # Determine Win
+        win_amount = 0
+        is_win = False
+        
+        if result[0] == result[1] == result[2]:
+            is_win = True
+            s = result[0]
+            if s == "🍒": win_amount = bet_amount * 3
+            elif s == "🍋": win_amount = bet_amount * 5
+            elif s == "🍇": win_amount = bet_amount * 10
+            elif s == "💎": win_amount = bet_amount * 20
+            elif s == "7️⃣": win_amount = bet_amount * 50
+            
+            db.update_user_coins(user_id, win_amount)
+        
+        new_balance = db.get_user_coins(user_id)
+        
+        response = jsonify({
+            "success": True,
+            "result": result,
+            "is_win": is_win,
+            "win_amount": win_amount,
+            "new_balance": new_balance
+        })
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+        
+    except Exception as e:
+        print(f"Server Error: {e}")
+        return jsonify({"error": str(e), "success": False}), 500
+
+@app.route('/api/test', methods=['GET'])
+def test_api():
+    return jsonify({"status": "ok", "message": "API is reachable"})
+
 
 def run_flask():
     port = int(os.environ.get("PORT", 8080))

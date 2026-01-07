@@ -78,7 +78,11 @@ spinBtn.addEventListener("click", async () => {
 
     } catch (e) {
         console.error(e);
-        stopSpin({ success: false, error: "Network Error" });
+        // Show detailed error if possible
+        let errMsg = "Network Error";
+        if (e && e.message) errMsg = e.message;
+
+        stopSpin({ success: false, error: errMsg });
     }
 });
 
