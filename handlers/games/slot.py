@@ -76,6 +76,49 @@ async def slot_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     # No state needed as Web App handles logic independently via API
 
 
+@rate_limit("games")
+async def olympus_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Gates of Olympus 1000 için mini app butonu göster"""
+    user_id = update.effective_user.id
+    lang = await db.get_user_lang(user_id)
+    import os
+    from telegram import WebAppInfo, InlineKeyboardButton, InlineKeyboardMarkup
+    
+    await cleanup_context(context, user_id)
+    try: await update.message.delete()
+    except: pass
+    
+    await state.clear_user_states(user_id)
+    
+    server_url = os.environ.get("RENDER_EXTERNAL_URL")
+    if not server_url:
+        server_url = "https://askvirabot-beta.onrender.com"
+        
+    web_app_url = f"{server_url}/web/olympus/index.html"
+    
+    texts = {
+        "tr": "⚡ *Gates of Olympus 1000*\\n\\nZeus'un kapılarını aç, büyük ödüller kazan!\\n\\n_Mini App açılacaktır._",
+        "en": "⚡ *Gates of Olympus 1000*\\n\\nOpen the gates of Zeus, win big rewards!\\n\\n_Opens Mini App._",
+        "ru": "⚡ *Gates of Olympus 1000*\\n\\nОткройте врата Зевса, выиграйте большие награды!\\n\\n_Откроется Mini App._"
+    }
+    
+    btn_text = {
+        "tr": "⚡ Zeus'un Kapılarını Aç",
+        "en": "⚡ Open the Gates",
+        "ru": "⚡ Открыть Врата"
+    }
+    
+    markup = InlineKeyboardMarkup([
+        [InlineKeyboardButton(text=btn_text.get(lang, btn_text["en"]), web_app=WebAppInfo(url=web_app_url))]
+    ])
+    
+    await update.message.reply_text(
+        texts.get(lang, texts["en"]),
+        reply_markup=markup,
+        parse_mode="Markdown"
+    )
+
+
 async def handle_slot_bet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle Slot bet amount selection"""
     user_id = update.effective_user.id

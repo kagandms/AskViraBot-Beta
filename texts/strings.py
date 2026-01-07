@@ -90,9 +90,10 @@ AUTO_MAPPINGS = {
     "tkm_main": extract_button_set(GAMES_BUTTONS, 1, 1),
     "blackjack_main": extract_button_set(GAMES_BUTTONS, 2, 0),
     "slot_main": extract_button_set(GAMES_BUTTONS, 2, 1),
-    "daily_bonus": extract_button_set(GAMES_BUTTONS, 3, 0),
-    "balance": extract_button_set(GAMES_BUTTONS, 3, 1),
-    "player_stats": extract_button_set(GAMES_BUTTONS, 4, 0),
+    "olympus_main": extract_button_set(GAMES_BUTTONS, 3, 0),
+    "daily_bonus": extract_button_set(GAMES_BUTTONS, 4, 0),
+    "balance": extract_button_set(GAMES_BUTTONS, 4, 1),
+    "player_stats": extract_button_set(GAMES_BUTTONS, 5, 0),
 
     # Notes
     "add_note_button": extract_button_set(NOTES_BUTTONS, 0, 0),

@@ -23,7 +23,8 @@ from .slot import (
     slot_start,
     handle_slot_bet,
     start_slot_game,
-    slot_spin
+    slot_spin,
+    olympus_start
 )
 
 from .blackjack import (
@@ -137,6 +138,7 @@ def setup(app):
     app.add_handler(CommandHandler("coinflip", coinflip_command))
     app.add_handler(CommandHandler("blackjack", blackjack_start))
     app.add_handler(CommandHandler("slot", slot_start))
+    app.add_handler(CommandHandler("olympus", olympus_start))
     app.add_handler(CommandHandler("stats", show_player_stats))
     
     # 2. Router
@@ -159,5 +161,6 @@ def setup(app):
     register_button("blackjack_main", blackjack_start)
     register_button("player_stats", show_player_stats)
     register_button("slot_main", slot_start)
+    register_button("olympus_main", olympus_start)
     
     logger.info("✅ Games module loaded")
