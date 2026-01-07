@@ -91,7 +91,7 @@ def slot_spin():
              return jsonify({"error": "Insufficient funds", "success": False, "balance": current_coins}), 200 # 200 OK but success=False logic
              
         # 2. Deduct Bet
-        db.update_user_coins(user_id, -bet_amount)
+        db.add_user_coins(user_id, -bet_amount)
         
         # 3. Game Logic (RNG)
         import random
@@ -112,7 +112,7 @@ def slot_spin():
             elif s == "💎": win_amount = bet_amount * 20
             elif s == "7️⃣": win_amount = bet_amount * 50
             
-            db.update_user_coins(user_id, win_amount)
+            db.add_user_coins(user_id, win_amount)
         
         new_balance = db.get_user_coins(user_id)
         
