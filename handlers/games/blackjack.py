@@ -103,8 +103,11 @@ async def blackjack_start(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         "ru": "🎰 Сесть за Стол"
     }
     
+    back_text = {"tr": "🔙 Oyun Odası", "en": "🔙 Game Room", "ru": "🔙 Игровая"}
+    
     keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton(button_texts.get(lang, button_texts["en"]), web_app={"url": web_app_url})]
+        [InlineKeyboardButton(button_texts.get(lang, button_texts["en"]), web_app={"url": web_app_url})],
+        [InlineKeyboardButton(back_text.get(lang, back_text["en"]), callback_data="back_to_games")]
     ])
     
     await update.message.reply_text(

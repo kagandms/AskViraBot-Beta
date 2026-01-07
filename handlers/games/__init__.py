@@ -126,9 +126,32 @@ async def handle_game_mode_selection(update: Update, context: ContextTypes.DEFAU
 
 # --- MODULAR SETUP ---
 def setup(app):
-    from telegram.ext import CommandHandler
+    from telegram.ext import CommandHandler, CallbackQueryHandler
     from core.router import router, register_button
     import state
+    
+    # Callback handler for inline back button
+    async def handle_back_to_games_callback(update, context):
+        query = update.callback_query
+        await query.answer()
+        try:
+            await query.message.delete()
+        except:
+            pass
+        # Send games menu
+        user_id = query.from_user.id
+        lang = await db.get_user_lang(user_id)
+        await state.clear_user_states(user_id)
+        
+        from texts import get_buttons
+        buttons = get_buttons("GAMES_BUTTONS", lang)
+        from telegram import ReplyKeyboardMarkup
+        keyboard = ReplyKeyboardMarkup(buttons, resize_keyboard=True)
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=TEXTS["games_menu_prompt"][lang],
+            reply_markup=keyboard
+        )
     
     # 1. Commands
     app.add_handler(CommandHandler("games", games_menu))
@@ -140,6 +163,9 @@ def setup(app):
     app.add_handler(CommandHandler("slot", slot_start))
     app.add_handler(CommandHandler("olympus", olympus_start))
     app.add_handler(CommandHandler("stats", show_player_stats))
+    
+    # 1.5 Callbacks
+    app.add_handler(CallbackQueryHandler(handle_back_to_games_callback, pattern="^back_to_games$"))
     
     # 2. Router
     router.register(state.PLAYING_XOX, handle_xox_message)

@@ -64,8 +64,11 @@ async def slot_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         "ru": "🎰 Играть"
     }
     
+    back_text = {"tr": "🔙 Oyun Odası", "en": "🔙 Game Room", "ru": "🔙 Игровая"}
+    
     markup = InlineKeyboardMarkup([
-        [InlineKeyboardButton(text=btn_text.get(lang, "Play"), web_app=WebAppInfo(url=web_app_url))]
+        [InlineKeyboardButton(text=btn_text.get(lang, "Play"), web_app=WebAppInfo(url=web_app_url))],
+        [InlineKeyboardButton(text=back_text.get(lang, back_text["en"]), callback_data="back_to_games")]
     ])
     
     sent_msg = await update.message.reply_text(
@@ -108,8 +111,11 @@ async def olympus_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         "ru": "⚡ Открыть Врата"
     }
     
+    back_text = {"tr": "🔙 Oyun Odası", "en": "🔙 Game Room", "ru": "🔙 Игровая"}
+    
     markup = InlineKeyboardMarkup([
-        [InlineKeyboardButton(text=btn_text.get(lang, btn_text["en"]), web_app=WebAppInfo(url=web_app_url))]
+        [InlineKeyboardButton(text=btn_text.get(lang, btn_text["en"]), web_app=WebAppInfo(url=web_app_url))],
+        [InlineKeyboardButton(text=back_text.get(lang, back_text["en"]), callback_data="back_to_games")]
     ])
     
     await update.message.reply_text(
