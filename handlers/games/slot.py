@@ -30,26 +30,51 @@ def get_slot_keyboard(lang):
 
 @rate_limit("games")
 async def slot_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Slot makinesi için mod seçimi göster"""
+    """Slot makinesi için mini app butonu göster"""
     user_id = update.effective_user.id
     lang = await db.get_user_lang(user_id)
+    import os
+    from telegram import WebAppInfo, InlineKeyboardButton, InlineKeyboardMarkup
     
     await cleanup_context(context, user_id)
     try: await update.message.delete()
     except: pass
     
     await state.clear_user_states(user_id)
-    await state.set_state(user_id, state.WAITING_FOR_GAME_MODE, {"game": "slot"})
+    # Not using generic game mode state anymore for slot, as it's web app driven
     
-    game_name = GAME_NAMES["slot"].get(lang, GAME_NAMES["slot"]["en"])
-    msg_text = TEXTS["game_mode_select"][lang].format(game_name=game_name)
+    # Determine URL
+    # On Render: RENDER_EXTERNAL_URL is set automatically
+    server_url = os.environ.get("RENDER_EXTERNAL_URL")
+    if not server_url:
+        # Fallback or prompt user to set it
+        server_url = "https://askvirabot-beta.onrender.com" # Example fallback
+        
+    web_app_url = f"{server_url}/web/slot/index.html"
+    
+    texts = {
+        "tr": "🎰 *Vira Casino Slot*\n\nGerçekçi slot deneyimi için aşağıdaki butona tıkla!\n\n_Mini App açılacaktır._",
+        "en": "🎰 *Vira Casino Slot*\n\nClick the button below for realistic slot experience!\n\n_Opens Mini App._",
+        "ru": "🎰 *Vira Casino Slot*\n\nНажмите кнопку ниже для реалистичного слота!\n\n_Откроется Mini App._"
+    }
+    
+    btn_text = {
+        "tr": "🎰 Hemen Oyna",
+        "en": "🎰 Play Now",
+        "ru": "🎰 Играть"
+    }
+    
+    markup = InlineKeyboardMarkup([
+        [InlineKeyboardButton(text=btn_text.get(lang, "Play"), web_app=WebAppInfo(url=web_app_url))]
+    ])
     
     sent_msg = await update.message.reply_text(
-        msg_text,
-        reply_markup=get_game_mode_keyboard(lang),
+        texts.get(lang, texts["en"]),
+        reply_markup=markup,
         parse_mode="Markdown"
     )
-    await state.set_state(user_id, state.WAITING_FOR_GAME_MODE, {"game": "slot", "message_id": sent_msg.message_id})
+    # No state needed as Web App handles logic independently via API
+
 
 async def handle_slot_bet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle Slot bet amount selection"""

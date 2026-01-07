@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>ViraBot Slots</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="neon-text">CASINO VIRA</h1>
+        </div>
+
+        <div class="balance-container">
+            <span>BALANCE:</span>
+            <span id="balance">Loading...</span> 💰
+        </div>
+
+        <div class="slot-machine">
+            <div class="reels-container">
+                <div class="reel" id="reel1"><div class="symbol">❓</div></div>
+                <div class="reel" id="reel2"><div class="symbol">❓</div></div>
+                <div class="reel" id="reel3"><div class="symbol">❓</div></div>
+            </div>
+            <div class="payline"></div>
+        </div>
+
+        <div class="controls">
+            <div class="bet-selector">
+                <button class="bet-btn active" data-amount="100">100</button>
+                <button class="bet-btn" data-amount="500">500</button>
+                <button class="bet-btn" data-amount="1000">1K</button>
+                <button class="bet-btn" data-amount="5000">5K</button>
+            </div>
+            
+            <button id="spin-btn" class="spin-btn">SPIN 🎰</button>
+        </div>
+        
+        <div id="status" class="status-text">Ready to Play!</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

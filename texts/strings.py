@@ -47,6 +47,7 @@ MANUAL_MAPPINGS = {
     "back_to_games": {"🔙 oyun odası", "🔙 game room", "🔙 игровая комната"},
     "back_to_notes": {"🔙 notlar menüsü", "🔙 notes menu", "🔙 меню заметок"},
     "admin_panel_button": {"🔒 yönetim", "🔒 admin", "🔒 управление"},
+    "metro_main_button": {"🚇 canlı metro istanbul", "🚇 live metro istanbul", "🚇 metro istanbul", "metro"},
 }
 
 
