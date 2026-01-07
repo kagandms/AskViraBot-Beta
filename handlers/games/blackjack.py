@@ -73,7 +73,7 @@ def format_blackjack_state(player_hand, dealer_hand, lang, hide_dealer=True):
 
 @rate_limit("games")
 async def blackjack_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Blackjack için mod seçimi göster"""
+    """Launch Blackjack Web App"""
     user_id = update.effective_user.id
     lang = await db.get_user_lang(user_id)
     
@@ -82,12 +82,36 @@ async def blackjack_start(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     except: pass
     
     await state.clear_user_states(user_id)
-    await state.set_state(user_id, state.WAITING_FOR_GAME_MODE, {"game": "blackjack"})
     
-    game_name = GAME_NAMES["blackjack"].get(lang, GAME_NAMES["blackjack"]["en"])
-    msg_text = TEXTS["game_mode_select"][lang].format(game_name=game_name)
+    # Get Web App URL
+    import os
+    RENDER_URL = os.getenv("RENDER_EXTERNAL_URL", "http://localhost:8080")
+    web_app_url = f"{RENDER_URL}/web/blackjack/index.html"
     
-    sent_msg = await update.message.reply_text(
+    # Create WebApp button
+    from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+    
+    prompts = {
+        "tr": "🃏 *Blackjack (21)*\\n\\nKarta başlamak için aşağıdaki butona tıklayın!",
+        "en": "🃏 *Blackjack (21)*\\n\\nClick the button below to start playing!",
+        "ru": "🃏 *Блэкджек (21)*\\n\\nНажмите кнопку ниже, чтобы начать игру!"
+    }
+    
+    button_texts = {
+        "tr": "🎰 Masaya Otur",
+        "en": "🎰 Join Table",
+        "ru": "🎰 Сесть за Стол"
+    }
+    
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton(button_texts.get(lang, button_texts["en"]), web_app={"url": web_app_url})]
+    ])
+    
+    await update.message.reply_text(
+        prompts.get(lang, prompts["en"]),
+        reply_markup=keyboard,
+        parse_mode="Markdown"
+    )
         msg_text,
         reply_markup=get_game_mode_keyboard(lang),
         parse_mode="Markdown"

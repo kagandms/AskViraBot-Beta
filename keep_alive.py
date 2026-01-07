@@ -164,6 +164,76 @@ def xox_result():
         print(f"Server Error: {e}")
         return jsonify({"error": str(e), "success": False}), 500
 
+# --- API: BLACKJACK GAME ---
+@app.route('/api/games/blackjack/balance', methods=['POST'])
+def blackjack_balance():
+    try:
+        data = request.get_json(force=True, silent=True)
+        if not data:
+            return jsonify({"error": "Invalid JSON", "success": False}), 400
+            
+        init_data = data.get('initData')
+        
+        # Validate Data
+        user_data = validate_telegram_data(init_data)
+        if not user_data:
+            if os.environ.get("FLASK_ENV") == "development":
+                user_id = 12345
+            else:
+                return jsonify({"error": "Unauthorized", "success": False}), 401
+        else:
+            user_id = user_data['id']
+        
+        # Get balance
+        balance = db.get_user_coins(user_id)
+        
+        response = jsonify({"success": True, "balance": balance})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+        
+    except Exception as e:
+        print(f"Balance Error: {e}")
+        return jsonify({"error": str(e), "success": False}), 500
+
+@app.route('/api/games/blackjack/result', methods=['POST'])
+def blackjack_result():
+    try:
+        data = request.get_json(force=True, silent=True)
+        if not data:
+            return jsonify({"error": "Invalid JSON", "success": False}), 400
+            
+        init_data = data.get('initData')
+        result = data.get('result')
+        bet_amount = data.get('betAmount', 0)
+        win_amount = data.get('winAmount', 0)
+        player_score = data.get('playerScore', 0)
+        dealer_score = data.get('dealerScore', 0)
+        
+        # Validate Data
+        user_data = validate_telegram_data(init_data)
+        if not user_data:
+            if os.environ.get("FLASK_ENV") == "development":
+                user_id = 12345
+            else:
+                return jsonify({"error": "Unauthorized", "success": False}), 401
+        else:
+            user_id = user_data['id']
+        
+        # Update coins (server confirms the win amount)
+        if win_amount > 0:
+            db.add_user_coins(user_id, win_amount)
+        
+        # Log game
+        db.log_blackjack_game(user_id, player_score, dealer_score, result)
+        
+        response = jsonify({"success": True})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+        
+    except Exception as e:
+        print(f"Blackjack Result Error: {e}")
+        return jsonify({"error": str(e), "success": False}), 500
+
 @app.route('/api/test', methods=['GET'])
 def test_api():
     return jsonify({"status": "ok", "message": "API is reachable"})
