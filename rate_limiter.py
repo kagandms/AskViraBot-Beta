@@ -138,7 +138,7 @@ def rate_limit(category: str = "general"):
                 cooldown = get_remaining_cooldown(user_id, category)
                 
                 # Kullanıcının dilini al
-                lang = await asyncio.to_thread(db.get_user_lang, user_id)
+                lang = await db.get_user_lang(user_id)
                 
                 # Çok dilli rate limit mesajları
                 messages = {

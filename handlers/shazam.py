@@ -59,7 +59,7 @@ import state
 async def start_shazam_mode(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Start Shazam mode"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Clean up trigger
     try:
@@ -82,7 +82,7 @@ async def start_shazam_mode(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def handle_shazam_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle audio/video/voice/link input for Shazam"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     msg_obj = update.message
     text = msg_obj.text
     
@@ -184,3 +184,18 @@ async def handle_shazam_input(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_text(f"❌ Error: {str(e)}")
         if file_path and os.path.exists(file_path):
             os.remove(file_path)
+
+# --- MODULAR SETUP ---
+def setup(app):
+    from telegram.ext import CommandHandler
+    from core.router import router
+    import state
+    import logging
+
+    # 1. Commands
+    app.add_handler(CommandHandler("shazam", start_shazam_mode))
+    
+    # 2. Router
+    router.register(state.WAITING_FOR_SHAZAM, handle_shazam_input)
+    
+    logging.getLogger(__name__).info("✅ Shazam module loaded")

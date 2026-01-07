@@ -49,7 +49,7 @@ async def get_all_in_amount(text: str, user_id: int) -> int | None:
 async def games_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Oyunlar Alt Menüsünü Açar"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Önceki oyun mesajlarını temizle
     await cleanup_context(context, user_id)
@@ -75,7 +75,7 @@ async def games_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 async def show_player_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Oyuncunun oyun istatistiklerini gösterir"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Cleanup previous context
     await cleanup_context(context, user_id)
@@ -118,7 +118,7 @@ async def show_player_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 @rate_limit("games")
 async def dice_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     number = random.randint(1, 6)
     await asyncio.to_thread(db.log_dice_roll, user_id, number)
     
@@ -131,7 +131,7 @@ async def dice_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 @rate_limit("games")
 async def coinflip_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     result = random.choice(["heads", "tails"])
     await asyncio.to_thread(db.log_coinflip, user_id, result)
     translations = {"tr": {"heads": "Yazı", "tails": "Tura"}, "en": {"heads": "Heads", "tails": "Tails"}, "ru": {"heads": "Орёл", "tails": "Решка"}}
@@ -171,15 +171,71 @@ def check_winner(board):
     return "Draw" if " " not in board else None
 
 def bot_make_move(board, difficulty="easy"):
-    # ... logic abbreviated for brewity, will copy fully in real file ...
-    # For now, simplistic implementation to save space in this response context
+    """XOX bot with proper AI based on difficulty level."""
     empty = [i for i, x in enumerate(board) if x == " "]
-    return random.choice(empty) if empty else None
+    if not empty:
+        return None
+    
+    def minimax(board, depth, is_maximizing):
+        """Minimax algorithm for optimal play."""
+        winner = check_winner(board)
+        if winner == "O": return 10 - depth  # Bot wins
+        if winner == "X": return depth - 10  # Player wins
+        if winner == "Draw": return 0  # Draw
+        
+        if is_maximizing:
+            best_score = -float('inf')
+            for i in range(9):
+                if board[i] == " ":
+                    board[i] = "O"
+                    score = minimax(board, depth + 1, False)
+                    board[i] = " "
+                    best_score = max(score, best_score)
+            return best_score
+        else:
+            best_score = float('inf')
+            for i in range(9):
+                if board[i] == " ":
+                    board[i] = "X"
+                    score = minimax(board, depth + 1, True)
+                    board[i] = " "
+                    best_score = min(score, best_score)
+            return best_score
+    
+    def get_best_move(board):
+        """Get the best move using minimax."""
+        best_score = -float('inf')
+        best_move = None
+        for i in range(9):
+            if board[i] == " ":
+                board[i] = "O"
+                score = minimax(board, 0, False)
+                board[i] = " "
+                if score > best_score:
+                    best_score = score
+                    best_move = i
+        return best_move
+    
+    # Difficulty determines how often the bot plays optimally
+    import random as rnd
+    if difficulty == "easy":
+        # 30% optimal, 70% random
+        if rnd.random() < 0.3:
+            return get_best_move(board)
+        return rnd.choice(empty)
+    elif difficulty == "medium":
+        # 60% optimal, 40% random
+        if rnd.random() < 0.6:
+            return get_best_move(board)
+        return rnd.choice(empty)
+    else:  # hard
+        # 100% optimal - unbeatable
+        return get_best_move(board)
 
 @rate_limit("games")
 async def xox_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     await cleanup_context(context, user_id)
     try: await update.message.delete()
     except: pass
@@ -203,7 +259,7 @@ async def xox_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def handle_xox_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     text = update.message.text
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     game_state = await state.get_data(user_id)
     if not game_state: return
 

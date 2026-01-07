@@ -22,7 +22,7 @@ from handlers.games.core import (
 async def tkm_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """TKM oyunu için mod seçimi göster"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     await cleanup_context(context, user_id)
     try: await update.message.delete()
@@ -44,7 +44,7 @@ async def tkm_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def handle_tkm_bet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle TKM bet amount selection"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     text = update.message.text if update.message.text else ""
     
     if is_back_button(text):
@@ -84,7 +84,7 @@ from models.game_state import TKMState
 async def start_tkm_game(update: Update, context: ContextTypes.DEFAULT_TYPE, bet_amount: int = 0) -> None:
     """Actually start the TKM game"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Use Model
     tkm_state = TKMState(bet_amount=bet_amount)
@@ -108,7 +108,7 @@ async def tkm_play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     lang = "en"
     try:
-        lang = await asyncio.to_thread(db.get_user_lang, user_id)
+        lang = await db.get_user_lang(user_id)
         user_move_raw = update.message.text.lower().strip()
         
         game_data_dict = await state.get_data(user_id)

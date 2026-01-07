@@ -75,7 +75,7 @@ def format_blackjack_state(player_hand, dealer_hand, lang, hide_dealer=True):
 async def blackjack_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Blackjack için mod seçimi göster"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     await cleanup_context(context, user_id)
     try: await update.message.delete()
@@ -99,7 +99,7 @@ async def start_blackjack_game(update: Update, context: ContextTypes.DEFAULT_TYP
 
 async def handle_blackjack_bet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     text = update.message.text
     
     if is_back_button(text):
@@ -143,7 +143,7 @@ from models.game_state import BlackjackState
 
 async def blackjack_deal(update: Update, context: ContextTypes.DEFAULT_TYPE, bet_amount: int) -> None:
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     await cleanup_context(context, user_id)
     deck = create_deck()
@@ -188,7 +188,7 @@ async def blackjack_deal(update: Update, context: ContextTypes.DEFAULT_TYPE, bet
 async def handle_blackjack_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     text = update.message.text.lower()
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     game_data_dict = await state.get_data(user_id)
     if not game_data_dict: return

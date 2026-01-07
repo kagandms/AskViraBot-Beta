@@ -73,7 +73,7 @@ async def handle_admin_message(update: Update, context: ContextTypes.DEFAULT_TYP
     # Geri butonu
     if is_back_button(text):
         await state.clear_user_states(user_id)
-        lang = await asyncio.to_thread(db.get_user_lang, user_id)
+        lang = await db.get_user_lang(user_id)
         await update.message.reply_text(
             "🏠 Ana menüye döndünüz.",
             reply_markup=get_main_keyboard_markup(lang, user_id)
@@ -117,7 +117,7 @@ async def admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif query.data == "admin_exit_to_menu":
         # Admin panelini kapat ve ana menüye dön
         user_id = query.from_user.id
-        lang = await asyncio.to_thread(db.get_user_lang, user_id)
+        lang = await db.get_user_lang(user_id)
         await query.delete_message()
         await query.message.chat.send_message(
             "🏠 Ana menüye döndünüz.",
@@ -271,7 +271,7 @@ async def handle_broadcast_message(update: Update, context: ContextTypes.DEFAULT
         await update.message.reply_text("⏳ Duyuru işlemi arka planda başlatıldı.")
 
         # Ana menüye dön
-        lang = await asyncio.to_thread(db.get_user_lang, user_id)
+        lang = await db.get_user_lang(user_id)
         await update.message.reply_text("🏠 Ana menüye döndünüz.", reply_markup=get_main_keyboard_markup(lang, user_id))
     except Exception as e:
         await status_msg.edit_text(f"❌ Hata: {e}")
@@ -288,8 +288,9 @@ async def show_users(query, context):
         else:
             lines = ["👥 *Son 10 Kullanıcı*\n"]
             for i, user in enumerate(users, 1):
-                uid = user.get('user_id', 'N/A')
-                lang = user.get('language', '?')
+                # UserModel objects have attributes, not dict keys
+                uid = getattr(user, 'user_id', 'N/A')
+                lang = getattr(user, 'language', '?')
                 lines.append(f"{i}. `{uid}` ({lang})")
             users_text = "\n".join(lines)
         
@@ -346,13 +347,15 @@ async def show_users_reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         else:
             lines = ["👥 *Son 10 Kullanıcı*\n"]
             for i, user in enumerate(users, 1):
-                uid = user.get('user_id', 'N/A')
-                lang = user.get('language', '?')
+                # UserModel objects have attributes, not dict keys
+                uid = getattr(user, 'user_id', 'N/A')
+                lang = getattr(user, 'language', '?')
                 lines.append(f"{i}. `{uid}` ({lang})")
             users_text = "\n".join(lines)
         
         await update.message.reply_text(users_text, parse_mode="Markdown", reply_markup=get_admin_keyboard())
     except Exception as e:
+        logger.error(f"Error in show_users_reply: {e}", exc_info=True)
         await update.message.reply_text(f"❌ Hata: {e}")
 
 async def start_broadcast_reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -371,3 +374,21 @@ async def start_broadcast_reply(update: Update, context: ContextTypes.DEFAULT_TY
         parse_mode="Markdown"
     )
 
+
+# --- MODULAR SETUP ---
+def setup(app):
+    """Register all handlers for this module."""
+    from telegram.ext import CommandHandler, CallbackQueryHandler
+    from core.router import router
+    import state
+    
+    # 1. Command Handlers
+    app.add_handler(CommandHandler("admin", admin_command))
+    
+    # 2. Callback Handlers
+    app.add_handler(CallbackQueryHandler(admin_callback, pattern=r"^admin_"))
+    
+    # 3. State Handlers (Router)
+    router.register(state.ADMIN_MENU_ACTIVE, handle_admin_message)
+    
+    logger.info("✅ Admin module loaded")

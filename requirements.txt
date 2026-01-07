@@ -16,3 +16,5 @@ shazamio
 audioop-lts
 pydantic
 pydantic-settings
+redis
+ujson

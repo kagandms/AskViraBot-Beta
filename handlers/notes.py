@@ -14,7 +14,7 @@ from utils import get_notes_keyboard_markup, get_input_back_keyboard_markup, is_
 async def notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Cleanup previous context
     from utils import cleanup_context
@@ -54,7 +54,7 @@ async def notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 async def addnote_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     note_content = ' '.join(context.args)
     if note_content:
@@ -67,7 +67,7 @@ async def addnote_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 async def prompt_new_note(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     await state.clear_user_states(user_id)
     
     # Cleanup user trigger
@@ -83,7 +83,7 @@ async def prompt_new_note(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 async def handle_new_note_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     text = update.message.text
     text_lower = text.lower().strip()
 
@@ -115,7 +115,7 @@ async def handle_new_note_input(update: Update, context: ContextTypes.DEFAULT_TY
 async def shownotes_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron (Dil ve Notlar)
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Cleanup user trigger
     try:
@@ -148,7 +148,7 @@ async def shownotes_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 async def deletenotes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     notes = await asyncio.to_thread(db.get_notes, user_id)
     
     # Kullanıcı butonunu sil (Eğer message varsa - callback değilse)
@@ -227,7 +227,7 @@ async def delete_note_callback(update: Update, context: ContextTypes.DEFAULT_TYP
     query = update.callback_query
     user_id = query.from_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     await query.answer()
     
@@ -274,7 +274,7 @@ async def delete_note_callback(update: Update, context: ContextTypes.DEFAULT_TYP
 async def edit_notes_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     notes = await asyncio.to_thread(db.get_notes, user_id)
     
     # Kullanıcı butonunu sil (Eğer message varsa - callback değilse)
@@ -319,7 +319,7 @@ async def handle_edit_note_callback(update: Update, context: ContextTypes.DEFAUL
     query = update.callback_query
     user_id = query.from_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     await query.answer()
 
     if query.data == "notes_back_inline":
@@ -385,7 +385,7 @@ async def handle_edit_note_callback(update: Update, context: ContextTypes.DEFAUL
 async def handle_edit_note_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     new_text = update.message.text
     text_lower = new_text.lower().strip()
     
@@ -423,3 +423,29 @@ async def handle_edit_note_input(update: Update, context: ContextTypes.DEFAULT_T
         await update.message.reply_text(TEXTS["note_updated"][lang], reply_markup=get_notes_keyboard_markup(lang))
     else:
         await update.message.reply_text(TEXTS["error_occurred"][lang])
+
+# --- MODULAR SETUP ---
+def setup(app):
+    from telegram.ext import CommandHandler, CallbackQueryHandler
+    from core.router import router
+    import state
+    
+    # 1. Commands
+    app.add_handler(CommandHandler("notes", notes_menu))
+    app.add_handler(CommandHandler("deletenotes", deletenotes_menu))
+    app.add_handler(CommandHandler("addnote", addnote_command))
+    app.add_handler(CommandHandler("editnote", edit_notes_menu))
+    app.add_handler(CommandHandler("shownotes", shownotes_command))
+    
+    # 2. Callbacks
+    app.add_handler(CallbackQueryHandler(delete_note_callback, pattern=r"^(delete_note_\d+|notes_prev_page|notes_next_page|delete_notes_back_inline)$"))
+    app.add_handler(CallbackQueryHandler(handle_edit_note_callback, pattern=r"^(edit_note_\d+|notes_back_inline)$"))
+    
+    # 3. Router
+    router.register(state.NOTES_IN_MENU, notes_menu)
+    router.register(state.WAITING_FOR_NEW_NOTE_INPUT, handle_new_note_input)
+    router.register(state.WAITING_FOR_EDIT_NOTE_INPUT, handle_edit_note_input)
+    router.register(state.DELETING_NOTES, select_note_to_delete_prompt)
+    router.register(state.EDITING_NOTES, edit_notes_menu)
+    
+    logger.info("✅ Notes module loaded")

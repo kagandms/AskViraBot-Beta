@@ -187,7 +187,7 @@ async def fetch_timetable(station_id: int, direction_id: int):
 async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Metro menüsünü başlat (Hatları listele)"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Cleanup previous context
     await cleanup_context(context, user_id)
@@ -258,7 +258,7 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
     from texts import turkish_lower
     text_lower = turkish_lower(text)
     
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Geri / Menü Kontrolü
     from texts import BUTTON_MAPPINGS
@@ -798,6 +798,20 @@ async def delete_favorite(update: Update, context: ContextTypes.DEFAULT_TYPE, te
             fav["station_id"], 
             fav["direction_id"]
         )
+
+# --- MODULAR SETUP ---
+def setup(app):
+    from telegram.ext import CommandHandler
+    from core.router import router
+    import state
+    
+    # 1. Commands
+    app.add_handler(CommandHandler("metro", metro_menu_command))
+    
+    # 2. Router
+    router.register(state.METRO_BROWSING, handle_metro_message)
+    
+    logger.info("✅ Metro module loaded")
         
         if success:
             del_texts = {"tr": "✅ Favori silindi!", "en": "✅ Favorite deleted!", "ru": "✅ Удалено!"}

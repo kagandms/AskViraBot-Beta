@@ -26,7 +26,7 @@ async def time_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 @rate_limit("heavy")
 async def qrcode_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     if context.args:
         data = ' '.join(context.args)
@@ -47,9 +47,14 @@ async def qrcode_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         
         await state.set_state(user_id, state.WAITING_FOR_QR_DATA, {"message_id": sent_message.message_id})
 
+async def handle_qr_input_from_state(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Wrapper for state router - gets text from message and calls generate_and_send_qr"""
+    if update.message and update.message.text:
+        await generate_and_send_qr(update, context, update.message.text)
+
 async def generate_and_send_qr(update: Update, context: ContextTypes.DEFAULT_TYPE, data):
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
 
     data_lower = data.lower().strip()
     if is_back_button(data):
@@ -97,7 +102,7 @@ def get_developer_keyboard(lang):
 
 async def show_developer_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Cleanup previous messages
     await cleanup_context(context, user_id)
@@ -131,7 +136,7 @@ async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT
         return False
     
     text = update.message.text.lower()
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     if is_back_button(text):
         # State temizliğini menu_command içinde cleanup_context yapacak
@@ -162,6 +167,12 @@ async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT
         link = SOCIAL_MEDIA_LINKS["linkedin"]
     
     if link:
+        # Delete user's button press (bas-sil)
+        try:
+            await update.message.delete()
+        except Exception as e:
+            logger.debug(f"Failed to delete user message in developer: {e}")
+        
         if "developer_last_link_msg" in context.user_data:
             try:
                 await context.user_data["developer_last_link_msg"].delete()
@@ -177,5 +188,24 @@ async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT
 async def handle_social_media_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     await query.answer()
-    if query.data == "back_to_main_menu":
         await query.message.delete()
+
+# --- MODULAR SETUP ---
+def setup(app):
+    from telegram.ext import CommandHandler, CallbackQueryHandler
+    from core.router import router
+    import state
+    
+    # 1. Commands
+    app.add_handler(CommandHandler("time", time_command))
+    app.add_handler(CommandHandler("qrcode", qrcode_command))
+    app.add_handler(CommandHandler("developer", show_developer_info))
+    
+    # 2. Callbacks
+    app.add_handler(CallbackQueryHandler(handle_social_media_callbacks, pattern=r"^(back_to_main_menu)$"))
+    
+    # 3. Router
+    router.register(state.DEVELOPER_MENU_ACTIVE, handle_developer_message)
+    router.register(state.WAITING_FOR_QR_DATA, handle_qr_input_from_state)
+    
+    logger.info("✅ Tools module loaded")

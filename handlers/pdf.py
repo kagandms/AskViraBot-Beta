@@ -22,7 +22,7 @@ def get_pdf_keyboard_markup(lang):
 @rate_limit("heavy")
 async def pdf_converter_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Cleanup previous context
     from utils import cleanup_context
@@ -45,7 +45,7 @@ async def pdf_converter_menu(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 async def prompt_text_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     await state.clear_user_states(user_id)
     
     # Cleanup user trigger
@@ -64,7 +64,7 @@ async def prompt_text_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 async def prompt_file_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     await state.clear_user_states(user_id)
     
     # Cleanup user trigger
@@ -83,7 +83,7 @@ async def prompt_file_for_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 async def handle_pdf_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Retrieve mode from persistent state data
     state_data = await state.get_data(user_id)
@@ -208,3 +208,17 @@ async def handle_pdf_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     await state.clear_user_states(user_id)
     await pdf_converter_menu(update, context)
+
+# --- MODULAR SETUP ---
+def setup(app):
+    from telegram.ext import CommandHandler
+    from core.router import router
+    import state
+    
+    # 1. Commands
+    app.add_handler(CommandHandler("pdfconverter", pdf_converter_menu))
+    
+    # 2. Router
+    router.register(state.WAITING_FOR_PDF_CONVERSION_INPUT, handle_pdf_input)
+    
+    logging.getLogger(__name__).info("✅ PDF module loaded")

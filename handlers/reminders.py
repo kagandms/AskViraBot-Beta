@@ -14,7 +14,7 @@ from utils import get_reminder_keyboard_markup, get_input_back_keyboard_markup, 
 async def reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Cleanup previous context
     from utils import cleanup_context
@@ -35,7 +35,7 @@ async def reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 async def show_reminders_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Cleanup user trigger
     try:
@@ -43,7 +43,7 @@ async def show_reminders_command(update: Update, context: ContextTypes.DEFAULT_T
     except: pass
     
     reminders = await asyncio.to_thread(db.get_all_reminders_db)
-    user_reminders = [r for r in reminders if str(r.get("user_id")) == str(user_id)]
+    user_reminders = [r for r in reminders if str(r.user_id) == str(user_id)]
     
     if not user_reminders:
         await update.message.reply_text(TEXTS["no_reminders"][lang], reply_markup=get_reminder_keyboard_markup(lang))
@@ -60,21 +60,21 @@ async def show_reminders_command(update: Update, context: ContextTypes.DEFAULT_T
     
     for i, reminder in enumerate(user_reminders):
         try:
-            target_time = datetime.fromisoformat(reminder["time"])
+            target_time = datetime.fromisoformat(reminder.time)
             remaining_seconds = (target_time - now).total_seconds()
             time_formatted = target_time.astimezone(pytz.timezone(TIMEZONE)).strftime('%Y-%m-%d %H:%M')
             if remaining_seconds > 0:
-                message += f"{i+1}. {time_formatted} - {reminder['message']} ({remaining_text.get(lang, 'Remaining')}: {format_remaining_time(remaining_seconds, lang)})\n"
+                message += f"{i+1}. {time_formatted} - {reminder.message} ({remaining_text.get(lang, 'Remaining')}: {format_remaining_time(remaining_seconds, lang)})\n"
             else:
-                message += f"{i+1}. {time_formatted} - {reminder['message']} ({expired_text.get(lang, 'Expired')})\n"
+                message += f"{i+1}. {time_formatted} - {reminder.message} ({expired_text.get(lang, 'Expired')})\n"
         except Exception as e:
-            message += f"{i+1}. [{error_text.get(lang, 'Error')}] - {reminder.get('message', unknown_text.get(lang, 'Unknown'))}\n"
+            message += f"{i+1}. [{error_text.get(lang, 'Error')}] - {reminder.message if hasattr(reminder, 'message') else unknown_text.get(lang, 'Unknown')}\n"
     await update.message.reply_text(message, reply_markup=get_reminder_keyboard_markup(lang))
 
 async def prompt_reminder_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Delete user's trigger button
     try:
@@ -88,7 +88,7 @@ async def prompt_reminder_input(update: Update, context: ContextTypes.DEFAULT_TY
 async def process_reminder_input(update: Update, context: ContextTypes.DEFAULT_TYPE, input_string: str = None):
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     text = input_string if input_string else update.message.text
     text_lower = text.lower().strip()
 
@@ -182,7 +182,7 @@ async def reminder_task(application, chat_id, message, wait_seconds, reminder_id
 async def delete_reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Delete user's trigger button (eğer message varsa - callback değilse)
     if update.message:
@@ -191,7 +191,7 @@ async def delete_reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYP
         except: pass
     
     reminders = await asyncio.to_thread(db.get_all_reminders_db)
-    user_reminders = [r for r in reminders if str(r.get("user_id")) == str(user_id)]
+    user_reminders = [r for r in reminders if str(r.user_id) == str(user_id)]
     
     if not user_reminders:
         msg = TEXTS["no_reminders"][lang]
@@ -206,14 +206,14 @@ async def delete_reminder_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     
     keyboard = []
     for i, reminder in enumerate(user_reminders):
-        rem_id = reminder['id']
+        rem_id = reminder.id
         try:
-            time_obj = datetime.fromisoformat(reminder['time']).astimezone(pytz.timezone(TIMEZONE))
+            time_obj = datetime.fromisoformat(reminder.time).astimezone(pytz.timezone(TIMEZONE))
             time_str = time_obj.strftime('%H:%M %d.%m.%Y')
         except Exception:
             time_str = "Invalid Date"
             
-        btn_txt = f"{i+1}. {reminder['message']} ({time_str})"
+        btn_txt = f"{i+1}. {reminder.message} ({time_str})"
         if len(btn_txt) > 50: btn_txt = btn_txt[:47] + "..."
         keyboard.append([InlineKeyboardButton(btn_txt, callback_data=f"delete_rem_{rem_id}")])
         
@@ -226,7 +226,7 @@ async def delete_reminder_callback(update: Update, context: ContextTypes.DEFAULT
     query = update.callback_query
     user_id = query.from_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     await query.answer()
     if query.data == "reminders_back_inline":
         await state.clear_user_states(user_id)
@@ -253,14 +253,31 @@ async def start_pending_reminders(application):
     reminders = await asyncio.to_thread(db.get_all_reminders_db)
     now = datetime.now(pytz.utc)
     for reminder in reminders:
-        if isinstance(reminder.get("time"), str):
-            try: target_time = datetime.fromisoformat(reminder["time"])
+        if isinstance(reminder.time, str):
+            try: target_time = datetime.fromisoformat(reminder.time)
             except ValueError: continue
         else: continue
 
         if target_time > now:
             wait_seconds = (target_time - now).total_seconds()
-            asyncio.create_task(reminder_task(application, reminder["chat_id"], reminder["message"], wait_seconds, reminder.get("id")))
+            asyncio.create_task(reminder_task(application, reminder.chat_id, reminder.message, wait_seconds, reminder.id))
         else:
             # DB İŞLEMİ: Asenkron
-            await asyncio.to_thread(db.remove_reminder_db, reminder.get("id"))
+            await asyncio.to_thread(db.remove_reminder_db, reminder.id)
+
+# --- MODULAR SETUP ---
+def setup(app):
+    from telegram.ext import CommandHandler, CallbackQueryHandler
+    from core.router import router
+    import state
+    
+    # 1. Commands
+    app.add_handler(CommandHandler("remind", remind_command))
+    
+    # 2. Callbacks
+    app.add_handler(CallbackQueryHandler(delete_reminder_callback, pattern=r"^(delete_rem_\d+|reminders_back_inline)$"))
+    
+    # 3. Router
+    router.register(state.WAITING_FOR_REMINDER_INPUT, process_reminder_input)
+    
+    logger.info("✅ Reminders module loaded")

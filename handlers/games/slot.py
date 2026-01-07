@@ -32,7 +32,7 @@ def get_slot_keyboard(lang):
 async def slot_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Slot makinesi için mod seçimi göster"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     await cleanup_context(context, user_id)
     try: await update.message.delete()
@@ -54,7 +54,7 @@ async def slot_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 async def handle_slot_bet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle Slot bet amount selection"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     text = update.message.text if update.message.text else ""
     
     if is_back_button(text):
@@ -93,7 +93,7 @@ from models.game_state import SlotState
 async def start_slot_game(update: Update, context: ContextTypes.DEFAULT_TYPE, bet_amount: int = 0) -> None:
     """Actually start the Slot game"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Use Model
     slot_state = SlotState(bet_amount=bet_amount)
@@ -123,7 +123,7 @@ async def start_slot_game(update: Update, context: ContextTypes.DEFAULT_TYPE, be
 async def slot_spin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Slot makinesini çevir (Animasyonlu)"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     text = update.message.text.lower() if update.message.text else ""
     
     if is_back_button(text):

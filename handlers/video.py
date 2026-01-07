@@ -21,7 +21,7 @@ def get_format_selection_keyboard_markup(lang):
 @rate_limit("heavy")
 async def video_downloader_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Cleanup previous context
     from utils import cleanup_context
@@ -44,7 +44,7 @@ async def video_downloader_menu(update: Update, context: ContextTypes.DEFAULT_TY
 
 async def set_video_platform(update: Update, context: ContextTypes.DEFAULT_TYPE, platform: str):
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     await state.clear_user_states(user_id)
     # Store platform in persistent state data
@@ -65,7 +65,7 @@ async def set_video_platform(update: Update, context: ContextTypes.DEFAULT_TYPE,
 
 async def set_download_format(update: Update, context: ContextTypes.DEFAULT_TYPE, download_format: str):
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Retrieve platform from persistent state
     state_data = await state.get_data(user_id)
@@ -101,7 +101,7 @@ async def set_download_format(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # State zaten main.py'de kontrol edildi
 
@@ -234,3 +234,18 @@ async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_
                 os.remove(temp_file)
     
     return True
+
+# --- MODULAR SETUP ---
+def setup(app):
+    from telegram.ext import CommandHandler
+    from core.router import router
+    import state
+    import logging
+    
+    # 1. Commands
+    app.add_handler(CommandHandler("video", video_downloader_menu))
+    
+    # 2. Router
+    router.register(state.WAITING_FOR_VIDEO_LINK, download_and_send_media)
+    
+    logging.getLogger(__name__).info("✅ Video module loaded")

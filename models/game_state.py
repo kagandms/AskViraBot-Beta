@@ -1,5 +1,4 @@
-
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field, asdict, fields
 from typing import List, Optional, Tuple, Any
 
 @dataclass
@@ -12,7 +11,9 @@ class GameState:
 
     @classmethod
     def from_dict(cls, data: dict):
-        return cls(**{k: v for k, v in data.items() if k in cls.__annotations__})
+        # Use fields(cls) to get ALL fields including inherited ones
+        valid_fields = {f.name for f in fields(cls)}
+        return cls(**{k: v for k, v in data.items() if k in valid_fields})
 
 @dataclass
 class TKMState(GameState):
@@ -29,21 +30,4 @@ class BlackjackState(GameState):
     dealer_hand: List[Tuple[str, str]] = field(default_factory=list)
     game: str = "blackjack"
     
-    def to_dict(self) -> dict:
-        # Tuples might need serialization if JSON doesn't support them well (it converts to list)
-        # But standard asdict handles this by converting validation... 
-        # Actually standard python json.dump converts tuples to lists.
-        # So when we read back, they are lists.
-        # We need to ensure we treat them as lists or convert back to tuples.
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        # Filter keys
-        valid_data = {k: v for k, v in data.items() if k in cls.__annotations__ or k in GameState.__annotations__}
-        
-        # Convert hands from lists to tuples if necessary (though tuples are immutable)
-        # JSON loads as lists. Python List[Tuple] type hint ensures static analysis but runtime it's list.
-        # We can explicitly convert if needed, but for now list is fine as long as code handles it.
-        # Our blackjack code accesses elements via index, so lists are fine.
-        return cls(**valid_data)
+    # Inherit generic from_dict from GameState which now handles everything correctly

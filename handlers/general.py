@@ -26,7 +26,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE, user=None) -
 async def tools_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Araçlar menüsünü gösterir."""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Cleanup previous state/messages
     await cleanup_context(context, user_id)
@@ -58,7 +58,7 @@ async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     """Ana menüyü gösterir. Hem komut hem de callback (geri tuşu) ile çalışır."""
     user_id = update.effective_user.id
     # DB İŞLEMİ: Asenkron
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Cleanup
     await cleanup_context(context, user_id)
@@ -104,7 +104,7 @@ async def set_language(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
     if lang_to_set:
         # DB İŞLEMİ: Asenkron
-        await asyncio.to_thread(db.set_user_lang_db, user_id, lang_to_set)
+        await db.set_user_lang_db(user_id, lang_to_set)
         await update.message.reply_text(TEXTS["language_set"][lang_to_set])
         await menu_command(update, context)
 
@@ -112,8 +112,8 @@ async def set_language(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Tüm komutları ve özellikleri listeler"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Cleanup previous context (e.g. menu prompt)
     await cleanup_context(context, user_id)
@@ -280,3 +280,14 @@ Access all features easily through the menu buttons!
         parse_mode="Markdown",
         reply_markup=get_main_keyboard_markup(lang, user_id)
     )
+
+# --- MODULAR SETUP ---
+def setup(app):
+    from telegram.ext import CommandHandler
+    
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("menu", menu_command))
+    app.add_handler(CommandHandler("help", help_command))
+    app.add_handler(CommandHandler(["tr", "en", "ru"], set_language))
+    
+    logger.info("✅ General module loaded")

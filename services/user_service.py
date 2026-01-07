@@ -25,36 +25,55 @@ def get_user_model(user_id: int | str) -> UserModel:
         return UserModel(user_id=user_id)
 
 # --- LANGUAGE ---
-_user_lang_cache: dict[str, str] = {}
+from services.cache_service import get_cache, set_cache, delete_cache
 
-def get_user_lang(user_id: int | str) -> str:
+# --- LANGUAGE ---
+# _user_lang_cache removed in favor of Redis
+
+async def get_user_lang(user_id: int | str) -> str:
     user_id = str(user_id)
-    if user_id in _user_lang_cache:
-        return _user_lang_cache[user_id]
+    cache_key = f"lang:{user_id}"
+    
+    # 1. Try Cache
+    cached = await get_cache(cache_key)
+    if cached:
+        return cached
         
-    if not supabase: return "en"
-    try:
-        # Optimized: Only fetch language
-        response = supabase.table("users").select("language").eq("user_id", user_id).execute()
-        if response.data:
-            lang = response.data[0]["language"]
-        else:
-            lang = "en"
-        _user_lang_cache[user_id] = lang
-        return lang
-    except Exception as e:
-        logger.error(f"Dil getirme hatası (User: {user_id}): {e}")
-        return "en"
+    # 2. Fallback to DB (Sync call wrapped in thread)
+    def _fetch_db():
+        if not supabase: return "en"
+        try:
+            response = supabase.table("users").select("language").eq("user_id", user_id).execute()
+            if response.data:
+                return response.data[0]["language"]
+            return "en"
+        except Exception as e:
+            logger.error(f"Dil getirme hatası (User: {user_id}): {e}")
+            return "en"
 
-def set_user_lang_db(user_id: int | str, lang: str) -> None:
+    lang = await asyncio.to_thread(_fetch_db)
+    
+    # 3. Set Cache
+    await set_cache(cache_key, lang, ttl=86400) # 24 hours
+    return lang
+
+async def set_user_lang_db(user_id: int | str, lang: str) -> None:
     user_id = str(user_id)
-    _user_lang_cache[user_id] = lang
-    if not supabase: return
-    try:
-        data = {"user_id": user_id, "language": lang}
-        supabase.table("users").upsert(data).execute()
-    except Exception as e:
-        logger.error(f"Dil kaydetme hatası (User: {user_id}, Lang: {lang}): {e}")
+    cache_key = f"lang:{user_id}"
+    
+    # 1. Update Cache
+    await set_cache(cache_key, lang, ttl=86400)
+    
+    # 2. Update DB (Sync call wrapped in thread)
+    def _update_db():
+        if not supabase: return
+        try:
+            data = {"user_id": user_id, "language": lang}
+            supabase.table("users").upsert(data).execute()
+        except Exception as e:
+            logger.error(f"Dil kaydetme hatası (User: {user_id}, Lang: {lang}): {e}")
+            
+    await asyncio.to_thread(_update_db)
 
 # --- STATE MANAGEMENT ---
 def set_user_state(user_id: int | str, state_name: str, state_data: dict = None) -> None:

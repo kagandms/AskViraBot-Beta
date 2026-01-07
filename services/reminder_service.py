@@ -1,15 +1,15 @@
-
 import logging
 from typing import Any, Optional
 from config import supabase
+from models.reminder_model import ReminderModel
 
 logger = logging.getLogger(__name__)
 
-def get_all_reminders_db() -> list[dict[str, Any]]:
+def get_all_reminders_db() -> list[ReminderModel]:
     if not supabase: return []
     try:
         response = supabase.table("reminders").select("*").execute()
-        return response.data
+        return [ReminderModel(**rem) for rem in response.data]
     except Exception as e:
         logger.error(f"Hatırlatıcıları çekme hatası: {e}")
         return []

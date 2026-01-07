@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 @rate_limit("heavy")
 async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     # Cleanup previous context
     from utils import cleanup_context
@@ -52,7 +52,7 @@ async def weather_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, city_name):
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
 
     original_city_name = city_name
     for lang_code, cities in CITY_NAMES_TRANSLATED.items():
@@ -191,7 +191,7 @@ async def get_weather_data(update: Update, context: ContextTypes.DEFAULT_TYPE, c
 async def weather_callback_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     user_id = query.from_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     
     await query.answer()
     
@@ -288,3 +288,26 @@ async def get_forecast_data(update: Update, context: ContextTypes.DEFAULT_TYPE, 
     except Exception as e:
         logging.getLogger(__name__).error(f"Forecast Error: {e}")
         await query.message.reply_text(TEXTS["weather_api_error"][lang])
+
+async def handle_weather_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Wrapper for router to handle text input for weather city"""
+    if update.message and update.message.text:
+       await get_weather_data(update, context, update.message.text)
+
+
+# --- MODULAR SETUP ---
+def setup(app):
+    from telegram.ext import CommandHandler, CallbackQueryHandler
+    from core.router import router
+    import state
+    
+    # 1. Commands
+    app.add_handler(CommandHandler("weather", weather_command))
+    
+    # 2. Callbacks
+    app.add_handler(CallbackQueryHandler(weather_callback_query, pattern=r"^(forecast_|weather_)"))
+    
+    # 3. Router
+    router.register(state.WAITING_FOR_WEATHER_CITY, handle_weather_input)
+    
+    logger.info("✅ Weather module loaded")

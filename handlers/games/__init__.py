@@ -51,7 +51,7 @@ from .core import games_menu, get_bet_keyboard_generic
 async def handle_game_mode_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handles Fun/Coin mode selection for all games"""
     user_id = update.effective_user.id
-    lang = await asyncio.to_thread(db.get_user_lang, user_id)
+    lang = await db.get_user_lang(user_id)
     text = update.message.text.lower() if update.message.text else ""
     
     # Get current game from state data
@@ -122,3 +122,28 @@ async def handle_game_mode_selection(update: Update, context: ContextTypes.DEFAU
     else:
         # Invalid selection - ignore
         pass
+
+# --- MODULAR SETUP ---
+def setup(app):
+    from telegram.ext import CommandHandler
+    from core.router import router
+    import state
+    
+    # 1. Commands
+    app.add_handler(CommandHandler("games", games_menu))
+    app.add_handler(CommandHandler("tkm", tkm_start))
+    app.add_handler(CommandHandler("xox", xox_start))
+    app.add_handler(CommandHandler("dice", dice_command))
+    app.add_handler(CommandHandler("coinflip", coinflip_command))
+    
+    # 2. Router
+    router.register(state.PLAYING_XOX, handle_xox_message)
+    router.register(state.PLAYING_TKM, tkm_play)
+    router.register(state.PLAYING_BLACKJACK, handle_blackjack_message)
+    router.register(state.PLAYING_SLOT, slot_spin)
+    router.register(state.WAITING_FOR_GAME_MODE, handle_game_mode_selection)
+    router.register(state.WAITING_FOR_TKM_BET, handle_tkm_bet)
+    router.register(state.WAITING_FOR_SLOT_BET, handle_slot_bet)
+    router.register(state.WAITING_FOR_BJ_BET, handle_blackjack_bet)
+    
+    logger.info("✅ Games module loaded")
