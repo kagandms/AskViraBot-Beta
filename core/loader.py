@@ -19,8 +19,9 @@ def load_handlers(app: Application):
     prefix = handlers.__name__ + "."
 
     for _, name, is_pkg in pkgutil.iter_modules(package_path, prefix):
-        if is_pkg:
-            continue # Skip sub-packages for now, or recurse if needed
+        # Allow loading packages (like 'handlers.games') if they have setup()
+        # if is_pkg: continue 
+
             
         try:
             module = importlib.import_module(name)

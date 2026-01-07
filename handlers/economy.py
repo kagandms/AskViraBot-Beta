@@ -62,14 +62,14 @@ async def balance_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 # --- MODULAR SETUP ---
 def setup(app):
     from telegram.ext import CommandHandler
+    from core.router import register_button
+    import logging
     
     app.add_handler(CommandHandler("daily", daily_bonus_command))
     app.add_handler(CommandHandler("balance", balance_command))
     
-    logger = logging.getLogger(__name__) # Ensure logger exists or use predefined
-    # economy.py doesn't seem to define 'logger' at top level based on view_file usage
-    # Actually it implies logging is not used or it uses basic config.
-    # It imports nothing but asyncio, update, context, db, texts, utils.
-    # I should import logging inside setup or rely on print? No, use logger.
-    import logging
+    # Buttons
+    register_button("daily_bonus", daily_bonus_command)
+    register_button("balance", balance_command)
+    
     logging.getLogger(__name__).info("✅ Economy module loaded")

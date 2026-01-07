@@ -304,19 +304,19 @@ Kullanıcının dilinde yanıt ver."""
 # --- MODULAR SETUP ---
 def setup(app):
     from telegram.ext import CommandHandler
-    from core.router import router
+    from core.router import router, register_button
     import state
     
     # 1. Commands
-    # ai_menu is called via rate_limit wrapper usually, but here we can register it if needed as command?
-    # main.py does: app.add_handler(CommandHandler("ai", ai_menu)) ? No, usually button based.
-    # But let's check main.py. If "ai" command exists.
-    # Assuming "ai" command exists or it's just menu based.
-    # main.py usually has: CommandHandler("ai", ai_chat.ai_menu)
     app.add_handler(CommandHandler("ai", ai_menu))
     
     # 2. Router
     router.register(state.AI_CHAT_ACTIVE, handle_ai_message)
     router.register(state.AI_MENU_ACTIVE, ai_menu)
+    
+    # 3. Buttons
+    register_button("ai_main_button", ai_menu)
+    register_button("ai_start_chat", start_ai_chat)
+    register_button("ai_end_chat", end_ai_chat)
     
     logger.info("✅ AI Chat module loaded")

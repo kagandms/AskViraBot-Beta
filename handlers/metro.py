@@ -799,19 +799,7 @@ async def delete_favorite(update: Update, context: ContextTypes.DEFAULT_TYPE, te
             fav["direction_id"]
         )
 
-# --- MODULAR SETUP ---
-def setup(app):
-    from telegram.ext import CommandHandler
-    from core.router import router
-    import state
-    
-    # 1. Commands
-    app.add_handler(CommandHandler("metro", metro_menu_command))
-    
-    # 2. Router
-    router.register(state.METRO_BROWSING, handle_metro_message)
-    
-    logger.info("✅ Metro module loaded")
+
         
         if success:
             del_texts = {"tr": "✅ Favori silindi!", "en": "✅ Favorite deleted!", "ru": "✅ Удалено!"}
@@ -920,3 +908,20 @@ async def use_favorite(update: Update, context: ContextTypes.DEFAULT_TYPE, text:
     except (ValueError, IndexError, KeyError) as e:
         logger.error(f"Favori kullanım hatası: {e}")
         await update.message.reply_text("⚠️ Favori bilgisi alınamadı.")
+
+# --- MODULAR SETUP ---
+def setup(app):
+    from telegram.ext import CommandHandler
+    from core.router import router, register_button
+    import state
+    
+    # 1. Commands
+    app.add_handler(CommandHandler("metro", metro_menu_command))
+    
+    # 2. Router
+    router.register(state.METRO_BROWSING, handle_metro_message)
+    
+    # 3. Buttons
+    register_button("metro_main_button", metro_menu_command)
+    
+    logger.info("✅ Metro module loaded")

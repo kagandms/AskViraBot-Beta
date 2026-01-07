@@ -84,22 +84,22 @@ async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYP
     # 3. Dinamik Buton Yönlendirme (Router Pattern)
     from texts import BUTTON_MAPPINGS
     # Unified import: Everything is now in core.router
-    from core.router import BUTTON_HANDLERS, VIDEO_PLATFORM_HANDLERS, FORMAT_HANDLERS, LANGUAGE_BUTTONS
+    from core.router import button_handlers, video_platform_handlers, format_handlers, LANGUAGE_BUTTONS
     
     # Standart buton eşleşmeleri
-    for mapping_key, handler in BUTTON_HANDLERS:
+    for mapping_key, handler in button_handlers.items():
         if text in BUTTON_MAPPINGS.get(mapping_key, set()):
             await handler(update, context)
             return
     
     # Video platform butonları (parametre gerektiren)
-    for mapping_key, (platform, handler) in VIDEO_PLATFORM_HANDLERS.items():
+    for mapping_key, (platform, handler) in video_platform_handlers.items():
         if text in BUTTON_MAPPINGS.get(mapping_key, set()):
             await handler(update, context, platform)
             return
     
     # Format seçim butonları (parametre gerektiren)
-    for mapping_key, (format_type, handler) in FORMAT_HANDLERS.items():
+    for mapping_key, (format_type, handler) in format_handlers.items():
         if text in BUTTON_MAPPINGS.get(mapping_key, set()):
             await handler(update, context, format_type)
             return

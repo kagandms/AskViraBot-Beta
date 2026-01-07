@@ -126,7 +126,7 @@ async def handle_game_mode_selection(update: Update, context: ContextTypes.DEFAU
 # --- MODULAR SETUP ---
 def setup(app):
     from telegram.ext import CommandHandler
-    from core.router import router
+    from core.router import router, register_button
     import state
     
     # 1. Commands
@@ -135,6 +135,9 @@ def setup(app):
     app.add_handler(CommandHandler("xox", xox_start))
     app.add_handler(CommandHandler("dice", dice_command))
     app.add_handler(CommandHandler("coinflip", coinflip_command))
+    app.add_handler(CommandHandler(" blackjack", blackjack_start))
+    app.add_handler(CommandHandler("slot", slot_start))
+    app.add_handler(CommandHandler("stats", show_player_stats))
     
     # 2. Router
     router.register(state.PLAYING_XOX, handle_xox_message)
@@ -145,5 +148,16 @@ def setup(app):
     router.register(state.WAITING_FOR_TKM_BET, handle_tkm_bet)
     router.register(state.WAITING_FOR_SLOT_BET, handle_slot_bet)
     router.register(state.WAITING_FOR_BJ_BET, handle_blackjack_bet)
+    
+    # 3. Buttons
+    register_button("back_to_games", games_menu)
+    register_button("games_main_button", games_menu)
+    register_button("xox_game", xox_start)
+    register_button("dice", dice_command)
+    register_button("coinflip", coinflip_command)
+    register_button("tkm_main", tkm_start)
+    register_button("blackjack_main", blackjack_start)
+    register_button("player_stats", show_player_stats)
+    register_button("slot_main", slot_start)
     
     logger.info("✅ Games module loaded")

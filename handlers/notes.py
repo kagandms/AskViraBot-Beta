@@ -427,7 +427,7 @@ async def handle_edit_note_input(update: Update, context: ContextTypes.DEFAULT_T
 # --- MODULAR SETUP ---
 def setup(app):
     from telegram.ext import CommandHandler, CallbackQueryHandler
-    from core.router import router
+    from core.router import router, register_button
     import state
     
     # 1. Commands
@@ -447,5 +447,14 @@ def setup(app):
     router.register(state.WAITING_FOR_EDIT_NOTE_INPUT, handle_edit_note_input)
     router.register(state.DELETING_NOTES, select_note_to_delete_prompt)
     router.register(state.EDITING_NOTES, edit_notes_menu)
+    
+    # 4. Buttons
+    register_button("back_to_notes", notes_menu)
+    register_button("notes_main_button", notes_menu)
+    register_button("add_note_button", prompt_new_note)
+    register_button("edit_note_button", edit_notes_menu)
+    register_button("show_all_notes_button", shownotes_command)
+    register_button("delete_note_button", deletenotes_menu)
+    register_button("select_delete_note_button", select_note_to_delete_prompt)
     
     logger.info("✅ Notes module loaded")

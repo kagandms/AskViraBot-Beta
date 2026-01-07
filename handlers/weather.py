@@ -298,7 +298,7 @@ async def handle_weather_input(update: Update, context: ContextTypes.DEFAULT_TYP
 # --- MODULAR SETUP ---
 def setup(app):
     from telegram.ext import CommandHandler, CallbackQueryHandler
-    from core.router import router
+    from core.router import router, register_button
     import state
     
     # 1. Commands
@@ -309,5 +309,8 @@ def setup(app):
     
     # 3. Router
     router.register(state.WAITING_FOR_WEATHER_CITY, handle_weather_input)
+    
+    # 4. Buttons
+    register_button("weather_main_button", weather_command)
     
     logger.info("✅ Weather module loaded")

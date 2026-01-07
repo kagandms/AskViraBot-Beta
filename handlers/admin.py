@@ -379,7 +379,7 @@ async def start_broadcast_reply(update: Update, context: ContextTypes.DEFAULT_TY
 def setup(app):
     """Register all handlers for this module."""
     from telegram.ext import CommandHandler, CallbackQueryHandler
-    from core.router import router
+    from core.router import router, register_button
     import state
     
     # 1. Command Handlers
@@ -390,5 +390,8 @@ def setup(app):
     
     # 3. State Handlers (Router)
     router.register(state.ADMIN_MENU_ACTIVE, handle_admin_message)
+    
+    # 4. Buttons
+    register_button("admin_panel_button", admin_command)
     
     logger.info("✅ Admin module loaded")

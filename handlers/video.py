@@ -238,7 +238,7 @@ async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_
 # --- MODULAR SETUP ---
 def setup(app):
     from telegram.ext import CommandHandler
-    from core.router import router
+    from core.router import router, register_button, register_video_platform, register_format
     import state
     import logging
     
@@ -247,5 +247,18 @@ def setup(app):
     
     # 2. Router
     router.register(state.WAITING_FOR_VIDEO_LINK, download_and_send_media)
+    
+    # 3. Buttons
+    register_button("video_downloader_main_button", video_downloader_menu)
+    register_button("back_to_platform", video_downloader_menu)
+    
+    # 4. Platforms
+    register_video_platform("tiktok", lambda u, c: set_video_platform(u, c, "tiktok"))
+    register_video_platform("twitter", lambda u, c: set_video_platform(u, c, "twitter"))
+    register_video_platform("instagram", lambda u, c: set_video_platform(u, c, "instagram"))
+    
+    # 5. Formats
+    register_format("video_format", lambda u, c: set_download_format(u, c, "video"))
+    register_format("audio_format", lambda u, c: set_download_format(u, c, "audio"))
     
     logging.getLogger(__name__).info("✅ Video module loaded")

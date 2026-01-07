@@ -188,12 +188,12 @@ async def handle_developer_message(update: Update, context: ContextTypes.DEFAULT
 async def handle_social_media_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     await query.answer()
-        await query.message.delete()
+    await query.message.delete()
 
 # --- MODULAR SETUP ---
 def setup(app):
     from telegram.ext import CommandHandler, CallbackQueryHandler
-    from core.router import router
+    from core.router import router, register_button
     import state
     
     # 1. Commands
@@ -208,4 +208,9 @@ def setup(app):
     router.register(state.DEVELOPER_MENU_ACTIVE, handle_developer_message)
     router.register(state.WAITING_FOR_QR_DATA, handle_qr_input_from_state)
     
+    # 4. Buttons
+    register_button("developer_main_button", show_developer_info)
+    register_button("time", time_command)
+    register_button("qrcode_button", qrcode_command)
+
     logger.info("✅ Tools module loaded")

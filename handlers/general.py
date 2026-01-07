@@ -281,13 +281,43 @@ Access all features easily through the menu buttons!
         reply_markup=get_main_keyboard_markup(lang, user_id)
     )
 
+async def show_language_keyboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Dil seçim klavyesini gösterir"""
+    user_id = update.effective_user.id
+    from telegram import ReplyKeyboardMarkup
+    
+    # Cleanup previous context
+    await cleanup_context(context, user_id)
+    
+    # Delete user's button press
+    try:
+        if update.message:
+            await update.message.delete()
+    except Exception: pass
+    
+    language_keyboard = ReplyKeyboardMarkup([["🇹🇷 Türkçe", "🇬🇧 English", "🇷🇺 Русский"]], resize_keyboard=True)
+    sent_msg = await update.message.reply_text("Lütfen bir dil seçin:", reply_markup=language_keyboard)
+    
+    # Save message ID for cleanup
+    # Note: State constant might be missing in 'state.py', using string key is fine or defined const
+    await state.set_state(user_id, "language_selection", {"message_id": sent_msg.message_id})
+
 # --- MODULAR SETUP ---
 def setup(app):
     from telegram.ext import CommandHandler
+    from core.router import router, register_button
     
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("menu", menu_command))
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler(["tr", "en", "ru"], set_language))
+    
+    # --- Register Buttons ---
+    register_button("menu", menu_command)
+    register_button("tools_main_button", tools_menu_command)
+    register_button("back_to_tools", tools_menu_command)
+    register_button("help_button", help_command)
+    register_button("ai_back_to_menu", menu_command)
+    register_button("language", show_language_keyboard)
     
     logger.info("✅ General module loaded")

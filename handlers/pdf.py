@@ -212,7 +212,7 @@ async def handle_pdf_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 # --- MODULAR SETUP ---
 def setup(app):
     from telegram.ext import CommandHandler
-    from core.router import router
+    from core.router import router, register_button
     import state
     
     # 1. Commands
@@ -220,5 +220,11 @@ def setup(app):
     
     # 2. Router
     router.register(state.WAITING_FOR_PDF_CONVERSION_INPUT, handle_pdf_input)
+    
+    # 3. Buttons
+    register_button("pdf_converter_main_button", pdf_converter_menu)
+    register_button("text_to_pdf_button", prompt_text_for_pdf)
+    register_button("image_to_pdf_button", prompt_file_for_pdf)
+    register_button("document_to_pdf_button", prompt_file_for_pdf)
     
     logging.getLogger(__name__).info("✅ PDF module loaded")

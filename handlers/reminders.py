@@ -268,7 +268,7 @@ async def start_pending_reminders(application):
 # --- MODULAR SETUP ---
 def setup(app):
     from telegram.ext import CommandHandler, CallbackQueryHandler
-    from core.router import router
+    from core.router import router, register_button
     import state
     
     # 1. Commands
@@ -279,5 +279,11 @@ def setup(app):
     
     # 3. Router
     router.register(state.WAITING_FOR_REMINDER_INPUT, process_reminder_input)
+    
+    # 4. Buttons
+    register_button("reminder", reminder_menu)
+    register_button("add_reminder_button", prompt_reminder_input)
+    register_button("show_reminders_button", show_reminders_command)
+    register_button("delete_reminder_button", delete_reminder_menu)
     
     logger.info("✅ Reminders module loaded")

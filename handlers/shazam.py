@@ -188,7 +188,7 @@ async def handle_shazam_input(update: Update, context: ContextTypes.DEFAULT_TYPE
 # --- MODULAR SETUP ---
 def setup(app):
     from telegram.ext import CommandHandler
-    from core.router import router
+    from core.router import router, register_button
     import state
     import logging
 
@@ -197,5 +197,8 @@ def setup(app):
     
     # 2. Router
     router.register(state.WAITING_FOR_SHAZAM, handle_shazam_input)
+    
+    # 3. Buttons
+    register_button("shazam_main_button", start_shazam_mode)
     
     logging.getLogger(__name__).info("✅ Shazam module loaded")
