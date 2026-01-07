@@ -112,11 +112,7 @@ async def blackjack_start(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         reply_markup=keyboard,
         parse_mode="Markdown"
     )
-        msg_text,
-        reply_markup=get_game_mode_keyboard(lang),
-        parse_mode="Markdown"
-    )
-    await state.set_state(user_id, state.WAITING_FOR_GAME_MODE, {"game": "blackjack", "message_id": sent_msg.message_id})
+
 
 async def start_blackjack_game(update: Update, context: ContextTypes.DEFAULT_TYPE, bet_amount: int = 0) -> None:
     await blackjack_deal(update, context, bet_amount)
