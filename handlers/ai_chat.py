@@ -251,60 +251,75 @@ Kullanıcının dilinde yanıt ver."""
         stream = await client.chat.completions.create(
             model=AI_MODEL,
             messages=api_messages,
-            max_tokens=1000,
+            max_tokens=4000,
             stream=True  # ENABLE STREAMING
         )
         
         last_update_time = time.time()
         first_chunk_received = False
         
+        # Message splitting logic
+        current_msg_obj = ai_msg
+        MAX_MSG_LEN = 4000  # Safety margin under 4096
+        current_buffer = ""  # Content of the current message chunk
+        full_response = ""   # Full accumulated response for history
+        
         async for chunk in stream:
             # Stop rotation on first chunk
             if not first_chunk_received:
                 thinking_task_running = False
                 rotation_task.cancel()
-                try:
-                    await rotation_task
-                except asyncio.CancelledError:
-                    pass
+                try: await rotation_task
+                except asyncio.CancelledError: pass
                 first_chunk_received = True
             
             delta = chunk.choices[0].delta.content
             if delta:
-                ai_response_content += delta
+                current_buffer += delta
+                full_response += delta
+                
+                # Check for split
+                if len(current_buffer) > MAX_MSG_LEN:
+                    # Finalize current message (remove cursor)
+                    try:
+                        await current_msg_obj.edit_text(current_buffer)
+                    except Exception as e:
+                        logger.warning(f"Failed to finalize chunk: {e}")
+                    
+                    # Start new message
+                    current_buffer = "" # Reset buffer for new message
+                    current_msg_obj = await update.message.reply_text("...") # Placeholder
                 
                 # Rate Limiting: Update message every ~1.0 seconds
                 current_time = time.time()
                 if current_time - last_update_time > 1.0:
                     try:
-                        # Append cursor
-                        await ai_msg.edit_text(ai_response_content + " ▌")
+                        # Append cursor only to current active message
+                        display_text = current_buffer + " ▌"
+                        if not current_buffer: display_text = "▌"
+                        
+                        await current_msg_obj.edit_text(display_text)
                         last_update_time = current_time
                     except BadRequest as e:
-                        # Ignore "Message is not modified" errors
-                        if "Message is not modified" in str(e):
-                            pass
-                        else:
-                            # Other errors (e.g. connection), log but try to continue
-                            logger.warning(f"Stream update error: {e}")
+                        if "Message is not modified" in str(e): pass
+                        else: logger.warning(f"Stream update error: {e}")
         
-        # Final cleanup: Remove cursor and ensure full text is shown
-        if not ai_response_content:
-            ai_response_content = "⚠️ Boş yanıt alındı."
-            
+        # Final cleanup for the last message chunk
+        final_content = current_buffer if current_buffer else "⚠️"
+        ai_response_content = full_response # For history
+        
         try:
-            # Prepare footer
+            # Prepare footer only for the very last message
             if user_id in ADMIN_IDS:
                 footer = TEXTS["ai_unlimited_text"][lang]
             else:
-                # Increment usage
                 await increment_usage_async(user_id)
                 new_remaining = await get_user_remaining_quota_async(user_id)
                 status_text = f"{new_remaining}/{AI_DAILY_LIMIT}"
                 footer = TEXTS["ai_remaining_footer"][lang].format(status=status_text)
             
-            final_text = f"{ai_response_content}\n\n{footer}"
-            await ai_msg.edit_text(final_text, reply_markup=get_ai_chat_keyboard(lang))
+            final_text = f"{final_content}\n\n{footer}"
+            await current_msg_obj.edit_text(final_text, reply_markup=get_ai_chat_keyboard(lang))
             
         except BadRequest as e:
             logger.error(f"Final update error: {e}")
