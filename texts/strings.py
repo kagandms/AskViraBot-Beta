@@ -48,7 +48,7 @@ MANUAL_MAPPINGS = {
     "back_to_tools": {"🔙 araçlar menüsü", "🔙 tools menu", "🔙 меню инструментов"},
     "back_to_notes": {"🔙 notlar menüsü", "🔙 notes menu", "🔙 меню заметок"},
     "admin_panel_button": {"🔒 yönetim", "🔒 admin", "🔒 управление"},
-    "metro_main_button": {"🚇 canlı metro istanbul", "🚇 canlı metro i̇stanbul", "🚇 live metro istanbul", "🚇 metro istanbul", "metro", "canlı metro", "🚇 метро стамбул"},
+    "metro_main_button": {"🚇 canlı metro istanbul", "🚇 canlı metro i̇stanbul", "🚇 live metro istanbul", "🚇 live metro ıstanbul", "🚇 metro istanbul", "metro", "canlı metro", "🚇 метро стамбул"},
 }
 
 

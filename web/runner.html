@@ -285,7 +285,7 @@
         let frames = 0;
         let score = 0;
         let highScore = parseInt(localStorage.getItem('runner_best') || '0');
-        let gameSpeed = 6;
+        let gameSpeed = 8;
         let gameState = 'start'; // start, playing, over
         let gameLoop;
 
@@ -373,7 +373,7 @@
                     });
 
                     // Increase speed cap
-                    if (gameSpeed < 14) gameSpeed += 0.01;
+                    if (gameSpeed < 20) gameSpeed += 0.02;
                 }
 
                 for (let i = 0; i < this.items.length; i++) {
@@ -520,7 +520,7 @@
             particles.reset();
             score = 0;
             frames = 0;
-            gameSpeed = 6;
+            gameSpeed = 8;
             document.getElementById('score').textContent = '0';
             startGame();
         }

@@ -40,6 +40,13 @@ async def snake_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "ru": "🐍 *Snake*\n\nКлассическая игра Змейка!\n\n🎮 Ешь еду и расти\n⚠️ Не врезайся в стены\n🏆 Побей рекорд!"
     }
     
+    
+    # Bas-sil: Delete user's message/previous menu
+    try:
+        await update.effective_message.delete()
+    except Exception as e:
+        logger.debug(f"Failed to delete message in snake_start: {e}")
+
     await update.effective_message.reply_text(
         prompts.get(lang, prompts["en"]),
         reply_markup=keyboard,
@@ -68,6 +75,13 @@ async def game_2048_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "ru": "🔢 *2048*\n\nЗатягивающая головоломка!\n\n⬆️⬇️⬅️➡️ Свайп и объединяй\n🎯 Достигни 2048\n🧠 Нужна стратегия!"
     }
     
+    
+    # Bas-sil
+    try:
+        await update.effective_message.delete()
+    except Exception as e:
+        logger.debug(f"Failed to delete message in game_2048_start: {e}")
+
     await update.effective_message.reply_text(
         prompts.get(lang, prompts["en"]),
         reply_markup=keyboard,
@@ -96,6 +110,13 @@ async def flappy_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "ru": "🐦 *Flappy Bird*\n\nЛегендарная сложная игра!\n\n👆 Тап = Прыжок\n🚧 Избегай труб\n😤 Сохраняй спокойствие!"
     }
     
+    
+    # Bas-sil
+    try:
+        await update.effective_message.delete()
+    except Exception as e:
+        logger.debug(f"Failed to delete message in flappy_start: {e}")
+
     await update.effective_message.reply_text(
         prompts.get(lang, prompts["en"]),
         reply_markup=keyboard,
@@ -124,6 +145,13 @@ async def runner_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "ru": "🏃 *Endless Runner*\n\nБесконечный бег!\n\n👆 Тап = Прыжок\n✌️ Двойной прыжок!\n🏆 Как далеко убежишь?"
     }
     
+    
+    # Bas-sil
+    try:
+        await update.effective_message.delete()
+    except Exception as e:
+        logger.debug(f"Failed to delete message in runner_start: {e}")
+
     await update.effective_message.reply_text(
         prompts.get(lang, prompts["en"]),
         reply_markup=keyboard,
