@@ -82,26 +82,29 @@ async def handle_buttons_logic(update: Update, context: ContextTypes.DEFAULT_TYP
         return
 
     # 3. Dinamik Buton Yönlendirme (Router Pattern)
-    from texts import BUTTON_MAPPINGS
+    from texts import BUTTON_MAPPINGS, turkish_lower
     # Unified import: Everything is now in core.router
     from core.router import button_handlers, video_platform_handlers, format_handlers, LANGUAGE_BUTTONS
     
+    # Lowercase for Turkish character handling
+    text_lower = turkish_lower(text)
+    
     # Standart buton eşleşmeleri
     for mapping_key, handler in button_handlers.items():
-        if text in BUTTON_MAPPINGS.get(mapping_key, set()):
+        if text_lower in BUTTON_MAPPINGS.get(mapping_key, set()):
             await handler(update, context)
             return
     
-    # Video platform butonları (parametre gerektiren)
-    for mapping_key, (platform, handler) in video_platform_handlers.items():
-        if text in BUTTON_MAPPINGS.get(mapping_key, set()):
-            await handler(update, context, platform)
+    # Video platform butonları
+    for mapping_key, handler in video_platform_handlers.items():
+        if text_lower in BUTTON_MAPPINGS.get(mapping_key, set()):
+            await handler(update, context)
             return
     
-    # Format seçim butonları (parametre gerektiren)
-    for mapping_key, (format_type, handler) in format_handlers.items():
-        if text in BUTTON_MAPPINGS.get(mapping_key, set()):
-            await handler(update, context, format_type)
+    # Format seçim butonları
+    for mapping_key, handler in format_handlers.items():
+        if text_lower in BUTTON_MAPPINGS.get(mapping_key, set()):
+            await handler(update, context)
             return
     
     # Dil butonları

@@ -62,11 +62,11 @@ def register_button(mapping_key: str, handler: Callable):
     """Registers a handler for a specific button mapping key."""
     button_handlers[mapping_key] = handler
 
-def register_video_platform(mapping_key: str, platform: str, handler: Callable):
+def register_video_platform(mapping_key: str, handler: Callable):
     """Registers a handler for a video platform button."""
-    video_platform_handlers[mapping_key] = (platform, handler)
+    video_platform_handlers[mapping_key] = handler
 
-def register_format(mapping_key: str, format_type: str, handler: Callable):
+def register_format(mapping_key: str, handler: Callable):
     """Registers a handler for a format selection button."""
-    format_handlers[mapping_key] = (format_type, handler)
+    format_handlers[mapping_key] = handler
 

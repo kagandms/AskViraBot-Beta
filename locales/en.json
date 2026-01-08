@@ -121,8 +121,7 @@
   "buttons": {
     "MAIN_BUTTONS": [
       [
-        "🛠 Tools",
-        "🎮 Game Room"
+        "🛠 Tools"
       ],
       [
         "🌐 Change Language",
@@ -175,33 +174,6 @@
         "🔙 Platform Selection"
       ]
     ],
-    "GAMES_BUTTONS": [
-      [
-        "❌⭕ XOX",
-        "🎲 Dice"
-      ],
-      [
-        "🪙 Coinflip",
-        "🪨📄✂️ R-P-S"
-      ],
-      [
-        "🃏 Blackjack (21)",
-        "🎰 Slot"
-      ],
-      [
-        "⚡ Gates of Olympus"
-      ],
-      [
-        "🎁 Daily Bonus",
-        "💰 Wallet"
-      ],
-      [
-        "📊 My Stats"
-      ],
-      [
-        "🔙 Main Menu"
-      ]
-    ],
     "NOTES_BUTTONS": [
       [
         "➕ Add Note",
@@ -221,20 +193,6 @@
       ],
       [
         "🔙 Notes Menu"
-      ]
-    ],
-    "TKM_BUTTONS": [
-      [
-        "🪨 Rock"
-      ],
-      [
-        "📄 Paper"
-      ],
-      [
-        "✂️ Scissors"
-      ],
-      [
-        "🔙 Game Room"
       ]
     ],
     "PDF_CONVERTER_BUTTONS": [
@@ -268,32 +226,6 @@
       ],
       [
         "🔙 Tools Menu"
-      ]
-    ],
-    "GAME_MODE_BUTTONS": [
-      [
-        "🎮 Just for Fun",
-        "💰 With Coins"
-      ],
-      [
-        "🔙 Game Room"
-      ]
-    ],
-    "BET_BUTTONS": [
-      [
-        "100 💰",
-        "500 💰",
-        "1000 💰"
-      ],
-      [
-        "5000 💰",
-        "10000 💰"
-      ],
-      [
-        "🎯 All In!"
-      ],
-      [
-        "🔙 Game Room"
       ]
     ]
   }

@@ -17,13 +17,8 @@ WAITING_FOR_EDIT_NOTE_INPUT = "waiting_for_edit_note_input" # Data: note_id
 EDITING_NOTES = "editing_notes"
 GAMES_MENU_ACTIVE = "games_menu_active"
 PLAYING_XOX = "playing_xox" # Data: Game state
-PLAYING_BLACKJACK = "playing_blackjack" # Data: deck, player_hand, dealer_hand
-WAITING_FOR_BJ_BET = "waiting_for_bj_bet" # Data: none
 WAITING_FOR_SHAZAM = "waiting_for_shazam" # Data: none
-WAITING_FOR_GAME_MODE = "waiting_for_game_mode" # Data: {game: "tkm"|"slot"|"blackjack"}
-WAITING_FOR_TKM_BET = "waiting_for_tkm_bet" # Data: none
-WAITING_FOR_SLOT_BET = "waiting_for_slot_bet" # Data: none
-PLAYING_SLOT = "playing_slot" # Slot makinesi
+# Vira: Gambling states removed (PLAYING_BLACKJACK, WAITING_FOR_BJ_BET, WAITING_FOR_SLOT_BET, PLAYING_SLOT, WAITING_FOR_GAME_MODE, WAITING_FOR_TKM_BET)
 WAITING_FOR_VIDEO_LINK = "waiting_for_video_link" # Data: {platform, format}
 WAITING_FOR_FORMAT_SELECTION = "waiting_for_format_selection" # Data: platform
 AI_CHAT_ACTIVE = "ai_chat_active"

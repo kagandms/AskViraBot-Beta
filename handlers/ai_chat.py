@@ -193,18 +193,40 @@ async def handle_ai_message(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     # API Key / Client kontrolü
     if not client:
         await update.message.reply_text(
-            f"❌ AI servisi yapılandırılmamış.\nAPI Key: {'Var' if OPENROUTER_API_KEY else 'YOK'}",
+            f"❌ AI servisi yapılandırılmamış.\\nAPI Key: {'Var' if OPENROUTER_API_KEY else 'YOK'}",
             reply_markup=get_ai_chat_keyboard(lang)
         )
         return True
     
-    # Başlangıç mesajı
-    initial_texts = {
-        "tr": "🤔 ...",
-        "en": "🤔 ...",
-        "ru": "🤔 ..."
+    # Rotating "thinking" messages
+    thinking_messages = {
+        "tr": ["🤔 Düşünüyorum...", "💭 Analiz ediyorum...", "🧠 Cevap hazırlıyorum..."],
+        "en": ["🤔 Thinking...", "💭 Analyzing...", "🧠 Preparing answer..."],
+        "ru": ["🤔 Думаю...", "💭 Анализирую...", "🧠 Готовлю ответ..."]
     }
-    ai_msg = await update.message.reply_text(initial_texts.get(lang, "🤔 ..."))
+    messages = thinking_messages.get(lang, thinking_messages["en"])
+    
+    # Send initial thinking message
+    ai_msg = await update.message.reply_text(messages[0])
+    
+    # Create background task for rotating messages
+    thinking_task_running = True
+    
+    async def rotate_thinking_messages():
+        """Rotate through thinking messages every 2 seconds"""
+        idx = 0
+        while thinking_task_running:
+            await asyncio.sleep(2.0)
+            if not thinking_task_running:
+                break
+            idx = (idx + 1) % len(messages)
+            try:
+                await ai_msg.edit_text(messages[idx])
+            except:
+                pass  # Ignore errors if message was already edited by main flow
+    
+    # Start rotation task
+    rotation_task = asyncio.create_task(rotate_thinking_messages())
     
     ai_response_content = ""
     
@@ -234,8 +256,19 @@ Kullanıcının dilinde yanıt ver."""
         )
         
         last_update_time = time.time()
+        first_chunk_received = False
         
         async for chunk in stream:
+            # Stop rotation on first chunk
+            if not first_chunk_received:
+                thinking_task_running = False
+                rotation_task.cancel()
+                try:
+                    await rotation_task
+                except asyncio.CancelledError:
+                    pass
+                first_chunk_received = True
+            
             delta = chunk.choices[0].delta.content
             if delta:
                 ai_response_content += delta
@@ -285,6 +318,15 @@ Kullanıcının dilinde yanıt ver."""
         await state.set_state(user_id, state.AI_CHAT_ACTIVE, {"messages": message_history})
         
     except Exception as e:
+        # Stop rotation task if still running
+        thinking_task_running = False
+        if 'rotation_task' in locals():
+            rotation_task.cancel()
+            try:
+                await rotation_task
+            except asyncio.CancelledError:
+                pass
+        
         error_str = str(e)
         logger.error(f"AI Stream Error: {error_str}", exc_info=True)
         

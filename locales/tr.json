@@ -121,8 +121,7 @@
   "buttons": {
     "MAIN_BUTTONS": [
       [
-        "🛠 Araçlar",
-        "🎮 Oyun Odası"
+        "🛠 Araçlar"
       ],
       [
         "🌐 Dil Değiştir",
@@ -175,33 +174,6 @@
         "🔙 Platform Seçimi"
       ]
     ],
-    "GAMES_BUTTONS": [
-      [
-        "❌⭕ XOX",
-        "🎲 Zar"
-      ],
-      [
-        "🪙 Yazı Tura",
-        "🪨📄✂️ T-K-M"
-      ],
-      [
-        "🃏 Blackjack (21)",
-        "🎰 Slot"
-      ],
-      [
-        "⚡ Gates of Olympus"
-      ],
-      [
-        "🎁 Günlük Bonus",
-        "💰 Cüzdan"
-      ],
-      [
-        "📊 İstatistiklerim"
-      ],
-      [
-        "🔙 Ana Menü"
-      ]
-    ],
     "NOTES_BUTTONS": [
       [
         "➕ Not Ekle",
@@ -221,20 +193,6 @@
       ],
       [
         "🔙 Notlar Menüsü"
-      ]
-    ],
-    "TKM_BUTTONS": [
-      [
-        "🪨 Taş"
-      ],
-      [
-        "📄 Kağıt"
-      ],
-      [
-        "✂️ Makas"
-      ],
-      [
-        "🔙 Oyun Odası"
       ]
     ],
     "PDF_CONVERTER_BUTTONS": [
@@ -268,32 +226,6 @@
       ],
       [
         "🔙 Araçlar Menüsü"
-      ]
-    ],
-    "GAME_MODE_BUTTONS": [
-      [
-        "🎮 Eğlencesine",
-        "💰 Coinle"
-      ],
-      [
-        "🔙 Oyun Odası"
-      ]
-    ],
-    "BET_BUTTONS": [
-      [
-        "100 💰",
-        "500 💰",
-        "1000 💰"
-      ],
-      [
-        "5000 💰",
-        "10000 💰"
-      ],
-      [
-        "🎯 Hepsini Koy!"
-      ],
-      [
-        "🔙 Oyun Odası"
       ]
     ]
   }

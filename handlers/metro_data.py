@@ -11,7 +11,7 @@ METRO_LINES = [
         "LongDescription": "Taksim-Kabataş Füniküler Hattı",
         "ENDescription": "Taksim - Kabatas Funicular Line",
         "ARDescription": "خط القطار المعلق بين محطة تقسيم - قاباطاش",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-F01",
         "Color": {
             "Color_R": "124",
@@ -32,7 +32,7 @@ METRO_LINES = [
         "LongDescription": "Boğaziçi Üniversitesi | Hisarüstü-Aşiyan Füniküler Hattı",
         "ENDescription": "Bogazici University | Hisarustu-Asiyan Funicular Line",
         "ARDescription": "",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-F04",
         "Color": {
             "Color_R": "124",
@@ -53,7 +53,7 @@ METRO_LINES = [
         "LongDescription": "Yenikapı-Atatürk Havalimanı Metro Hattı",
         "ENDescription": "Yenikapi-Ataturk Airport Metro Line",
         "ARDescription": "خط المترو   الواصل بين محطة يني قابي - والمحطة بمطار أتاتورك",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-M1A",
         "Color": {
             "Color_R": "238",
@@ -74,7 +74,7 @@ METRO_LINES = [
         "LongDescription": "Yenikapı-Kirazlı Metro Hattı",
         "ENDescription": "Yenikapi-Kirazli Metro Line",
         "ARDescription": "خط المترو  الواصل يبن يني قابي و كيرازلي",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-M1B",
         "Color": {
             "Color_R": "238",
@@ -95,7 +95,7 @@ METRO_LINES = [
         "LongDescription": "Yenikapı-Seyrantepe-Hacıosman Metro Hattı",
         "ENDescription": "Yenikapi-Seyrantepe-Haciosman Metro Line",
         "ARDescription": "خط المترو  الواصل بين محطة يني قابي - ومحطة حاجي عثمان",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-M02",
         "Color": {
             "Color_R": "0",
@@ -116,7 +116,7 @@ METRO_LINES = [
         "LongDescription": "Bakırköy-Kayaşehir Metro Hattı",
         "ENDescription": "Bakirkoy-Kayasehir Metro Line",
         "ARDescription": "خط المترو    الواصل بين محطات كيرازلي - أوليمبياد - باشاق شهير.",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-M03",
         "Color": {
             "Color_R": "0",
@@ -137,7 +137,7 @@ METRO_LINES = [
         "LongDescription": "Kadıköy-Sabiha Gökçen Havalimanı Metro Hattı",
         "ENDescription": "Kadikoy-Sabiha Gokcen Airport Metro Line",
         "ARDescription": "خط المترو    الواصل بين محطة قاضي كوي- محطة طاوشان تبه",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-M04",
         "Color": {
             "Color_R": "233",
@@ -158,7 +158,7 @@ METRO_LINES = [
         "LongDescription": "Üsküdar-Samandıra Metro Hattı",
         "ENDescription": "Uskudar-Samandira Metro Line",
         "ARDescription": "خط المترو    الواصل بين محطة أوسكودار - ومحطة يامان أولر",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-M05",
         "Color": {
             "Color_R": "104",
@@ -179,7 +179,7 @@ METRO_LINES = [
         "LongDescription": "Levent-Boğaziçi Ü. | Hisarüstü Metro Hattı",
         "ENDescription": "Levent-Bogazici U. | Hisarustu Metro Line",
         "ARDescription": "خط المترو   الواصل بين محطات ليفيند - بوغازي جي / حصار أوستو",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-M06",
         "Color": {
             "Color_R": "202",
@@ -200,7 +200,7 @@ METRO_LINES = [
         "LongDescription": "Yıldız-Mahmutbey Metro Hattı",
         "ENDescription": "Yildiz-Mahmutbey Metro Line",
         "ARDescription": "",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-M07",
         "Color": {
             "Color_R": "248",
@@ -221,7 +221,7 @@ METRO_LINES = [
         "LongDescription": "Bostancı-Parseller Metro Hattı",
         "ENDescription": "Bostanci-Parseller Metro Line",
         "ARDescription": "",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-M08",
         "Color": {
             "Color_R": "68",
@@ -242,7 +242,7 @@ METRO_LINES = [
         "LongDescription": "Ataköy-Olimpiyat Metro Hattı",
         "ENDescription": "Atakoy-Olimpiyat Metro Line",
         "ARDescription": "",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-M09",
         "Color": {
             "Color_R": "240",
@@ -263,7 +263,7 @@ METRO_LINES = [
         "LongDescription": "Kabataş-Bağcılar Tramvay Hattı",
         "ENDescription": "Kabatas-Bagcilar Tram Line",
         "ARDescription": "خط الترام    الواصل بين محطات قاباطاش- باغجيلار",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-T01",
         "Color": {
             "Color_R": "0",
@@ -284,7 +284,7 @@ METRO_LINES = [
         "LongDescription": "Kadıköy-Moda Tramvay Hattı",
         "ENDescription": "Kadikoy-Moda Tram Line",
         "ARDescription": "​​​​​​​خط الترام  الواصل بين محطة قاضي كوي - ومحطة مودا",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-T03",
         "Color": {
             "Color_R": "168",
@@ -305,7 +305,7 @@ METRO_LINES = [
         "LongDescription": "Topkapı-Mescid-i Selam Tramvay Hattı",
         "ENDescription": "Topkapi-Mescid-i Selam Tram Line",
         "ARDescription": "خط الترام   الواصل بين طوب قابي  - محطة مسجد السلام",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-T04",
         "Color": {
             "Color_R": "244",
@@ -326,7 +326,7 @@ METRO_LINES = [
         "LongDescription": "Eminönü-Alibeyköy Tramvay Hattı",
         "ENDescription": "Eminonu-Alibeykoy Tram Line",
         "ARDescription": "",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-T05",
         "Color": {
             "Color_R": "124",
@@ -347,7 +347,7 @@ METRO_LINES = [
         "LongDescription": "Maçka-Taşkışla Teleferik Hattı",
         "ENDescription": "Macka-Taskisla Aerial Cable Car Line",
         "ARDescription": "خط التلفريك الواصل بين محطة ماجكه - ومحطة طاش قشله",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-TF1",
         "Color": {
             "Color_R": "104",
@@ -368,7 +368,7 @@ METRO_LINES = [
         "LongDescription": "Eyüp-Piyer Loti Teleferik Hattı",
         "ENDescription": "Eyup-Piyer Loti Aerial Cable Car Line",
         "ARDescription": "خط التلفريك  الواصل بين محطة أيوب - ومحطة بيير لوتي",
-        "IsActive": true,
+        "IsActive": True,
         "FunctionalCode": "M-TF2",
         "Color": {
             "Color_R": "104",
@@ -390,14 +390,14 @@ METRO_STATIONS = {
             "LineName": "F1",
             "Description": "Taksim",
             "Order": 1,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-F01-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 43,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0366994647",
                 "Longitude": "28.9868190279"
             }
@@ -409,14 +409,14 @@ METRO_STATIONS = {
             "LineName": "F1",
             "Description": "Kabataş",
             "Order": 2,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-F01-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 4,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0338745666",
                 "Longitude": "28.9922350785"
             }
@@ -430,14 +430,14 @@ METRO_STATIONS = {
             "LineName": "F4",
             "Description": "Boğaziçi Ü./Hisarüstü",
             "Order": 1,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-F04-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.08486726284434",
                 "Longitude": "29.051021003065568"
             }
@@ -449,14 +449,14 @@ METRO_STATIONS = {
             "LineName": "F4",
             "Description": "Aşiyan",
             "Order": 2,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-F04-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0815736348652",
                 "Longitude": "29.05422416736053"
             }
@@ -470,14 +470,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Yenikapı",
             "Order": 1,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M1A-S-H-I-18",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.004755",
                 "Longitude": "28.952549"
             }
@@ -489,14 +489,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Aksaray",
             "Order": 2,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-17",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 5,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0120281897",
                 "Longitude": "28.9480625565"
             }
@@ -508,14 +508,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Emniyet-Fatih",
             "Order": 3,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-16",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 6,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0176115439",
                 "Longitude": "28.9395963977"
             }
@@ -527,14 +527,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Topkapı-Ulubatlı",
             "Order": 4,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-15",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 6,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0240250582",
                 "Longitude": "28.9305034257"
             }
@@ -546,14 +546,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Bayrampaşa-Maltepe",
             "Order": 5,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-14",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 2,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0340978572",
                 "Longitude": "28.920238689"
             }
@@ -565,14 +565,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Sağmalcılar",
             "Order": 6,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-13",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 3,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0408544497",
                 "Longitude": "28.9072352877"
             }
@@ -584,14 +584,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Kocatepe",
             "Order": 7,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-12",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 3,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0484928183",
                 "Longitude": "28.8953862076"
             }
@@ -603,14 +603,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Otogar",
             "Order": 8,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-11",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 6,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0401441651",
                 "Longitude": "28.8945600984"
             }
@@ -622,14 +622,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Terazidere",
             "Order": 9,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-10",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 8,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0303317032",
                 "Longitude": "28.8979522419"
             }
@@ -641,14 +641,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Davutpaşa-YTÜ",
             "Order": 10,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-09",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 4,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0206387059",
                 "Longitude": "28.9001417888"
             }
@@ -660,14 +660,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Merter",
             "Order": 11,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-08",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 4,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0076458753",
                 "Longitude": "28.8961771147"
             }
@@ -679,14 +679,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Zeytinburnu",
             "Order": 12,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-07",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 8,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0017008338",
                 "Longitude": "28.8896520683"
             }
@@ -698,14 +698,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Bakırköy-İncirli",
             "Order": 13,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-06",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 9,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.9966121333",
                 "Longitude": "28.8753997556"
             }
@@ -717,14 +717,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Bahçelievler",
             "Order": 14,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-05",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 8,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.9953532384",
                 "Longitude": "28.8630661969"
             }
@@ -736,14 +736,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Ataköy-Şirinevler",
             "Order": 15,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-04",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 8,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.9913500997",
                 "Longitude": "28.846082309"
             }
@@ -755,14 +755,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Yenibosna",
             "Order": 16,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-03",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 3,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.9893149835",
                 "Longitude": "28.8367043004"
             }
@@ -774,14 +774,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "DTM-İstanbul Fuar Merkezi",
             "Order": 17,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 3,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.9866455145",
                 "Longitude": "28.8285503243"
             }
@@ -793,14 +793,14 @@ METRO_STATIONS = {
             "LineName": "M1A",
             "Description": "Atatürk Havalimanı",
             "Order": 18,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1A-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 4,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.9795429431",
                 "Longitude": "28.8211244027"
             }
@@ -814,14 +814,14 @@ METRO_STATIONS = {
             "LineName": "M1B",
             "Description": "Yenikapı",
             "Order": 1,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M1B-S-H-I-18",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.004755",
                 "Longitude": "28.952549"
             }
@@ -833,14 +833,14 @@ METRO_STATIONS = {
             "LineName": "M1B",
             "Description": "Aksaray",
             "Order": 2,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M1B-S-H-I-17",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0120281897",
                 "Longitude": "28.9480625565"
             }
@@ -852,14 +852,14 @@ METRO_STATIONS = {
             "LineName": "M1B",
             "Description": "Emniyet-Fatih",
             "Order": 3,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M1B-S-H-I-16",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0176115439",
                 "Longitude": "28.9395963977"
             }
@@ -871,14 +871,14 @@ METRO_STATIONS = {
             "LineName": "M1B",
             "Description": "Topkapı-Ulubatlı",
             "Order": 4,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M1B-S-H-I-15",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0240250582",
                 "Longitude": "28.9305034257"
             }
@@ -890,14 +890,14 @@ METRO_STATIONS = {
             "LineName": "M1B",
             "Description": "Bayrampaşa-Maltepe",
             "Order": 5,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M1B-S-H-I-14",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0340978572",
                 "Longitude": "28.920238689"
             }
@@ -909,14 +909,14 @@ METRO_STATIONS = {
             "LineName": "M1B",
             "Description": "Sağmalcılar",
             "Order": 6,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M1B-S-H-I-13",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0408544497",
                 "Longitude": "28.9072352877"
             }
@@ -928,14 +928,14 @@ METRO_STATIONS = {
             "LineName": "M1B",
             "Description": "Kocatepe",
             "Order": 7,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M1B-S-H-I-12",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0484928183",
                 "Longitude": "28.8953862076"
             }
@@ -947,14 +947,14 @@ METRO_STATIONS = {
             "LineName": "M1B",
             "Description": "Otogar",
             "Order": 8,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M1B-S-H-I-11",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0401441651",
                 "Longitude": "28.8945600984"
             }
@@ -966,14 +966,14 @@ METRO_STATIONS = {
             "LineName": "M1B",
             "Description": "Esenler",
             "Order": 9,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1B-S-H-I-05",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 7,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.037682433",
                 "Longitude": "28.8884222852"
             }
@@ -985,14 +985,14 @@ METRO_STATIONS = {
             "LineName": "M1B",
             "Description": "Menderes",
             "Order": 10,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1B-S-H-I-04",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 23,
-                "BabyRoom": true,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": True,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0427591002",
                 "Longitude": "28.8784878297"
             }
@@ -1004,14 +1004,14 @@ METRO_STATIONS = {
             "LineName": "M1B",
             "Description": "Üçyüzlü",
             "Order": 11,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1B-S-H-I-03",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 20,
-                "BabyRoom": true,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": True,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.036721597",
                 "Longitude": "28.8706340581"
             }
@@ -1023,14 +1023,14 @@ METRO_STATIONS = {
             "LineName": "M1B",
             "Description": "Bağcılar Meydan",
             "Order": 12,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1B-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 29,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0345164689",
                 "Longitude": "28.8561714937"
             }
@@ -1042,14 +1042,14 @@ METRO_STATIONS = {
             "LineName": "M1B",
             "Description": "Kirazlı-Bağcılar",
             "Order": 13,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M1B-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 32,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.0322960516",
                 "Longitude": "28.8427689525"
             }
@@ -1063,14 +1063,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "Yenikapı",
             "Order": 1,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 32,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.0055971704",
                 "Longitude": "28.9513306172"
             }
@@ -1082,14 +1082,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "Vezneciler-İstanbul Ü.",
             "Order": 2,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 29,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.011475",
                 "Longitude": "28.960705"
             }
@@ -1101,14 +1101,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "Haliç",
             "Order": 3,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-03",
             "DetailInfo": {
                 "Escolator": 14,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0224366195",
                 "Longitude": "28.9664183343"
             }
@@ -1120,14 +1120,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "Şişhane",
             "Order": 4,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-04",
             "DetailInfo": {
                 "Escolator": 37,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.028298",
                 "Longitude": "28.97285"
             }
@@ -1139,14 +1139,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "Taksim",
             "Order": 5,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-05",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.038496",
                 "Longitude": "28.985783"
             }
@@ -1158,14 +1158,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "Osmanbey",
             "Order": 6,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-06",
             "DetailInfo": {
                 "Escolator": 17,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.052955",
                 "Longitude": "28.987375"
             }
@@ -1177,14 +1177,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "Şişli-Mecidiyeköy",
             "Order": 7,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-07",
             "DetailInfo": {
                 "Escolator": 30,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0645069127",
                 "Longitude": "28.9926697578"
             }
@@ -1196,14 +1196,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "Gayrettepe",
             "Order": 8,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-08",
             "DetailInfo": {
                 "Escolator": 43,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0690012375",
                 "Longitude": "29.0109200808"
             }
@@ -1215,14 +1215,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "Levent",
             "Order": 9,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-09",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0767734293",
                 "Longitude": "29.0136876237"
             }
@@ -1234,14 +1234,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "4.Levent",
             "Order": 10,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-10",
             "DetailInfo": {
                 "Escolator": 17,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0860080659",
                 "Longitude": "29.0070897722"
             }
@@ -1253,14 +1253,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "Sanayi Mahallesi",
             "Order": 11,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-11",
             "DetailInfo": {
                 "Escolator": 30,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0943240181",
                 "Longitude": "29.0053380126"
             }
@@ -1272,14 +1272,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "Seyrantepe",
             "Order": 12,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-12",
             "DetailInfo": {
                 "Escolator": 21,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.100906",
                 "Longitude": "28.997775"
             }
@@ -1291,14 +1291,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "İTÜ-Ayazağa",
             "Order": 13,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-13",
             "DetailInfo": {
                 "Escolator": 23,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.108094796",
                 "Longitude": "29.0207947235"
             }
@@ -1310,14 +1310,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "Atatürk Oto Sanayi",
             "Order": 14,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-14",
             "DetailInfo": {
                 "Escolator": 17,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.1182574386",
                 "Longitude": "29.0241897659"
             }
@@ -1329,14 +1329,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "Darüşşafaka",
             "Order": 15,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-15",
             "DetailInfo": {
                 "Escolator": 22,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.1295823098",
                 "Longitude": "29.0251244919"
             }
@@ -1348,14 +1348,14 @@ METRO_STATIONS = {
             "LineName": "M2",
             "Description": "Hacıosman",
             "Order": 16,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M02-S-H-I-16",
             "DetailInfo": {
                 "Escolator": 52,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.1397745691",
                 "Longitude": "29.0304324362"
             }
@@ -1369,14 +1369,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Bakırköy Sahil",
             "Order": 1,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M03-S-H-I-22",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.97380907939043",
                 "Longitude": "28.86808953853861"
             }
@@ -1388,14 +1388,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Özgürlük Meydanı",
             "Order": 2,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M03-S-H-I-21",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.98184836284361",
                 "Longitude": "28.873888809703004"
             }
@@ -1407,14 +1407,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "İncirli",
             "Order": 3,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M03-S-H-I-20",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.99749718083783",
                 "Longitude": "28.875149165334438"
             }
@@ -1426,14 +1426,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Haznedar",
             "Order": 4,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M03-S-H-I-19",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.006429380800306",
                 "Longitude": "28.870525623196162"
             }
@@ -1445,14 +1445,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "İlkyuva",
             "Order": 5,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M03-S-H-I-18",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0117525985906",
                 "Longitude": "28.865987182720854"
             }
@@ -1464,14 +1464,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Yıldıztepe",
             "Order": 6,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M03-S-H-I-17",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.01977477131699",
                 "Longitude": "28.856716911557328"
             }
@@ -1483,14 +1483,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Molla Gürani",
             "Order": 7,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M03-S-H-I-16",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.02551147580674",
                 "Longitude": "28.848112725049546"
             }
@@ -1502,14 +1502,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Kirazlı-Bağcılar",
             "Order": 8,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M03-S-H-I-09",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.0322960516",
                 "Longitude": "28.8427689525"
             }
@@ -1521,14 +1521,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Yenimahalle",
             "Order": 9,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M03-S-H-I-08",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.0403571945",
                 "Longitude": "28.8359378583"
             }
@@ -1540,14 +1540,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Mahmutbey",
             "Order": 10,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M03-S-H-I-07",
             "DetailInfo": {
                 "Escolator": 45,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.0548448863",
                 "Longitude": "28.8305244805"
             }
@@ -1559,14 +1559,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "İSTOÇ",
             "Order": 11,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M03-S-H-I-06",
             "DetailInfo": {
                 "Escolator": 22,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.0649996532",
                 "Longitude": "28.8259591715"
             }
@@ -1578,14 +1578,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "İkitelli Sanayi",
             "Order": 12,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M03-S-H-I-05",
             "DetailInfo": {
                 "Escolator": 38,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0724333906",
                 "Longitude": "28.8023285305"
             }
@@ -1597,14 +1597,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Turgut Özal",
             "Order": 13,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M03-S-H-I-04",
             "DetailInfo": {
                 "Escolator": 15,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0811852568",
                 "Longitude": "28.7974049311"
             }
@@ -1616,14 +1616,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Siteler",
             "Order": 14,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M03-S-H-I-03",
             "DetailInfo": {
                 "Escolator": 16,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.0882027223",
                 "Longitude": "28.7965104065"
             }
@@ -1635,14 +1635,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Başak Konutları",
             "Order": 15,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M03-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 15,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0976705948",
                 "Longitude": "28.7912824671"
             }
@@ -1654,14 +1654,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Başakşehir-Metrokent",
             "Order": 16,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M03-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 24,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.1075899254",
                 "Longitude": "28.8014768347"
             }
@@ -1673,14 +1673,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Onurkent",
             "Order": 17,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M03-S-H-I-12",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.11350955222164",
                 "Longitude": "28.79034835203765"
             }
@@ -1692,14 +1692,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Şehir Hastanesi",
             "Order": 18,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M03-S-H-I-13",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.103457237940475",
                 "Longitude": "28.777855352037243"
             }
@@ -1711,14 +1711,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Toplu Konutlar",
             "Order": 19,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M03-S-H-I-14",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.1076043981571",
                 "Longitude": "28.76788272505376"
             }
@@ -1730,14 +1730,14 @@ METRO_STATIONS = {
             "LineName": "M3",
             "Description": "Kayaşehir Merkez",
             "Order": 20,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M03-S-H-I-15",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.12006437207407",
                 "Longitude": "28.766642996218255"
             }
@@ -1751,14 +1751,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Kadıköy",
             "Order": 1,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 22,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": true,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": True,
                 "Latitude": "40.990663811475805",
                 "Longitude": "29.02200761747134"
             }
@@ -1770,14 +1770,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Ayrılık Çeşmesi",
             "Order": 2,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 21,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.00020434433358",
                 "Longitude": "29.030153258203203"
             }
@@ -1789,14 +1789,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Acıbadem",
             "Order": 3,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-03",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 14,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.002331976173814",
                 "Longitude": "29.044498290084867"
             }
@@ -1808,14 +1808,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Ünalan",
             "Order": 4,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-04",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 34,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.997886812202864",
                 "Longitude": "29.061370874184917"
             }
@@ -1827,14 +1827,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Göztepe",
             "Order": 5,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-05",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.9939284023244",
                 "Longitude": "29.070446236116393"
             }
@@ -1846,14 +1846,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Yenisahra",
             "Order": 6,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-06",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 17,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.984973265772204",
                 "Longitude": "29.090125340335963"
             }
@@ -1865,14 +1865,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Pegasus-Kozyatağı",
             "Order": 7,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-07",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.9748528607554",
                 "Longitude": "29.099330474424526"
             }
@@ -1884,14 +1884,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Bostancı",
             "Order": 8,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-08",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.96483843441404",
                 "Longitude": "29.104601888800143"
             }
@@ -1903,14 +1903,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Küçükyalı",
             "Order": 9,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-09",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 13,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.94848177811069",
                 "Longitude": "29.123705678871918"
             }
@@ -1922,14 +1922,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Maltepe",
             "Order": 10,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-10",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 36,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.93649417481334",
                 "Longitude": "29.13681462729192"
             }
@@ -1941,14 +1941,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Huzurevi",
             "Order": 11,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-11",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 15,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.92996421985499",
                 "Longitude": "29.1469453905599"
             }
@@ -1960,14 +1960,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Gülsuyu",
             "Order": 12,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-12",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 19,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.92389300760361",
                 "Longitude": "29.156546529079005"
             }
@@ -1979,14 +1979,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Esenkent",
             "Order": 13,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-13",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 22,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.920594425063584",
                 "Longitude": "29.166297696250616"
             }
@@ -1998,14 +1998,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Hastane-Adliye",
             "Order": 14,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-14",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 37,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.916312335081564",
                 "Longitude": "29.178430843993343"
             }
@@ -2017,14 +2017,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Soğanlık",
             "Order": 15,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-15",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 21,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.912789206970004",
                 "Longitude": "29.192839855288547"
             }
@@ -2036,14 +2036,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Kartal",
             "Order": 16,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-16",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 25,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.90681782551962",
                 "Longitude": "29.211026353862238"
             }
@@ -2055,14 +2055,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Yakacık-Adnan Kahveci",
             "Order": 17,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-17",
             "DetailInfo": {
                 "Escolator": 23,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.896729838850625",
                 "Longitude": "29.226960280320945"
             }
@@ -2074,14 +2074,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Pendik",
             "Order": 18,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-18",
             "DetailInfo": {
                 "Escolator": 35,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.888385865460556",
                 "Longitude": "29.23816910887322"
             }
@@ -2093,14 +2093,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Tavşantepe",
             "Order": 19,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M04-S-H-I-19",
             "DetailInfo": {
                 "Escolator": 22,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "40.88225595122738",
                 "Longitude": "29.248573155917992"
             }
@@ -2112,14 +2112,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Fevzi Çakmak-Hastane",
             "Order": 20,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M04-S-H-I-20",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.888913773148275",
                 "Longitude": "29.262377999300135"
             }
@@ -2131,14 +2131,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Yayalar-Şeyhli",
             "Order": 21,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M04-S-H-I-21",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.90415466320274",
                 "Longitude": "29.275928959686205"
             }
@@ -2150,14 +2150,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Kurtköy",
             "Order": 22,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M04-S-H-I-22",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.91061969898158",
                 "Longitude": "29.297057446459206"
             }
@@ -2169,14 +2169,14 @@ METRO_STATIONS = {
             "LineName": "M4",
             "Description": "Sabiha Gökçen Havalimanı",
             "Order": 23,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M04-S-H-I-23",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.90597411173135",
                 "Longitude": "29.310554150804887"
             }
@@ -2190,14 +2190,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Üsküdar",
             "Order": 1,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.025618259645256",
                 "Longitude": "29.015061927581854"
             }
@@ -2209,14 +2209,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Fıstıkağacı",
             "Order": 2,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.028174185609586",
                 "Longitude": "29.028549998040898"
             }
@@ -2228,14 +2228,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Bağlarbaşı",
             "Order": 3,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-03",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.02148576285262",
                 "Longitude": "29.035391369205474"
             }
@@ -2247,14 +2247,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Altunizade",
             "Order": 4,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-04",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.02256927368503",
                 "Longitude": "29.045163182699945"
             }
@@ -2266,14 +2266,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Kısıklı",
             "Order": 5,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-05",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.02223769603908",
                 "Longitude": "29.062589925029574"
             }
@@ -2285,14 +2285,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Bulgurlu",
             "Order": 6,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-06",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.016382220485276",
                 "Longitude": "29.07613191178137"
             }
@@ -2304,14 +2304,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Ümraniye",
             "Order": 7,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-07",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.02475044117759",
                 "Longitude": "29.084914619850238"
             }
@@ -2323,14 +2323,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Çarşı",
             "Order": 8,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-08",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.025898812622515",
                 "Longitude": "29.097186268407956"
             }
@@ -2342,14 +2342,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Yamanevler",
             "Order": 9,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-09",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.02436045931574",
                 "Longitude": "29.10893285940382"
             }
@@ -2361,14 +2361,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Çakmak",
             "Order": 10,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-10",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.021651794492854",
                 "Longitude": "29.11831687527492"
             }
@@ -2380,14 +2380,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Ihlamurkuyu",
             "Order": 11,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-11",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.0193938740756",
                 "Longitude": "29.13128274037028"
             }
@@ -2399,14 +2399,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Altınşehir",
             "Order": 12,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-12",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.01682949821649",
                 "Longitude": "29.138624552588546"
             }
@@ -2418,14 +2418,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "İmam Hatip Lisesi",
             "Order": 13,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-13",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.016188074469916",
                 "Longitude": "29.15243635386462"
             }
@@ -2437,14 +2437,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Dudullu",
             "Order": 14,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-14",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.01544045560607",
                 "Longitude": "29.16244635386456"
             }
@@ -2456,14 +2456,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Necip Fazıl",
             "Order": 15,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-15",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.01620878613601",
                 "Longitude": "29.17929437105173"
             }
@@ -2475,14 +2475,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Çekmeköy",
             "Order": 16,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-16",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.01456617003643",
                 "Longitude": "29.189447811535"
             }
@@ -2494,14 +2494,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Meclis",
             "Order": 17,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-17",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0097339184714",
                 "Longitude": "29.198827223504292"
             }
@@ -2513,14 +2513,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Sarıgazi",
             "Order": 18,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-18",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.01031088932276",
                 "Longitude": "29.212121182720836"
             }
@@ -2532,14 +2532,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Sancaktepe",
             "Order": 20,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-20",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.99133734652666",
                 "Longitude": "29.22925491155591"
             }
@@ -2551,14 +2551,14 @@ METRO_STATIONS = {
             "LineName": "M5",
             "Description": "Samandıra Merkez",
             "Order": 21,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M05-S-H-I-21",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.983897557616025",
                 "Longitude": "29.231410725047297"
             }
@@ -2572,14 +2572,14 @@ METRO_STATIONS = {
             "LineName": "M6",
             "Description": "Levent",
             "Order": 1,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M06-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 34,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.075888",
                 "Longitude": "29.014142"
             }
@@ -2591,14 +2591,14 @@ METRO_STATIONS = {
             "LineName": "M6",
             "Description": "Nispetiye",
             "Order": 2,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M06-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 7,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.077692",
                 "Longitude": "29.022356"
             }
@@ -2610,14 +2610,14 @@ METRO_STATIONS = {
             "LineName": "M6",
             "Description": "Etiler",
             "Order": 3,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M06-S-H-I-03",
             "DetailInfo": {
                 "Escolator": 6,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.082395",
                 "Longitude": "29.037593"
             }
@@ -2629,14 +2629,14 @@ METRO_STATIONS = {
             "LineName": "M6",
             "Description": "Boğaziçi Ü.-Hisarüstü",
             "Order": 4,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M06-S-H-I-04",
             "DetailInfo": {
                 "Escolator": 6,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.085278",
                 "Longitude": "29.045519"
             }
@@ -2650,14 +2650,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Yıldız",
             "Order": 3,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-03",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.055457368403594",
                 "Longitude": "29.009803051316943"
             }
@@ -2669,14 +2669,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Fulya",
             "Order": 4,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-04",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0619540753492",
                 "Longitude": "29.007236307110315"
             }
@@ -2688,14 +2688,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Mecidiyeköy",
             "Order": 5,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M07-S-H-I-05",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.0661411",
                 "Longitude": "28.9945802"
             }
@@ -2707,14 +2707,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Çağlayan",
             "Order": 6,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-06",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.07124",
                 "Longitude": "28.9797905"
             }
@@ -2726,14 +2726,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Kağıthane",
             "Order": 7,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-07",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.0799698",
                 "Longitude": "28.9722495"
             }
@@ -2745,14 +2745,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Nurtepe",
             "Order": 8,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-08",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": true,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": True,
                 "Latitude": "41.0796403",
                 "Longitude": "28.9629489"
             }
@@ -2764,14 +2764,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Alibeyköy",
             "Order": 9,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-09",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.0791702",
                 "Longitude": "28.9493602"
             }
@@ -2783,14 +2783,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Çırçır Mahallesi",
             "Order": 10,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-10",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.07985",
                 "Longitude": "28.93762"
             }
@@ -2802,14 +2802,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Veysel Karani-Akşemsettin",
             "Order": 11,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-11",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": true,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": True,
                 "Latitude": "41.0796898",
                 "Longitude": "28.9295594"
             }
@@ -2821,14 +2821,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Yeşilpınar",
             "Order": 12,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-12",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": true,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": True,
                 "Latitude": "41.0799901",
                 "Longitude": "28.9352699"
             }
@@ -2840,14 +2840,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Kazım Karabekir",
             "Order": 13,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-13",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0854599",
                 "Longitude": "28.9085497"
             }
@@ -2859,14 +2859,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Yenimahalle",
             "Order": 14,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-14",
             "DetailInfo": {
                 "Escolator": 20,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0837182",
                 "Longitude": "28.8931096"
             }
@@ -2878,14 +2878,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Karadeniz Mahallesi",
             "Order": 15,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-15",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0815994",
                 "Longitude": "28.8754204"
             }
@@ -2897,14 +2897,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Tekstilkent-Giyimkent",
             "Order": 16,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-16",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0712997",
                 "Longitude": "28.8668802"
             }
@@ -2916,14 +2916,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Oruç Reis",
             "Order": 17,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-17",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0633806",
                 "Longitude": "28.8554406"
             }
@@ -2935,14 +2935,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Göztepe Mahallesi",
             "Order": 18,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-18",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 17,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0563991",
                 "Longitude": "28.8499689"
             }
@@ -2954,14 +2954,14 @@ METRO_STATIONS = {
             "LineName": "M7",
             "Description": "Mahmutbey",
             "Order": 19,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M07-S-H-I-19",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.054312",
                 "Longitude": "28.830612"
             }
@@ -2975,14 +2975,14 @@ METRO_STATIONS = {
             "LineName": "M8",
             "Description": "Bostancı",
             "Order": 1,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M08-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 31,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.95128998347687",
                 "Longitude": "29.097243057130374"
             }
@@ -2994,14 +2994,14 @@ METRO_STATIONS = {
             "LineName": "M8",
             "Description": "Emin Ali Paşa",
             "Order": 2,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M08-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.96054884646437",
                 "Longitude": "29.09385026231631"
             }
@@ -3013,14 +3013,14 @@ METRO_STATIONS = {
             "LineName": "M8",
             "Description": "Ayşekadın",
             "Order": 3,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M08-S-H-I-03",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.966729619003274",
                 "Longitude": "29.0868577820603"
             }
@@ -3032,14 +3032,14 @@ METRO_STATIONS = {
             "LineName": "M8",
             "Description": "Kozyatağı",
             "Order": 4,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M08-S-H-I-04",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 23,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.97524724462983",
                 "Longitude": "29.098809408749805"
             }
@@ -3051,14 +3051,14 @@ METRO_STATIONS = {
             "LineName": "M8",
             "Description": "Küçükbakkalköy",
             "Order": 5,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M08-S-H-I-05",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.97913311692388",
                 "Longitude": "29.111999801732374"
             }
@@ -3070,14 +3070,14 @@ METRO_STATIONS = {
             "LineName": "M8",
             "Description": "İçerenköy",
             "Order": 6,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M08-S-H-I-06",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.979123476347006",
                 "Longitude": "29.126665087038585"
             }
@@ -3089,14 +3089,14 @@ METRO_STATIONS = {
             "LineName": "M8",
             "Description": "Kayışdağı",
             "Order": 7,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M08-S-H-I-07",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.98552090314198",
                 "Longitude": "29.137286259239595"
             }
@@ -3108,14 +3108,14 @@ METRO_STATIONS = {
             "LineName": "M8",
             "Description": "Mevlana",
             "Order": 8,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M08-S-H-I-08",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.99236746200459",
                 "Longitude": "29.153558958239127"
             }
@@ -3127,14 +3127,14 @@ METRO_STATIONS = {
             "LineName": "M8",
             "Description": "İMES",
             "Order": 9,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M08-S-H-I-09",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.99995161943781",
                 "Longitude": "29.156059357475755"
             }
@@ -3146,14 +3146,14 @@ METRO_STATIONS = {
             "LineName": "M8",
             "Description": "MODOKO-KEYAP",
             "Order": 10,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M08-S-H-I-10",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.00761665286443",
                 "Longitude": "29.162182913381205"
             }
@@ -3165,14 +3165,14 @@ METRO_STATIONS = {
             "LineName": "M8",
             "Description": "Dudullu",
             "Order": 11,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M08-S-H-I-11",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.01556997960766",
                 "Longitude": "29.162499998040506"
             }
@@ -3184,14 +3184,14 @@ METRO_STATIONS = {
             "LineName": "M8",
             "Description": "Huzur",
             "Order": 12,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M08-S-H-I-12",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.022498790602256",
                 "Longitude": "29.15945298159044"
             }
@@ -3203,14 +3203,14 @@ METRO_STATIONS = {
             "LineName": "M8",
             "Description": "Parseller",
             "Order": 13,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M08-S-H-I-13",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.03187863452558",
                 "Longitude": "29.152689072367757"
             }
@@ -3224,14 +3224,14 @@ METRO_STATIONS = {
             "LineName": "M9",
             "Description": "Ataköy",
             "Order": 1,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M09-S-H-I-14",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.979916",
                 "Longitude": "28.856218"
             }
@@ -3243,14 +3243,14 @@ METRO_STATIONS = {
             "LineName": "M9",
             "Description": "Yenibosna",
             "Order": 2,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M09-S-H-I-13",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.989473",
                 "Longitude": "28.837963"
             }
@@ -3262,14 +3262,14 @@ METRO_STATIONS = {
             "LineName": "M9",
             "Description": "Çobançeşme",
             "Order": 3,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M09-S-H-I-12",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.999713",
                 "Longitude": "28.822589"
             }
@@ -3281,14 +3281,14 @@ METRO_STATIONS = {
             "LineName": "M9",
             "Description": "29 Ekim Cumhuriyet",
             "Order": 4,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M09-S-H-I-11",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.006215",
                 "Longitude": "28.818603"
             }
@@ -3300,14 +3300,14 @@ METRO_STATIONS = {
             "LineName": "M9",
             "Description": "Doğu Sanayi",
             "Order": 5,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M09-S-H-I-10",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.014893",
                 "Longitude": "28.817986"
             }
@@ -3319,14 +3319,14 @@ METRO_STATIONS = {
             "LineName": "M9",
             "Description": "Mimar Sinan",
             "Order": 6,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M09-S-H-I-09",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.025085",
                 "Longitude": "28.816549"
             }
@@ -3338,14 +3338,14 @@ METRO_STATIONS = {
             "LineName": "M9",
             "Description": "15 Temmuz",
             "Order": 7,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M09-S-H-I-08",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.036864",
                 "Longitude": "28.814156"
             }
@@ -3357,14 +3357,14 @@ METRO_STATIONS = {
             "LineName": "M9",
             "Description": "Halkalı Caddesi",
             "Order": 8,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M09-S-H-I-07",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.04552704030184",
                 "Longitude": "28.80633957331045"
             }
@@ -3376,14 +3376,14 @@ METRO_STATIONS = {
             "LineName": "M9",
             "Description": "Atatürk Mahallesi",
             "Order": 9,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-M09-S-H-I-06",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.05288544691126",
                 "Longitude": "28.79864644035015"
             }
@@ -3395,14 +3395,14 @@ METRO_STATIONS = {
             "LineName": "M9",
             "Description": "Bahariye",
             "Order": 10,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M09-S-H-I-05",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.058692228126105",
                 "Longitude": "28.79921854037114"
             }
@@ -3414,14 +3414,14 @@ METRO_STATIONS = {
             "LineName": "M9",
             "Description": "MASKO",
             "Order": 11,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M09-S-H-I-04",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.064346478553354",
                 "Longitude": "28.804145099888043"
             }
@@ -3433,14 +3433,14 @@ METRO_STATIONS = {
             "LineName": "M9",
             "Description": "İkitelli Sanayi",
             "Order": 12,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M09-S-H-I-03",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.071592188454204",
                 "Longitude": "28.80359489619547"
             }
@@ -3452,14 +3452,14 @@ METRO_STATIONS = {
             "LineName": "M9",
             "Description": "Ziya Gökalp Mahallesi",
             "Order": 13,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M09-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.07468683895818",
                 "Longitude": "28.786425453865895"
             }
@@ -3471,14 +3471,14 @@ METRO_STATIONS = {
             "LineName": "M9",
             "Description": "Olimpiyat",
             "Order": 14,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-M09-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.07978582261958",
                 "Longitude": "28.768494442218014"
             }
@@ -3492,14 +3492,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Kabataş",
             "Order": 1,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-31",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.034195",
                 "Longitude": "28.992712"
             }
@@ -3511,14 +3511,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Fındıklı-Mimar Sinan Ü.",
             "Order": 2,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-30",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0314551495",
                 "Longitude": "28.9894378694"
             }
@@ -3530,14 +3530,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Tophane",
             "Order": 3,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-29",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.026992487",
                 "Longitude": "28.9808626704"
             }
@@ -3549,14 +3549,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Karaköy",
             "Order": 4,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-28",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0221165813",
                 "Longitude": "28.9746840227"
             }
@@ -3568,14 +3568,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Eminönü",
             "Order": 5,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-27",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0174770208",
                 "Longitude": "28.9732097738"
             }
@@ -3587,14 +3587,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Sirkeci",
             "Order": 6,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-26",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0151806347",
                 "Longitude": "28.9758901555"
             }
@@ -3606,14 +3606,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Gülhane",
             "Order": 7,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-25",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0121648083",
                 "Longitude": "28.978420569"
             }
@@ -3625,14 +3625,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Sultanahmet",
             "Order": 8,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-24",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0080890263",
                 "Longitude": "28.9755834871"
             }
@@ -3644,14 +3644,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Çemberlitaş",
             "Order": 9,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-23",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0084369787",
                 "Longitude": "28.9711260369"
             }
@@ -3663,14 +3663,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Beyazıt-Kapalıçarşı",
             "Order": 10,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-22",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0090689647",
                 "Longitude": "28.9666944396"
             }
@@ -3682,14 +3682,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Laleli-İstanbul Ü.",
             "Order": 11,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-21",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0095870715",
                 "Longitude": "28.9597865368"
             }
@@ -3701,14 +3701,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Aksaray",
             "Order": 12,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-20",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0095939384",
                 "Longitude": "28.9538598842"
             }
@@ -3720,14 +3720,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Yusufpaşa",
             "Order": 13,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-19",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0099988102",
                 "Longitude": "28.9471169908"
             }
@@ -3739,14 +3739,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Haseki",
             "Order": 14,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-18",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0107098606",
                 "Longitude": "28.9442927851"
             }
@@ -3758,14 +3758,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Fındıkzade",
             "Order": 15,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-T01-S-H-I-17",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0117062059472",
                 "Longitude": "28.940655673320745"
             }
@@ -3777,14 +3777,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Çapa-Şehremini",
             "Order": 16,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-16",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0158833289",
                 "Longitude": "28.9320271861"
             }
@@ -3796,14 +3796,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Pazartekke",
             "Order": 17,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-15",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0182661997",
                 "Longitude": "28.9271526286"
             }
@@ -3815,14 +3815,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Topkapı",
             "Order": 18,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-14",
             "DetailInfo": {
                 "Escolator": 1,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0192295429",
                 "Longitude": "28.9194470285"
             }
@@ -3834,14 +3834,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Cevizlibağ-AÖY",
             "Order": 19,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-13",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0159557944",
                 "Longitude": "28.9115738934"
             }
@@ -3853,14 +3853,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Merkezefendi",
             "Order": 20,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-12",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0103922551",
                 "Longitude": "28.9095014291"
             }
@@ -3872,14 +3872,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Seyitnizam-Akşemsettin",
             "Order": 21,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-11",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0042150705",
                 "Longitude": "28.9075130061"
             }
@@ -3891,14 +3891,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Mithatpaşa",
             "Order": 22,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-10",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.003492938",
                 "Longitude": "28.9014562172"
             }
@@ -3910,14 +3910,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Zeytinburnu",
             "Order": 23,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-09",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0014853458",
                 "Longitude": "28.8902920022"
             }
@@ -3929,14 +3929,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Mehmet Akif",
             "Order": 24,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-08",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.00580192",
                 "Longitude": "28.8816767755"
             }
@@ -3948,14 +3948,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Merter Tekstil Merkezi",
             "Order": 25,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-07",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0115593225",
                 "Longitude": "28.8807549715"
             }
@@ -3967,14 +3967,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Güngören",
             "Order": 26,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-06",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0152104262",
                 "Longitude": "28.8775090458"
             }
@@ -3986,14 +3986,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Akıncılar",
             "Order": 27,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-05",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0173366346",
                 "Longitude": "28.8710305731"
             }
@@ -4005,14 +4005,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Soğanlı",
             "Order": 28,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-04",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0209689646",
                 "Longitude": "28.8670797269"
             }
@@ -4024,14 +4024,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Yavuzselim",
             "Order": 29,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-03",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0238219843",
                 "Longitude": "28.863651758"
             }
@@ -4043,14 +4043,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Güneştepe",
             "Order": 30,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0289950489",
                 "Longitude": "28.860949736"
             }
@@ -4062,14 +4062,14 @@ METRO_STATIONS = {
             "LineName": "T1",
             "Description": "Bağcılar",
             "Order": 31,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T01-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0330863118",
                 "Longitude": "28.860647218"
             }
@@ -4083,14 +4083,14 @@ METRO_STATIONS = {
             "LineName": "T3",
             "Description": "Kadıköy İDO",
             "Order": 1,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T03-S-H-I-10",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.989273",
                 "Longitude": "29.020977"
             }
@@ -4102,14 +4102,14 @@ METRO_STATIONS = {
             "LineName": "T3",
             "Description": "İskele Camii",
             "Order": 2,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T03-S-H-I-11",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.989941",
                 "Longitude": "29.022135"
             }
@@ -4121,14 +4121,14 @@ METRO_STATIONS = {
             "LineName": "T3",
             "Description": "Çarşı",
             "Order": 3,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T03-S-H-I-09",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.991075",
                 "Longitude": "29.025428"
             }
@@ -4140,14 +4140,14 @@ METRO_STATIONS = {
             "LineName": "T3",
             "Description": "Altıyol",
             "Order": 4,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T03-S-H-I-08",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.99003",
                 "Longitude": "29.029066"
             }
@@ -4159,14 +4159,14 @@ METRO_STATIONS = {
             "LineName": "T3",
             "Description": "Bahariye",
             "Order": 5,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T03-S-H-I-07",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.987932",
                 "Longitude": "29.028593"
             }
@@ -4178,14 +4178,14 @@ METRO_STATIONS = {
             "LineName": "T3",
             "Description": "Kilise",
             "Order": 6,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T03-S-H-I-06",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.986078",
                 "Longitude": "29.027885"
             }
@@ -4197,14 +4197,14 @@ METRO_STATIONS = {
             "LineName": "T3",
             "Description": "Moda İlkokulu",
             "Order": 7,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T03-S-H-I-05",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.98411",
                 "Longitude": "29.026652"
             }
@@ -4216,14 +4216,14 @@ METRO_STATIONS = {
             "LineName": "T3",
             "Description": "Moda",
             "Order": 8,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T03-S-H-I-04",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.983932",
                 "Longitude": "29.024892"
             }
@@ -4235,14 +4235,14 @@ METRO_STATIONS = {
             "LineName": "T3",
             "Description": "Rızapaşa",
             "Order": 9,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-T03-S-H-I-03",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.984465405285626",
                 "Longitude": "29.023221050093916"
             }
@@ -4254,14 +4254,14 @@ METRO_STATIONS = {
             "LineName": "T3",
             "Description": "Mühürdar",
             "Order": 10,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T03-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.985098",
                 "Longitude": "29.021598"
             }
@@ -4273,14 +4273,14 @@ METRO_STATIONS = {
             "LineName": "T3",
             "Description": "Damga Sokak",
             "Order": 11,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T03-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "40.987945",
                 "Longitude": "29.021009"
             }
@@ -4294,14 +4294,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Topkapı",
             "Order": 1,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-22",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0192295429",
                 "Longitude": "28.9194470285"
             }
@@ -4313,14 +4313,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Fetihkapı",
             "Order": 2,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-21",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.021825006",
                 "Longitude": "28.9253344699"
             }
@@ -4332,14 +4332,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Vatan",
             "Order": 3,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-20",
             "DetailInfo": {
                 "Escolator": 6,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0256946675",
                 "Longitude": "28.9293559649"
             }
@@ -4351,14 +4351,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Edirnekapı",
             "Order": 4,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-19",
             "DetailInfo": {
                 "Escolator": 8,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0314409253",
                 "Longitude": "28.9339710061"
             }
@@ -4370,14 +4370,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Şehitlik",
             "Order": 5,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-18",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0341823475",
                 "Longitude": "28.9282530221"
             }
@@ -4389,14 +4389,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Demirkapı",
             "Order": 6,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-17",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0369881849",
                 "Longitude": "28.923366509"
             }
@@ -4408,14 +4408,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Topçular",
             "Order": 7,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-16",
             "DetailInfo": {
                 "Escolator": 3,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.041546",
                 "Longitude": "28.919608"
             }
@@ -4427,14 +4427,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Rami",
             "Order": 8,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-15",
             "DetailInfo": {
                 "Escolator": 3,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.046518",
                 "Longitude": "28.915598"
             }
@@ -4446,14 +4446,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Uluyol Bereç",
             "Order": 9,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-14",
             "DetailInfo": {
                 "Escolator": 3,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0541381814",
                 "Longitude": "28.9102461379"
             }
@@ -4465,14 +4465,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Sağmalcılar",
             "Order": 10,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-13",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0572818121",
                 "Longitude": "28.9069357644"
             }
@@ -4484,14 +4484,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Bosna Çukurçeşme",
             "Order": 11,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-12",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.061832",
                 "Longitude": "28.902093"
             }
@@ -4503,14 +4503,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Ali Fuat Başgil",
             "Order": 12,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-11",
             "DetailInfo": {
                 "Escolator": 3,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.068493",
                 "Longitude": "28.895601"
             }
@@ -4522,14 +4522,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Taşköprü",
             "Order": 13,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-10",
             "DetailInfo": {
                 "Escolator": 3,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0726579715",
                 "Longitude": "28.8876475166"
             }
@@ -4541,14 +4541,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Karadeniz",
             "Order": 14,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-09",
             "DetailInfo": {
                 "Escolator": 3,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0752992311",
                 "Longitude": "28.8822357296"
             }
@@ -4560,14 +4560,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Kiptaş-Venezia",
             "Order": 15,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-T04-S-H-I-08",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.07985707357942",
                 "Longitude": "28.875993057122308"
             }
@@ -4579,14 +4579,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Cumhuriyet Mahallesi",
             "Order": 16,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-07",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0837494209",
                 "Longitude": "28.8723589675"
             }
@@ -4598,14 +4598,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "50.Yıl-Baştabya",
             "Order": 17,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-06",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.08781",
                 "Longitude": "28.866925"
             }
@@ -4617,14 +4617,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Hacı Şükrü",
             "Order": 18,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-05",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0929087651",
                 "Longitude": "28.8640033599"
             }
@@ -4636,14 +4636,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Yenimahalle",
             "Order": 19,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-04",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0998289018",
                 "Longitude": "28.8629734333"
             }
@@ -4655,14 +4655,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Sultançiftliği",
             "Order": 20,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-03",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.1061320011",
                 "Longitude": "28.8606445832"
             }
@@ -4674,14 +4674,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Cebeci",
             "Order": 21,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.1119217418",
                 "Longitude": "28.8578071487"
             }
@@ -4693,14 +4693,14 @@ METRO_STATIONS = {
             "LineName": "T4",
             "Description": "Mescid-i Selam",
             "Order": 22,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T04-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.116218",
                 "Longitude": "28.851229"
             }
@@ -4714,14 +4714,14 @@ METRO_STATIONS = {
             "LineName": "T5",
             "Description": "Eminönü",
             "Order": 1,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-T05-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.01833251289325",
                 "Longitude": "28.970220633282402"
             }
@@ -4733,14 +4733,14 @@ METRO_STATIONS = {
             "LineName": "T5",
             "Description": "Küçükpazar",
             "Order": 2,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-T05-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0211067072648",
                 "Longitude": "28.96307565267346"
             }
@@ -4752,14 +4752,14 @@ METRO_STATIONS = {
             "LineName": "T5",
             "Description": "Cibali",
             "Order": 3,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-T05-S-H-I-03",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.024336",
                 "Longitude": "28.960265"
             }
@@ -4771,14 +4771,14 @@ METRO_STATIONS = {
             "LineName": "T5",
             "Description": "Fener",
             "Order": 4,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-T05-S-H-I-04",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.028663",
                 "Longitude": "28.954462"
             }
@@ -4790,14 +4790,14 @@ METRO_STATIONS = {
             "LineName": "T5",
             "Description": "Balat",
             "Order": 5,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-T05-S-H-I-05",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.034098",
                 "Longitude": "28.948012"
             }
@@ -4809,14 +4809,14 @@ METRO_STATIONS = {
             "LineName": "T5",
             "Description": "Ayvansaray",
             "Order": 6,
-            "IsActive": true,
+            "IsActive": True,
             "FunctionalCode": "M-T05-S-H-I-06",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.039607",
                 "Longitude": "28.943916"
             }
@@ -4828,14 +4828,14 @@ METRO_STATIONS = {
             "LineName": "T5",
             "Description": "Feshane",
             "Order": 7,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T05-S-H-I-07",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.045456",
                 "Longitude": "28.937978"
             }
@@ -4847,14 +4847,14 @@ METRO_STATIONS = {
             "LineName": "T5",
             "Description": "Eyüpsultan Teleferik",
             "Order": 8,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T05-S-H-I-08",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.050482",
                 "Longitude": "28.935202"
             }
@@ -4866,14 +4866,14 @@ METRO_STATIONS = {
             "LineName": "T5",
             "Description": "Eyüpsultan Devlet Hastanesi",
             "Order": 9,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T05-S-H-I-09",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.056765",
                 "Longitude": "28.941212"
             }
@@ -4885,14 +4885,14 @@ METRO_STATIONS = {
             "LineName": "T5",
             "Description": "Silahtarağa Mahallesi",
             "Order": 10,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T05-S-H-I-10",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.064775",
                 "Longitude": "28.942874"
             }
@@ -4904,14 +4904,14 @@ METRO_STATIONS = {
             "LineName": "T5",
             "Description": "Üniversite",
             "Order": 11,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T05-S-H-I-11",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.069833",
                 "Longitude": "28.942865"
             }
@@ -4923,14 +4923,14 @@ METRO_STATIONS = {
             "LineName": "T5",
             "Description": "Alibeyköy Merkez",
             "Order": 12,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T05-S-H-I-12",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.073810",
                 "Longitude": "28.946063"
             }
@@ -4942,14 +4942,14 @@ METRO_STATIONS = {
             "LineName": "T5",
             "Description": "Alibeyköy Metro",
             "Order": 13,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T05-S-H-I-13",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.078480",
                 "Longitude": "28.949459"
             }
@@ -4961,14 +4961,14 @@ METRO_STATIONS = {
             "LineName": "T5",
             "Description": "Alibeyköy Cep Otogarı",
             "Order": 14,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-T05-S-H-I-14",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.086915",
                 "Longitude": "28.943988"
             }
@@ -4982,14 +4982,14 @@ METRO_STATIONS = {
             "LineName": "TF1",
             "Description": "Maçka",
             "Order": 1,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-TF1-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0446506053",
                 "Longitude": "28.9936254852"
             }
@@ -5001,14 +5001,14 @@ METRO_STATIONS = {
             "LineName": "TF1",
             "Description": "Taşkışla",
             "Order": 2,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-TF1-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": true,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": True,
+                "Masjid": False,
                 "Latitude": "41.04367845791161",
                 "Longitude": "28.99034291338203"
             }
@@ -5022,14 +5022,14 @@ METRO_STATIONS = {
             "LineName": "TF2",
             "Description": "Eyüp",
             "Order": 1,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-TF2-S-H-I-01",
             "DetailInfo": {
                 "Escolator": 4,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.0505432043",
                 "Longitude": "28.9339131846"
             }
@@ -5041,14 +5041,14 @@ METRO_STATIONS = {
             "LineName": "TF2",
             "Description": "Piyer Loti",
             "Order": 2,
-            "IsActive": null,
+            "IsActive": None,
             "FunctionalCode": "M-TF2-S-H-I-02",
             "DetailInfo": {
                 "Escolator": 0,
                 "Lift": 0,
-                "BabyRoom": false,
-                "WC": false,
-                "Masjid": false,
+                "BabyRoom": False,
+                "WC": False,
+                "Masjid": False,
                 "Latitude": "41.054193241",
                 "Longitude": "28.9327417801"
             }

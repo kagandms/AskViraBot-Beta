@@ -29,25 +29,17 @@ MAIN_BUTTONS = ALL_BUTTONS.get("MAIN_BUTTONS", {})
 TOOLS_BUTTONS = ALL_BUTTONS.get("TOOLS_BUTTONS", {})
 VIDEO_DOWNLOADER_BUTTONS = ALL_BUTTONS.get("VIDEO_DOWNLOADER_BUTTONS", {})
 FORMAT_SELECTION_BUTTONS = ALL_BUTTONS.get("FORMAT_SELECTION_BUTTONS", {})
-GAMES_BUTTONS = ALL_BUTTONS.get("GAMES_BUTTONS", {})
-NOTES_BUTTONS = ALL_BUTTONS.get("NOTES_BUTTONS", {})
-DELETE_NOTES_BUTTONS = ALL_BUTTONS.get("DELETE_NOTES_BUTTONS", {})
-TKM_BUTTONS = ALL_BUTTONS.get("TKM_BUTTONS", {})
-PDF_CONVERTER_BUTTONS = ALL_BUTTONS.get("PDF_CONVERTER_BUTTONS", {})
-INPUT_BACK_BUTTONS = ALL_BUTTONS.get("INPUT_BACK_BUTTONS", {})
-REMINDER_BUTTONS = ALL_BUTTONS.get("REMINDER_BUTTONS", {})
-GAME_MODE_BUTTONS = ALL_BUTTONS.get("GAME_MODE_BUTTONS", {})
-BET_BUTTONS = ALL_BUTTONS.get("BET_BUTTONS", {})
+
 
 # --- MANUEL MAPPINGS (Özel durumlar için) ---
 # Bazı butonlar birden fazla varyant gerektirdiği için manuel tutulur
 MANUAL_MAPPINGS = {
     "menu": {"🏠 menüye dön", "🏠 back to menu", "🏠 назад в меню", "🔙 geri", "🔙 back", "🔙 назад", "🔙 ana menü", "🔙 main menu", "🔙 главное меню"},
     "back_to_tools": {"🔙 araçlar menüsü", "🔙 tools menu", "🔙 меню инструментов"},
-    "back_to_games": {"🔙 oyun odası", "🔙 game room", "🔙 игровая комната"},
+    "back_to_tools": {"🔙 araçlar menüsü", "🔙 tools menu", "🔙 меню инструментов"},
     "back_to_notes": {"🔙 notlar menüsü", "🔙 notes menu", "🔙 меню заметок"},
     "admin_panel_button": {"🔒 yönetim", "🔒 admin", "🔒 управление"},
-    "metro_main_button": {"🚇 canlı metro istanbul", "🚇 live metro istanbul", "🚇 metro istanbul", "metro"},
+    "metro_main_button": {"🚇 canlı metro istanbul", "🚇 canlı metro i̇stanbul", "🚇 live metro istanbul", "🚇 metro istanbul", "metro", "canlı metro", "🚇 метро стамбул"},
 }
 
 
@@ -65,7 +57,7 @@ def extract_button_set(button_dict, row_idx, col_idx):
 AUTO_MAPPINGS = {
     # Ana menü
     "tools_main_button": extract_button_set(MAIN_BUTTONS, 0, 0),     # Row 0, Col 0: Tools
-    "games_main_button": extract_button_set(MAIN_BUTTONS, 0, 1),     # Row 0, Col 1: Games
+    "tools_main_button": extract_button_set(MAIN_BUTTONS, 0, 0),     # Row 0, Col 0: Tools
     
     "language": extract_button_set(MAIN_BUTTONS, 1, 0),              # Row 1, Col 0: Language
     "developer_main_button": extract_button_set(MAIN_BUTTONS, 1, 1), # Row 1, Col 1: Developer
@@ -79,21 +71,11 @@ AUTO_MAPPINGS = {
     "qrcode_button": extract_button_set(TOOLS_BUTTONS, 1, 0),
     "pdf_converter_main_button": extract_button_set(TOOLS_BUTTONS, 1, 1),
     "weather_main_button": extract_button_set(TOOLS_BUTTONS, 2, 0),
-    "metro_main_button": extract_button_set(TOOLS_BUTTONS, 2, 1),
+    # metro_main_button is in MANUAL_MAPPINGS with all variants
     "video_downloader_main_button": extract_button_set(TOOLS_BUTTONS, 3, 0),
     "shazam_main_button": extract_button_set(TOOLS_BUTTONS, 3, 1),
 
-    # Games
-    "xox_game": extract_button_set(GAMES_BUTTONS, 0, 0),
-    "dice": extract_button_set(GAMES_BUTTONS, 0, 1),
-    "coinflip": extract_button_set(GAMES_BUTTONS, 1, 0),
-    "tkm_main": extract_button_set(GAMES_BUTTONS, 1, 1),
-    "blackjack_main": extract_button_set(GAMES_BUTTONS, 2, 0),
-    "slot_main": extract_button_set(GAMES_BUTTONS, 2, 1),
-    "olympus_main": extract_button_set(GAMES_BUTTONS, 3, 0),
-    "daily_bonus": extract_button_set(GAMES_BUTTONS, 4, 0),
-    "balance": extract_button_set(GAMES_BUTTONS, 4, 1),
-    "player_stats": extract_button_set(GAMES_BUTTONS, 5, 0),
+
 
     # Notes
     "add_note_button": extract_button_set(NOTES_BUTTONS, 0, 0),
@@ -103,10 +85,7 @@ AUTO_MAPPINGS = {
     
     "select_delete_note_button": extract_button_set(DELETE_NOTES_BUTTONS, 0, 0),
     
-    # TKM
-    "tkm_rock": extract_button_set(TKM_BUTTONS, 0, 0),
-    "tkm_paper": extract_button_set(TKM_BUTTONS, 1, 0),
-    "tkm_scissors": extract_button_set(TKM_BUTTONS, 2, 0),
+
     
     # PDF
     "text_to_pdf_button": extract_button_set(PDF_CONVERTER_BUTTONS, 0, 0),

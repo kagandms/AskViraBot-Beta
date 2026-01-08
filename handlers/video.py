@@ -42,9 +42,23 @@ async def video_downloader_menu(update: Update, context: ContextTypes.DEFAULT_TY
     # Track message for cleanup
     await state.set_state(user_id, "video_menu", {"message_id": sent_msg.message_id})
 
-async def set_video_platform(update: Update, context: ContextTypes.DEFAULT_TYPE, platform: str):
+async def set_video_platform(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     lang = await db.get_user_lang(user_id)
+    
+    # Extract platform from button text
+    text = update.message.text.lower().strip()
+    platform = None
+    if "tiktok" in text:
+        platform = "tiktok"
+    elif "twitter" in text or "x" in text:
+        platform = "twitter"
+    elif "instagram" in text or "insta" in text:
+        platform = "instagram"
+    
+    if not platform:
+        await video_downloader_menu(update, context)
+        return
     
     await state.clear_user_states(user_id)
     # Store platform in persistent state data
@@ -63,9 +77,13 @@ async def set_video_platform(update: Update, context: ContextTypes.DEFAULT_TYPE,
     # Store message ID in state data
     await state.set_state(user_id, state.WAITING_FOR_FORMAT_SELECTION, {"platform": platform, "message_id": sent_message.message_id})
 
-async def set_download_format(update: Update, context: ContextTypes.DEFAULT_TYPE, download_format: str):
+async def set_download_format(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     lang = await db.get_user_lang(user_id)
+    
+    # Extract format from button text
+    text = update.message.text.lower().strip()
+    download_format = "video" if "video" in text else "audio"
     
     # Retrieve platform from persistent state
     state_data = await state.get_data(user_id)
@@ -252,13 +270,13 @@ def setup(app):
     register_button("video_downloader_main_button", video_downloader_menu)
     register_button("back_to_platform", video_downloader_menu)
     
-    # 4. Platforms
-    register_video_platform("tiktok", lambda u, c: set_video_platform(u, c, "tiktok"))
-    register_video_platform("twitter", lambda u, c: set_video_platform(u, c, "twitter"))
-    register_video_platform("instagram", lambda u, c: set_video_platform(u, c, "instagram"))
+    # 4. Platforms (fixed signature)
+    register_video_platform("video_platform_tiktok", set_video_platform)
+    register_video_platform("video_platform_twitter", set_video_platform)
+    register_video_platform("video_platform_instagram", set_video_platform)
     
-    # 5. Formats
-    register_format("video_format", lambda u, c: set_download_format(u, c, "video"))
-    register_format("audio_format", lambda u, c: set_download_format(u, c, "audio"))
+    # 5. Formats (fixed signature)
+    register_format("format_video", set_download_format)
+    register_format("format_audio", set_download_format)
     
     logging.getLogger(__name__).info("✅ Video module loaded")

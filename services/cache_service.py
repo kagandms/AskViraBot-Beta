@@ -3,7 +3,7 @@ import os
 import logging
 import asyncio
 from typing import Optional, Any
-import ujson as json
+import json
 
 try:
     from redis.asyncio import Redis, ConnectionError

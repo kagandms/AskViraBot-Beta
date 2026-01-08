@@ -441,8 +441,7 @@ def setup(app):
     app.add_handler(CallbackQueryHandler(delete_note_callback, pattern=r"^(delete_note_\d+|notes_prev_page|notes_next_page|delete_notes_back_inline)$"))
     app.add_handler(CallbackQueryHandler(handle_edit_note_callback, pattern=r"^(edit_note_\d+|notes_back_inline)$"))
     
-    # 3. Router
-    router.register(state.NOTES_IN_MENU, notes_menu)
+    # 3. Router (Remove NOTES_IN_MENU to avoid button loop)
     router.register(state.WAITING_FOR_NEW_NOTE_INPUT, handle_new_note_input)
     router.register(state.WAITING_FOR_EDIT_NOTE_INPUT, handle_edit_note_input)
     router.register(state.DELETING_NOTES, select_note_to_delete_prompt)
