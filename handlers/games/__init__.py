@@ -23,6 +23,7 @@ from .tkm import (
 
 from .sudoku import sudoku_start
 from .xox_web import xox_web_start
+from .web_games import snake_start, game_2048_start, flappy_start, runner_start
 
 # Slot and Blackjack imports removed
 
@@ -95,6 +96,10 @@ def setup(app):
     register_button("tkm_main", tkm_start)
     register_button("player_stats", show_player_stats)
     register_button("sudoku_main", sudoku_start)
+    register_button("snake_main", snake_start)
+    register_button("game_2048_main", game_2048_start)
+    register_button("flappy_main", flappy_start)
+    register_button("runner_main", runner_start)
     
     # 4. Callback Query Handlers (for inline keyboards)
     app.add_handler(CallbackQueryHandler(back_to_games_callback, pattern=r"^back_to_games$"))

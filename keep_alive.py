@@ -1,13 +1,13 @@
+
 import os
 import hmac
 import hashlib
 import json
-import time
 from urllib.parse import unquote
 from threading import Thread
 from flask import Flask, send_from_directory, request, jsonify
 from config import supabase, BOT_TOKEN
-import database as db
+from services.game_service import save_web_game_score, get_web_game_high_score
 
 # Configure Flask to serve static files from 'web' directory
 app = Flask(__name__, static_folder='web', static_url_path='/web')
@@ -62,12 +62,57 @@ def validate_telegram_data(init_data):
         print(f"Validation Error: {e}")
     return None
 
-# --- API: SLOT GAME ---
-# Slot API Removed for Vira Production
 
 @app.route('/api/test', methods=['GET'])
 def test_api():
     return jsonify({"status": "ok", "message": "API is reachable"})
+
+@app.route('/api/save_score', methods=['POST'])
+def save_score():
+    """
+    Saves game score from Web App.
+    Expects JSON: { "initData": "...", "game": "snake", "score": 100, "difficulty": "easy" }
+    """
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+            
+        init_data = data.get('initData')
+        user_data = validate_telegram_data(init_data)
+        
+        # Local development override (allow request without valid initData on localhost)
+        if not user_data and request.host.startswith('localhost'):
+            # Mock user for testing
+            user_data = {"id": 123456789, "first_name": "TestUser"}
+        
+        if not user_data:
+            return jsonify({"error": "Invalid authentication"}), 401
+            
+        user_id = str(user_data['id'])
+        game_type = data.get('game')
+        score = int(data.get('score', 0))
+        difficulty = data.get('difficulty')
+        
+        if not game_type:
+            return jsonify({"error": "Game type required"}), 400
+
+        # Save via service
+        success = save_web_game_score(user_id, game_type, score, difficulty)
+        
+        if success:
+            best_score = get_web_game_high_score(user_id, game_type)
+            return jsonify({
+                "success": True, 
+                "best_score": best_score,
+                "new_high_score": score >= best_score
+            })
+        else:
+            return jsonify({"error": "Database error"}), 500
+
+    except Exception as e:
+        print(f"API Error: {e}")
+        return jsonify({"error": str(e)}), 500
 
 
 def run_flask():

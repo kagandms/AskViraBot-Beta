@@ -84,13 +84,17 @@ AUTO_MAPPINGS = {
     "video_downloader_main_button": extract_button_set(TOOLS_BUTTONS, 3, 0),
     "shazam_main_button": extract_button_set(TOOLS_BUTTONS, 3, 1),
 
-    # Games (Restored - No Gambling)
+    # Games
     "xox_game": extract_button_set(GAMES_BUTTONS, 0, 0),
     "dice": extract_button_set(GAMES_BUTTONS, 0, 1),
     "coinflip": extract_button_set(GAMES_BUTTONS, 1, 0),
     "tkm_main": extract_button_set(GAMES_BUTTONS, 1, 1),
-    "sudoku_main": extract_button_set(GAMES_BUTTONS, 2, 0),  # NEW: Sudoku
-    "player_stats": extract_button_set(GAMES_BUTTONS, 2, 1),
+    "sudoku_main": extract_button_set(GAMES_BUTTONS, 2, 0),
+    "snake_main": extract_button_set(GAMES_BUTTONS, 2, 1),
+    "game_2048_main": extract_button_set(GAMES_BUTTONS, 3, 0),
+    "flappy_main": extract_button_set(GAMES_BUTTONS, 3, 1),
+    "runner_main": extract_button_set(GAMES_BUTTONS, 4, 0),
+    "player_stats": extract_button_set(GAMES_BUTTONS, 4, 1),
 
 
 

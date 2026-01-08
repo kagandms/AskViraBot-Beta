@@ -65,15 +65,30 @@ async def show_player_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         await update.message.delete()
     except: pass
     
-    # İstatistikleri çek (Vira - Only XOX and TKM)
+    # İstatistikleri çek
     xox_stats = await asyncio.to_thread(db.get_user_xox_stats, user_id)
     tkm_stats = await asyncio.to_thread(db.get_user_tkm_stats, user_id)
     
+    # Yeni Web Oyun İstatistikleri
+    web_stats = await asyncio.to_thread(db.get_web_game_stats, user_id)
+    
     # Başlıklar
     headers = {
-        "tr": {"title": "📊 *Oyun İstatistikleriniz*", "win": "✅ Kazanma", "lose": "❌ Kaybetme", "draw": "🤝 Berabere", "total": "Toplam"},
-        "en": {"title": "📊 *Your Game Stats*", "win": "✅ Wins", "lose": "❌ Losses", "draw": "🤝 Draws", "total": "Total"},
-        "ru": {"title": "📊 *Ваша Статистика*", "win": "✅ Победы", "lose": "❌ Поражения", "draw": "🤝 Ничьи", "total": "Всего"}
+        "tr": {
+            "title": "📊 *Oyun İstatistikleriniz*",
+            "win": "✅ Kazanma", "lose": "❌ Kaybetme", "draw": "🤝 Berabere", "total": "Toplam",
+            "highscores": "🏆 *En Yüksek Skorlar*"
+        },
+        "en": {
+            "title": "📊 *Your Game Stats*",
+            "win": "✅ Wins", "lose": "❌ Losses", "draw": "🤝 Draws", "total": "Total",
+            "highscores": "🏆 *High Scores*"
+        },
+        "ru": {
+            "title": "📊 *Ваша Статистика*",
+            "win": "✅ Победы", "lose": "❌ Поражения", "draw": "🤝 Ничьи", "total": "Всего",
+            "highscores": "🏆 *Рекорды*"
+        }
     }
     h = headers.get(lang, headers["en"])
     
@@ -85,8 +100,16 @@ async def show_player_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         )
     
     msg_text = f"{h['title']}\n\n"
-    msg_text += f"❌⭕ {format_stats('XOX', xox_stats)}\n\n"
-    msg_text += f"🪨📄✂️ {format_stats('Taş-Kağıt-Makas', tkm_stats)}"
+    msg_text += f"❌⭕ {format_stats('Legacy XOX', xox_stats)}\n\n"
+    msg_text += f"🪨📄✂️ {format_stats('Taş-Kağıt-Makas', tkm_stats)}\n\n"
+    
+    msg_text += f"{h['highscores']}\n"
+    msg_text += f"🐍 Snake: *{web_stats.get('snake', 0)}*\n"
+    msg_text += f"🔢 2048: *{web_stats.get('2048', 0)}*\n"
+    msg_text += f"🐦 Flappy: *{web_stats.get('flappy', 0)}*\n"
+    msg_text += f"🏃 Runner: *{web_stats.get('runner', 0)}*\n"
+    msg_text += f"🧩 Sudoku: *{web_stats.get('sudoku', 0)}*\n"
+    msg_text += f"❌⭕ XOX (Web): *{web_stats.get('xox', 0)}*"
     
     sent_msg = await update.message.reply_text(msg_text, reply_markup=get_games_keyboard_markup(lang), parse_mode="Markdown")
     

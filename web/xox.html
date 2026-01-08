@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>XOX - ViraBeta</title>
+    <title>XOX - Vira</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -17,8 +17,7 @@
             --text-secondary: #a0a0b0;
             --x-color: #e94560;
             --o-color: #00d4ff;
-            --win-line: #00d26a;
-            --success: #00d26a;
+            --game-bg: #1a1a2e;
         }
 
         .light-theme {
@@ -27,6 +26,7 @@
             --bg-card: #ffffff;
             --text-primary: #1a1a2e;
             --text-secondary: #666666;
+            --game-bg: #e0e0e0;
         }
 
         * {
@@ -49,8 +49,16 @@
         }
 
         .header {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             margin-bottom: 20px;
+        }
+
+        .header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
         }
 
         .header h1 {
@@ -59,12 +67,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 5px;
-        }
-
-        .header .subtitle {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
         }
 
         .stats-bar {
@@ -138,11 +140,6 @@
             transform: scale(1.05);
         }
 
-        .difficulty-btn:hover:not(.active) {
-            background: var(--accent-secondary);
-            color: var(--text-primary);
-        }
-
         .game-container {
             background: var(--bg-card);
             padding: 20px;
@@ -159,16 +156,6 @@
             background: var(--bg-secondary);
         }
 
-        .turn-indicator .player-x {
-            color: var(--x-color);
-            font-weight: bold;
-        }
-
-        .turn-indicator .player-o {
-            color: var(--o-color);
-            font-weight: bold;
-        }
-
         .xox-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -181,50 +168,39 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--bg-secondary);
+            background: var(--game-bg);
+            border: 3px solid rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             font-size: 4rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
             user-select: none;
-            position: relative;
-            overflow: hidden;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
         .cell:hover:not(.taken) {
             background: var(--accent-secondary);
-            transform: scale(1.02);
-        }
-
-        .cell.taken {
-            cursor: not-allowed;
         }
 
         .cell .x {
             color: var(--x-color);
-            text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
-            animation: popIn 0.3s ease;
+            animation: pop 0.3s ease;
         }
 
         .cell .o {
             color: var(--o-color);
-            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
-            animation: popIn 0.3s ease;
+            animation: pop 0.3s ease;
         }
 
-        .cell.win-cell {
-            animation: winPulse 0.5s ease infinite alternate;
-        }
-
-        @keyframes popIn {
+        @keyframes pop {
             0% {
                 transform: scale(0);
                 opacity: 0;
             }
 
-            50% {
-                transform: scale(1.2);
+            80% {
+                transform: scale(1.1);
             }
 
             100% {
@@ -233,13 +209,19 @@
             }
         }
 
-        @keyframes winPulse {
-            0% {
-                background: var(--bg-secondary);
+        .cell.win-cell {
+            animation: win 1s infinite alternate;
+            background: rgba(0, 212, 106, 0.2);
+            border-color: #00d26a;
+        }
+
+        @keyframes win {
+            from {
+                transform: scale(1);
             }
 
-            100% {
-                background: rgba(0, 210, 106, 0.3);
+            to {
+                transform: scale(1.02);
             }
         }
 
@@ -247,7 +229,6 @@
             display: flex;
             gap: 15px;
             margin-top: 25px;
-            flex-wrap: wrap;
             justify-content: center;
         }
 
@@ -258,25 +239,9 @@
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
             background: linear-gradient(135deg, var(--accent), #ff6b8a);
             color: white;
             box-shadow: 0 4px 20px rgba(233, 69, 96, 0.4);
-        }
-
-        .control-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(233, 69, 96, 0.5);
-        }
-
-        .control-btn:active {
-            transform: translateY(0);
-        }
-
-        .control-btn.secondary {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .result-overlay {
@@ -290,12 +255,22 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(5px);
         }
 
         .result-overlay.show {
             display: flex;
-            animation: fadeIn 0.3s ease;
+            animation: fade 0.3s;
+        }
+
+        @keyframes fade {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .result-content {
@@ -304,8 +279,8 @@
             border-radius: 25px;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            animation: slideUp 0.4s ease;
-            max-width: 90%;
+            width: 90%;
+            max-width: 350px;
         }
 
         .result-content h2 {
@@ -313,98 +288,22 @@
             margin-bottom: 15px;
         }
 
-        .result-content h2.win {
-            background: linear-gradient(135deg, var(--success), #00ff88);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .result-content h2.lose {
-            background: linear-gradient(135deg, var(--x-color), #ff6b8a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .result-content h2.draw {
-            background: linear-gradient(135deg, var(--o-color), #00a8cc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
         .result-content p {
             color: var(--text-secondary);
             margin-bottom: 25px;
-            font-size: 1.1rem;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(50px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .footer {
-            margin-top: 30px;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            text-align: center;
-        }
-
-        /* Bot thinking animation */
-        .thinking {
-            position: relative;
-        }
-
-        .thinking::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 30px;
-            height: 30px;
-            margin: -15px 0 0 -15px;
-            border: 3px solid var(--o-color);
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
         }
     </style>
 </head>
 
 <body>
     <div class="header">
+        <img src="vira_logo.png" alt="Vira">
         <h1>❌⭕ XOX</h1>
-        <p class="subtitle">Tic-Tac-Toe</p>
     </div>
 
     <div class="stats-bar">
         <div class="stat-item player-x">
-            <span>❌ Sen</span>
+            <span id="label-you">❌ Sen</span>
             <span class="stat-value x" id="player-wins">0</span>
         </div>
         <div class="stat-item draws">
@@ -412,15 +311,15 @@
             <span class="stat-value" id="draws">0</span>
         </div>
         <div class="stat-item player-o">
-            <span>⭕ Bot</span>
+            <span id="label-bot">⭕ Bot</span>
             <span class="stat-value o" id="bot-wins">0</span>
         </div>
     </div>
 
     <div class="difficulty-selector">
-        <button class="difficulty-btn active" data-difficulty="easy">🟢 Kolay</button>
-        <button class="difficulty-btn" data-difficulty="medium">🟡 Orta</button>
-        <button class="difficulty-btn" data-difficulty="hard">🔴 Zor</button>
+        <button class="difficulty-btn active" data-difficulty="easy" id="btn-easy">🟢 Kolay</button>
+        <button class="difficulty-btn" data-difficulty="medium" id="btn-medium">🟡 Orta</button>
+        <button class="difficulty-btn" data-difficulty="hard" id="btn-hard">🔴 Zor</button>
     </div>
 
     <div class="game-container">
@@ -441,283 +340,105 @@
     </div>
 
     <div class="controls">
-        <button class="control-btn" id="new-game">🔄 Yeni Oyun</button>
+        <button class="control-btn" onclick="resetGame()" id="btn-new">🔄 Yeni Oyun</button>
     </div>
 
     <div class="result-overlay" id="result-overlay">
         <div class="result-content">
             <h2 id="result-title">Tebrikler!</h2>
             <p id="result-message">Oyunu kazandın!</p>
-            <button class="control-btn" onclick="closeResult()">🔄 Tekrar Oyna</button>
+            <button class="control-btn" onclick="closeResult()" id="btn-again">🔄 Tekrar Oyna</button>
         </div>
     </div>
 
-    <div class="footer">
-        ViraBeta XOX • Powered by Telegram
-    </div>
-
     <script>
-        // --- TELEGRAM WEB APP INIT ---
         const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.ready();
-            tg.expand();
-
+            try { tg.expand(); } catch (e) { }
             if (tg.colorScheme === 'light') {
                 document.body.classList.add('light-theme');
             }
         }
 
-        // --- GAME STATE ---
-        let board = ['', '', '', '', '', '', '', '', ''];
-        let currentPlayer = 'X'; // Player is X, Bot is O
+        // --- Localization ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const lang = urlParams.get('lang') || 'en';
+
+        const TEXTS = {
+            tr: {
+                you: '❌ Sen', bot: '⭕ Bot',
+                easy: '🟢 Kolay', medium: '🟡 Orta', hard: '🔴 Zor',
+                turnYou: 'Sıra: <span class="player-x">❌ Sende</span>',
+                turnBot: 'Sıra: <span class="player-o">⭕ Bot</span>',
+                win: '🎉 Tebrikler!', winMsg: 'Oyunu kazandın!',
+                lose: '🤖 Bot Kazandı!', loseMsg: 'Bir dahaki sefere...',
+                draw: '🤝 Berabere!', drawMsg: 'Kimse kazanamadı',
+                newGame: '🔄 Yeni Oyun', playAgain: '🔄 Tekrar Oyna'
+            },
+            en: {
+                you: '❌ You', bot: '⭕ Bot',
+                easy: '🟢 Easy', medium: '🟡 Medium', hard: '🔴 Hard',
+                turnYou: 'Turn: <span class="player-x">❌ You</span>',
+                turnBot: 'Turn: <span class="player-o">⭕ Bot</span>',
+                win: '🎉 You Won!', winMsg: 'Victory is yours!',
+                lose: '🤖 Bot Won!', loseMsg: 'Maybe next time...',
+                draw: '🤝 Draw!', drawMsg: 'No winner',
+                newGame: '🔄 New Game', playAgain: '🔄 Play Again'
+            },
+            ru: {
+                you: '❌ Вы', bot: '⭕ Бот',
+                easy: '🟢 Легко', medium: '🟡 Средне', hard: '🔴 Сложно',
+                turnYou: 'Ход: <span class="player-x">❌ Ваш</span>',
+                turnBot: 'Ход: <span class="player-o">⭕ Бот</span>',
+                win: '🎉 Победа!', winMsg: 'Вы выиграли!',
+                lose: '🤖 Бот выиграл', loseMsg: 'Повезет в другой раз',
+                draw: '🤝 Ничья!', drawMsg: 'Победителя нет',
+                newGame: '🔄 Новая', playAgain: '🔄 Еще раз'
+            }
+        };
+
+        const t = TEXTS[lang] || TEXTS['en'];
+
+        document.getElementById('label-you').innerText = t.you;
+        document.getElementById('label-bot').innerText = t.bot;
+        document.getElementById('btn-easy').innerText = t.easy;
+        document.getElementById('btn-medium').innerText = t.medium;
+        document.getElementById('btn-hard').innerText = t.hard;
+        document.getElementById('btn-new').innerText = t.newGame;
+        document.getElementById('btn-again').innerText = t.playAgain;
+
+        async function saveScore(score) {
+            if (!tg) return;
+            try {
+                await fetch('/api/save_score', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        initData: tg.initData,
+                        game: 'xox',
+                        score: score
+                    })
+                });
+            } catch (e) { }
+        }
+
+        // --- Game Logic ---
+        let board = Array(9).fill('');
+        let currentPlayer = 'X';
         let gameOver = false;
         let difficulty = 'easy';
         let isThinking = false;
 
-        // Stats
         let playerWins = 0;
         let botWins = 0;
         let draws = 0;
 
         const winPatterns = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-            [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
-            [0, 4, 8], [2, 4, 6]             // diagonals
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
         ];
-
-        // --- RENDER ---
-        function renderBoard() {
-            const cells = document.querySelectorAll('.cell');
-            cells.forEach((cell, index) => {
-                const value = board[index];
-                cell.innerHTML = value ? `<span class="${value.toLowerCase()}">${value === 'X' ? '❌' : '⭕'}</span>` : '';
-                cell.classList.toggle('taken', value !== '');
-            });
-        }
-
-        function updateTurnIndicator() {
-            const indicator = document.getElementById('turn-indicator');
-            if (gameOver) {
-                indicator.innerHTML = 'Oyun Bitti!';
-            } else if (isThinking) {
-                indicator.innerHTML = 'Bot düşünüyor... <span class="player-o">⭕</span>';
-            } else {
-                indicator.innerHTML = currentPlayer === 'X'
-                    ? 'Sıra: <span class="player-x">❌ Sende</span>'
-                    : 'Sıra: <span class="player-o">⭕ Bot</span>';
-            }
-        }
-
-        function updateStats() {
-            document.getElementById('player-wins').textContent = playerWins;
-            document.getElementById('bot-wins').textContent = botWins;
-            document.getElementById('draws').textContent = draws;
-        }
-
-        // --- GAME LOGIC ---
-        function checkWinner() {
-            for (const pattern of winPatterns) {
-                const [a, b, c] = pattern;
-                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-                    return { winner: board[a], pattern };
-                }
-            }
-            return board.includes('') ? null : { winner: 'draw', pattern: null };
-        }
-
-        function highlightWinCells(pattern) {
-            if (!pattern) return;
-            const cells = document.querySelectorAll('.cell');
-            pattern.forEach(index => {
-                cells[index].classList.add('win-cell');
-            });
-        }
-
-        function showResult(winner) {
-            const overlay = document.getElementById('result-overlay');
-            const title = document.getElementById('result-title');
-            const message = document.getElementById('result-message');
-
-            if (winner === 'X') {
-                title.className = 'win';
-                title.textContent = '🎉 Tebrikler!';
-                message.textContent = 'Oyunu kazandın!';
-                playerWins++;
-            } else if (winner === 'O') {
-                title.className = 'lose';
-                title.textContent = '🤖 Bot Kazandı!';
-                message.textContent = 'Bir dahaki sefere...';
-                botWins++;
-            } else {
-                title.className = 'draw';
-                title.textContent = '🤝 Berabere!';
-                message.textContent = 'Kimse kazanamadı';
-                draws++;
-            }
-
-            updateStats();
-
-            setTimeout(() => {
-                overlay.classList.add('show');
-                if (tg?.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred(winner === 'X' ? 'success' : winner === 'O' ? 'error' : 'warning');
-                }
-            }, 500);
-        }
-
-        function closeResult() {
-            document.getElementById('result-overlay').classList.remove('show');
-            resetGame();
-        }
-
-        function resetGame() {
-            board = ['', '', '', '', '', '', '', '', ''];
-            currentPlayer = 'X';
-            gameOver = false;
-            isThinking = false;
-
-            document.querySelectorAll('.cell').forEach(cell => {
-                cell.classList.remove('win-cell');
-            });
-
-            renderBoard();
-            updateTurnIndicator();
-        }
-
-        // --- BOT AI ---
-        function minimax(board, depth, isMaximizing) {
-            const result = checkWinner();
-            if (result) {
-                if (result.winner === 'O') return 10 - depth;
-                if (result.winner === 'X') return depth - 10;
-                return 0;
-            }
-
-            if (isMaximizing) {
-                let best = -Infinity;
-                for (let i = 0; i < 9; i++) {
-                    if (board[i] === '') {
-                        board[i] = 'O';
-                        best = Math.max(best, minimax(board, depth + 1, false));
-                        board[i] = '';
-                    }
-                }
-                return best;
-            } else {
-                let best = Infinity;
-                for (let i = 0; i < 9; i++) {
-                    if (board[i] === '') {
-                        board[i] = 'X';
-                        best = Math.min(best, minimax(board, depth + 1, true));
-                        board[i] = '';
-                    }
-                }
-                return best;
-            }
-        }
-
-        function getBestMove() {
-            let bestScore = -Infinity;
-            let bestMove = null;
-
-            for (let i = 0; i < 9; i++) {
-                if (board[i] === '') {
-                    board[i] = 'O';
-                    const score = minimax(board, 0, false);
-                    board[i] = '';
-                    if (score > bestScore) {
-                        bestScore = score;
-                        bestMove = i;
-                    }
-                }
-            }
-            return bestMove;
-        }
-
-        function getRandomMove() {
-            const empty = [];
-            for (let i = 0; i < 9; i++) {
-                if (board[i] === '') empty.push(i);
-            }
-            return empty[Math.floor(Math.random() * empty.length)];
-        }
-
-        function botMove() {
-            if (gameOver) return;
-
-            isThinking = true;
-            updateTurnIndicator();
-
-            // Add thinking delay for better UX
-            const delay = 400 + Math.random() * 400;
-
-            setTimeout(() => {
-                let move;
-
-                if (difficulty === 'easy') {
-                    // 30% optimal, 70% random
-                    move = Math.random() < 0.3 ? getBestMove() : getRandomMove();
-                } else if (difficulty === 'medium') {
-                    // 60% optimal, 40% random
-                    move = Math.random() < 0.6 ? getBestMove() : getRandomMove();
-                } else {
-                    // 100% optimal
-                    move = getBestMove();
-                }
-
-                if (move !== null) {
-                    board[move] = 'O';
-                    renderBoard();
-
-                    if (tg?.HapticFeedback) {
-                        tg.HapticFeedback.impactOccurred('light');
-                    }
-
-                    const result = checkWinner();
-                    if (result) {
-                        gameOver = true;
-                        highlightWinCells(result.pattern);
-                        showResult(result.winner);
-                    } else {
-                        currentPlayer = 'X';
-                    }
-                }
-
-                isThinking = false;
-                updateTurnIndicator();
-            }, delay);
-        }
-
-        // --- EVENT LISTENERS ---
-        document.querySelectorAll('.cell').forEach(cell => {
-            cell.addEventListener('click', () => {
-                if (gameOver || isThinking || currentPlayer !== 'X') return;
-
-                const index = parseInt(cell.dataset.index);
-                if (board[index] !== '') return;
-
-                // Player move
-                board[index] = 'X';
-                renderBoard();
-
-                if (tg?.HapticFeedback) {
-                    tg.HapticFeedback.impactOccurred('medium');
-                }
-
-                const result = checkWinner();
-                if (result) {
-                    gameOver = true;
-                    highlightWinCells(result.pattern);
-                    showResult(result.winner);
-                    return;
-                }
-
-                currentPlayer = 'O';
-                updateTurnIndicator();
-                botMove();
-            });
-        });
 
         document.querySelectorAll('.difficulty-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -728,11 +449,189 @@
             });
         });
 
-        document.getElementById('new-game').addEventListener('click', resetGame);
+        document.querySelectorAll('.cell').forEach(cell => {
+            cell.addEventListener('click', () => makeMove(parseInt(cell.dataset.index)));
+        });
 
-        // --- START ---
-        renderBoard();
-        updateTurnIndicator();
+        function makeMove(index) {
+            if (board[index] !== '' || gameOver || isThinking) return;
+
+            // Player Move
+            board[index] = 'X';
+            renderCell(index, 'X');
+
+            if (checkEndGame('X')) return;
+
+            // Bot Move
+            currentPlayer = 'O';
+            updateTurnIndicator();
+            isThinking = true;
+
+            setTimeout(() => {
+                const botIndex = getBotMove();
+                board[botIndex] = 'O';
+                renderCell(botIndex, 'O');
+                isThinking = false;
+
+                if (checkEndGame('O')) return;
+
+                currentPlayer = 'X';
+                updateTurnIndicator();
+            }, 600);
+        }
+
+        function renderCell(index, player) {
+            const cell = document.querySelector(`.cell[data-index="${index}"]`);
+            cell.innerHTML = `<span class="${player.toLowerCase()}">${player === 'X' ? '❌' : '⭕'}</span>`;
+            cell.classList.add('taken');
+            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function updateTurnIndicator() {
+            const ind = document.getElementById('turn-indicator');
+            if (currentPlayer === 'X') ind.innerHTML = t.turnYou;
+            else ind.innerHTML = t.turnBot;
+        }
+
+        function checkEndGame(player) {
+            const win = checkWinner();
+            if (win) {
+                gameOver = true;
+                highlightWinCells(win.pattern);
+                if (win.winner === 'X') {
+                    showResult('win');
+                    saveScore(100); // 100 points for win
+                } else {
+                    showResult('lose');
+                }
+                return true;
+            }
+            if (!board.includes('')) {
+                gameOver = true;
+                showResult('draw');
+                saveScore(10); // 10 points for draw
+                return true;
+            }
+            return false;
+        }
+
+        function checkWinner() {
+            for (const p of winPatterns) {
+                if (board[p[0]] && board[p[0]] === board[p[1]] && board[p[0]] === board[p[2]]) {
+                    return { winner: board[p[0]], pattern: p };
+                }
+            }
+            return null;
+        }
+
+        function highlightWinCells(pattern) {
+            pattern.forEach(i => document.querySelector(`.cell[data-index="${i}"]`).classList.add('win-cell'));
+        }
+
+        function showResult(type) {
+            const overlay = document.getElementById('result-overlay');
+            const title = document.getElementById('result-title');
+            const msg = document.getElementById('result-message');
+
+            if (type === 'win') {
+                title.innerText = t.win; title.className = 'win';
+                msg.innerText = t.winMsg; playerWins++;
+                if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else if (type === 'lose') {
+                title.innerText = t.lose; title.className = 'lose';
+                msg.innerText = t.loseMsg; botWins++;
+                if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            } else {
+                title.innerText = t.draw; title.className = 'draw';
+                msg.innerText = t.drawMsg; draws++;
+                if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+            }
+
+            document.getElementById('player-wins').innerText = playerWins;
+            document.getElementById('bot-wins').innerText = botWins;
+            document.getElementById('draws').innerText = draws;
+
+            setTimeout(() => overlay.classList.add('show'), 500);
+        }
+
+        function closeResult() {
+            document.getElementById('result-overlay').classList.remove('show');
+            resetGame();
+        }
+
+        function resetGame() {
+            board.fill('');
+            currentPlayer = 'X';
+            gameOver = false;
+            isThinking = false;
+            document.querySelectorAll('.cell').forEach(c => {
+                c.innerHTML = '';
+                c.className = 'cell';
+            });
+            updateTurnIndicator();
+        }
+
+        // --- AI ---
+        function getBotMove() {
+            // Easy: Random
+            if (difficulty === 'easy') {
+                const empty = board.map((v, i) => v === '' ? i : null).filter(v => v !== null);
+                return empty[Math.floor(Math.random() * empty.length)];
+            }
+
+            // Medium: 30% Random, 70% Best
+            if (difficulty === 'medium' && Math.random() < 0.3) {
+                const empty = board.map((v, i) => v === '' ? i : null).filter(v => v !== null);
+                return empty[Math.floor(Math.random() * empty.length)];
+            }
+
+            // Hard: Minimax
+            let bestScore = -Infinity;
+            let move;
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'O';
+                    let score = minimax(board, 0, false);
+                    board[i] = '';
+                    if (score > bestScore) {
+                        bestScore = score;
+                        move = i;
+                    }
+                }
+            }
+            return move;
+        }
+
+        function minimax(board, depth, isMaximizing) {
+            const result = checkWinner();
+            if (result?.winner === 'O') return 10 - depth;
+            if (result?.winner === 'X') return depth - 10;
+            if (!board.includes('')) return 0;
+
+            if (isMaximizing) {
+                let bestScore = -Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = 'O';
+                        let score = minimax(board, depth + 1, false);
+                        board[i] = '';
+                        bestScore = Math.max(score, bestScore);
+                    }
+                }
+                return bestScore;
+            } else {
+                let bestScore = Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = 'X';
+                        let score = minimax(board, depth + 1, true);
+                        board[i] = '';
+                        bestScore = Math.min(score, bestScore);
+                    }
+                }
+                return bestScore;
+            }
+        }
     </script>
 </body>
 
