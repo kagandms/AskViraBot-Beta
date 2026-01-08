@@ -5,6 +5,8 @@
 from .core import (
     games_menu,
     show_player_stats,
+    dice_command,
+    coinflip_command,
     xox_start,
     handle_xox_message,
     get_game_mode_keyboard
@@ -48,6 +50,8 @@ def setup(app):
     app.add_handler(CommandHandler("games", games_menu))
     app.add_handler(CommandHandler("tkm", tkm_start))
     app.add_handler(CommandHandler("xox", xox_start))
+    app.add_handler(CommandHandler("dice", dice_command))
+    app.add_handler(CommandHandler("coinflip", coinflip_command))
     app.add_handler(CommandHandler("stats", show_player_stats))
     
     # 2. Router
@@ -59,6 +63,8 @@ def setup(app):
     register_button("back_to_games", games_menu)
     register_button("games_main_button", games_menu)
     register_button("xox_game", xox_start)
+    register_button("dice", dice_command)
+    register_button("coinflip", coinflip_command)
     register_button("tkm_main", tkm_start)
     register_button("player_stats", show_player_stats)
     

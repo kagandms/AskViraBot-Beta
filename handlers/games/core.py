@@ -95,6 +95,34 @@ async def show_player_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 # --- DICE & COINFLIP ---
 
     
+# --- DICE & COINFLIP ---
+@rate_limit("games")
+async def dice_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    lang = await db.get_user_lang(user_id)
+    number = random.randint(1, 6)
+    await asyncio.to_thread(db.log_dice_roll, user_id, number)
+    
+    try:
+        await update.message.delete()
+    except: pass
+    
+    await update.message.reply_text(TEXTS["dice_rolled"][lang].format(number=number), reply_markup=get_games_keyboard_markup(lang))
+
+@rate_limit("games")
+async def coinflip_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    lang = await db.get_user_lang(user_id)
+    result = random.choice(["heads", "tails"])
+    await asyncio.to_thread(db.log_coinflip, user_id, result)
+    translations = {"tr": {"heads": "Yazı", "tails": "Tura"}, "en": {"heads": "Heads", "tails": "Tails"}, "ru": {"heads": "Орёл", "tails": "Решка"}}
+    
+    try:
+        await update.message.delete()
+    except: pass
+    
+    await update.message.reply_text(TEXTS["coinflip_result"][lang].format(result=translations[lang][result]), reply_markup=get_games_keyboard_markup(lang))
+    
 # --- XOX Functions (Simplest to keep here for now as they are stateless mostly) ---
 def get_xox_board_reply_markup(board):
     keyboard = []

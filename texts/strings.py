@@ -79,8 +79,10 @@ AUTO_MAPPINGS = {
 
     # Games (Restored - No Gambling)
     "xox_game": extract_button_set(GAMES_BUTTONS, 0, 0),
-    "tkm_main": extract_button_set(GAMES_BUTTONS, 0, 1),
-    "player_stats": extract_button_set(GAMES_BUTTONS, 1, 0),
+    "dice": extract_button_set(GAMES_BUTTONS, 0, 1),
+    "coinflip": extract_button_set(GAMES_BUTTONS, 1, 0),
+    "tkm_main": extract_button_set(GAMES_BUTTONS, 1, 1),
+    "player_stats": extract_button_set(GAMES_BUTTONS, 2, 0),
 
 
 

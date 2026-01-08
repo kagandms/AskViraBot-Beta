@@ -21,6 +21,22 @@ def log_tkm_game(user_id: int | str, user_move: str, bot_move: str, result: str)
     except Exception as e:
         logger.error(f"TKM log hatası (User: {user_id}): {e}")
 
+def log_coinflip(user_id: int | str, result: str) -> None:
+    if not supabase: return
+    try:
+        data = {"user_id": str(user_id), "result": result}
+        supabase.table("coinflip_logs").insert(data).execute()
+    except Exception as e:
+        logger.error(f"Coinflip log hatası (User: {user_id}): {e}")
+
+def log_dice_roll(user_id: int | str, result: int) -> None:
+    if not supabase: return
+    try:
+        data = {"user_id": str(user_id), "result": str(result)}
+        supabase.table("dice_logs").insert(data).execute()
+    except Exception as e:
+        logger.error(f"Dice log hatası (User: {user_id}): {e}")
+
 
 
 # --- STATS ---
