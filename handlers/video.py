@@ -30,7 +30,8 @@ async def video_downloader_menu(update: Update, context: ContextTypes.DEFAULT_TY
     # Delete user's button press
     try:
         await update.message.delete()
-    except: pass
+    except Exception as e:
+        logger.debug(f"Video menu cleanup error: {e}")
     
     await state.clear_user_states(user_id)
     
@@ -67,7 +68,8 @@ async def set_video_platform(update: Update, context: ContextTypes.DEFAULT_TYPE)
     # Cleanup user trigger
     try:
         await update.message.delete()
-    except: pass
+    except Exception as e:
+        logger.debug(f"Video platform cleanup error: {e}")
     
     sent_message = await update.message.reply_text(
         TEXTS["format_selection_prompt"][lang],
@@ -107,7 +109,8 @@ async def set_download_format(update: Update, context: ContextTypes.DEFAULT_TYPE
     # Cleanup user trigger
     try:
         await update.message.delete()
-    except: pass
+    except Exception as e:
+        logger.debug(f"Video format cleanup error: {e}")
     
     sent_message = await update.message.reply_text(
         TEXTS["video_downloader_prompt_link"][lang].format(platform=platform_display),
@@ -138,8 +141,8 @@ async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_
             if "message_id" in download_info:
                 await context.bot.delete_message(chat_id=user_id, message_id=download_info["message_id"])
             await update.message.delete()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug(f"Video back cleanup error: {e}")
 
         await state.clear_user_states(user_id)
         await video_downloader_menu(update, context)
@@ -233,7 +236,10 @@ async def download_and_send_media(update: Update, context: ContextTypes.DEFAULT_
                     reply_markup=get_tools_keyboard_markup(lang)
                 )
         
-        await status_msg.delete()
+        try:
+            await status_msg.delete()
+        except Exception as e:
+             logger.debug(f"Video temp msg delete error: {e}")
         
     except Exception as e:
         error_msg = str(e)

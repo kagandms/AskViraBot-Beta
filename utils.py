@@ -140,14 +140,16 @@ async def cleanup_context(context, user_id):
         if "message_id" in data:
             try:
                 await context.bot.delete_message(chat_id=user_id, message_id=data["message_id"])
-            except Exception: pass
+            except Exception as e:
+                pass # Single message delete might fail if already deleted
             
         # Çoklu message_ids temizliği (yeni sistem)
         if "message_ids" in data and isinstance(data["message_ids"], list):
             for mid in data["message_ids"]:
                 try:
                     await context.bot.delete_message(chat_id=user_id, message_id=mid)
-                except Exception: pass
+                except Exception:
+                    pass # Batch delete, ignore individual failures
     except Exception as e:
         # logging.error(f"Cleanup error: {e}")
         pass
@@ -168,12 +170,15 @@ async def send_temp_message(update_or_bot, chat_id: int, text: str, delay: float
         await asyncio.sleep(delay)
         try:
             await msg.delete()
-        except: pass
-    except: pass
+        except Exception as e:
+            pass # Temp message delete error
+    except Exception as e:
+        pass # Send temp message error
 
 async def delete_user_message(update):
     """Kullanıcının gönderdiği mesajı siler (Eğer yetki varsa)"""
     try:
         if update.message:
             await update.message.delete()
-    except: pass
+    except Exception:
+        pass

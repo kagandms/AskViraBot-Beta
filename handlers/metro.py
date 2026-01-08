@@ -128,8 +128,8 @@ async def metro_menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     # Loading mesajını sil
     try:
         await loading_msg.delete()
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug(f"Metro loading msg del error: {e}")
     
     if not lines:
         await update.message.reply_text(TEXTS["metro_api_error"][lang])
@@ -221,8 +221,8 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
                 if "message_id" in current_selection:
                     await context.bot.delete_message(chat_id=user_id, message_id=current_selection["message_id"])
                 await update.message.delete()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug(f"Metro back(station) cleanup error: {e}")
 
             # İstasyondan hatta dön
             current_selection.pop("station", None)
@@ -239,8 +239,8 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
                 if "message_id" in current_selection:
                     await context.bot.delete_message(chat_id=user_id, message_id=current_selection["message_id"])
                 await update.message.delete()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug(f"Metro back(line) cleanup error: {e}")
 
             # Hattan hat listesine dön
             current_selection.pop("line", None)
@@ -257,8 +257,8 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
                 if "message_id" in current_selection:
                     await context.bot.delete_message(chat_id=user_id, message_id=current_selection["message_id"])
                 await update.message.delete()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug(f"Metro exit cleanup error: {e}")
 
             # Metro'dan çık, Araçlar menüsüne dön
             from handlers.general import tools_menu_command
@@ -273,7 +273,8 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         # Cleanup
         try:
             await update.message.delete()
-        except: pass
+        except Exception as e:
+            logger.debug(f"Fav cleanup error: {e}")
         await use_favorite(update, context, text, lang, user_id)
         return
 
@@ -291,7 +292,8 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         # Cleanup
         try:
             await update.message.delete()
-        except: pass
+        except Exception as e:
+            logger.debug(f"Fav stations cleanup error: {e}")
         await show_favorites_list(update, context, lang)
         return
     if any(kw in text_lower for kw in ["favorileri düzenle", "edit favorites", "ред. избранное"]):
@@ -304,7 +306,8 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         # Cleanup
         try:
             await update.message.delete()
-        except: pass
+        except Exception as e:
+            logger.debug(f"Fav main cleanup error: {e}")
         await show_favorites(update, context, lang)
         return
 
@@ -315,7 +318,8 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
         # Cleanup
         try:
             await update.message.delete()
-        except: pass
+        except Exception as e:
+            logger.debug(f"Fav delete cleanup error: {e}")
         await delete_favorite(update, context, text, lang, user_id)
         return
 
@@ -338,13 +342,15 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
                 # Cleanup user selection message
                 try:
                     await update.message.delete()
-                except: pass
+                except Exception as e:
+                    logger.debug(f"Line select cleanup error: {e}")
                 
                 # Cleanup previous list message
                 if "message_id" in current_selection:
                      try:
                         await context.bot.delete_message(chat_id=user_id, message_id=current_selection["message_id"])
-                     except: pass
+                     except Exception as e:
+                        logger.debug(f"Line select prev cleanup error: {e}")
                 break
         
         if selected_line:
@@ -372,13 +378,15 @@ async def handle_metro_message(update: Update, context: ContextTypes.DEFAULT_TYP
                 # Cleanup user selection message
                 try:
                     await update.message.delete()
-                except: pass
+                except Exception as e:
+                    logger.debug(f"Station select cleanup error: {e}")
                 
                 # Cleanup previous list message
                 if "message_id" in current_selection:
                      try:
                         await context.bot.delete_message(chat_id=user_id, message_id=current_selection["message_id"])
-                     except: pass
+                     except Exception as e:
+                        logger.debug(f"Station select prev cleanup error: {e}")
                 break
         
         if selected_station:
@@ -432,8 +440,8 @@ async def show_stations(update, context, line_id, line_name, lang):
     
     try:
         await loading_msg.delete()
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug(f"Station loading msg error: {e}")
     
     if not stations:
         await update.message.reply_text(TEXTS["metro_api_error"][lang])
@@ -475,8 +483,8 @@ async def show_directions(update, context, line_id, station_id, lang):
     
     try:
         await loading_msg.delete()
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug(f"Directions loading msg error: {e}")
     
     if not directions:
         await update.message.reply_text(TEXTS["metro_api_error"][lang])
@@ -512,8 +520,8 @@ async def show_timetable(update, context, station_id, direction_id, direction_na
     
     try:
         await loading_msg.delete()
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug(f"Timetable loading msg error: {e}")
     
     if not timetable_data:
         await update.message.reply_text(TEXTS["metro_no_departures"][lang])
@@ -742,20 +750,8 @@ async def save_to_favorites(update: Update, context: ContextTypes.DEFAULT_TYPE, 
     selection = await state.get_data(user_id) or {}
     
     required_keys = ["line", "line_name", "station", "station_name", "direction_id", "direction_name"]
-    # We might not have direction stored in state if we just clicked it.
-    # WAIT: User clicks "Add to favorites". When does this happen?
-    # It happens AFTER showing timetable. But in handle_metro_message, we didn't save direction to state selection!
-    # I need to fix `handle_metro_message` to save direction when user clicks direction button.
-    # Actually, in `handle_metro_message`, when direction is clicked, I didn't save it. I should save it.
-    # But wait, `save_to_favorites` is called via button click. At that point, `selection` MUST have direction.
-    # See below fix.
     
-    # If direction keys are missing, we can't save.
-    # Let me check where save_to_favorites is called. It is called from menu after timetable is shown.
-    # But currently `handle_metro_message` DOES NOT store direction_id/name into persistent state when direction is selected.
-    # I MUST FIX `handle_metro_message` first (see above logic).
-    
-    # Assuming I fixed handle_metro_message:
+    # Check if direction keys are missing
     if not all(k in selection for k in required_keys):
         await update.message.reply_text("⚠️ Hata: Seçim bilgisi eksik (Yön seçilmedi).")
         return
@@ -781,14 +777,12 @@ async def save_to_favorites(update: Update, context: ContextTypes.DEFAULT_TYPE, 
         await metro_menu_command(update, context)
         
     else:
-        # Zaten varsa da dönelim mi? Kullanıcı "eklendi" sanıp dönmek isteyebilir.
         exists_texts = {
             "tr": "ℹ️ Bu istasyon zaten favori listenizde.",
             "en": "ℹ️ Already in favorites.",
             "ru": "ℹ️ Уже в избранном."
         }
         await update.message.reply_text(exists_texts.get(lang, exists_texts["en"]))
-        # Burada kalabiliriz veya dönebiliriz. Şimdilik kalalım ki görsün.
 
 
 async def use_favorite(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str, lang: str, user_id: int) -> None:
