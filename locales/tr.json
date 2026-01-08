@@ -121,7 +121,8 @@
   "buttons": {
     "MAIN_BUTTONS": [
       [
-        "🛠 Araçlar"
+        "🛠 Araçlar",
+        "🎮 Oyun Odası"
       ],
       [
         "🌐 Dil Değiştir",
@@ -174,6 +175,18 @@
         "🔙 Platform Seçimi"
       ]
     ],
+    "GAMES_BUTTONS": [
+      [
+        "❌⭕ XOX",
+        "🪨📄✂️ T-K-M"
+      ],
+      [
+        "📊 İstatistiklerim"
+      ],
+      [
+        "🔙 Ana Menü"
+      ]
+    ],
     "NOTES_BUTTONS": [
       [
         "➕ Not Ekle",
@@ -193,6 +206,20 @@
       ],
       [
         "🔙 Notlar Menüsü"
+      ]
+    ],
+    "TKM_BUTTONS": [
+      [
+        "🪨 Taş"
+      ],
+      [
+        "📄 Kağıt"
+      ],
+      [
+        "✂️ Makas"
+      ],
+      [
+        "🔙 Oyun Odası"
       ]
     ],
     "PDF_CONVERTER_BUTTONS": [

@@ -121,7 +121,8 @@
   "buttons": {
     "MAIN_BUTTONS": [
       [
-        "🛠 Tools"
+        "🛠 Tools",
+        "🎮 Game Room"
       ],
       [
         "🌐 Change Language",
@@ -174,6 +175,18 @@
         "🔙 Platform Selection"
       ]
     ],
+    "GAMES_BUTTONS": [
+      [
+        "❌⭕ XOX",
+        "🪨📄✂️ R-P-S"
+      ],
+      [
+        "📊 My Stats"
+      ],
+      [
+        "🔙 Main Menu"
+      ]
+    ],
     "NOTES_BUTTONS": [
       [
         "➕ Add Note",
@@ -193,6 +206,20 @@
       ],
       [
         "🔙 Notes Menu"
+      ]
+    ],
+    "TKM_BUTTONS": [
+      [
+        "🪨 Rock"
+      ],
+      [
+        "📄 Paper"
+      ],
+      [
+        "✂️ Scissors"
+      ],
+      [
+        "🔙 Game Room"
       ]
     ],
     "PDF_CONVERTER_BUTTONS": [

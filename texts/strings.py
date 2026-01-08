@@ -28,7 +28,9 @@ ALL_BUTTONS = i18n.get_all_buttons()
 MAIN_BUTTONS = ALL_BUTTONS.get("MAIN_BUTTONS", {})
 TOOLS_BUTTONS = ALL_BUTTONS.get("TOOLS_BUTTONS", {})
 VIDEO_DOWNLOADER_BUTTONS = ALL_BUTTONS.get("VIDEO_DOWNLOADER_BUTTONS", {})
+GAMES_BUTTONS = ALL_BUTTONS.get("GAMES_BUTTONS", {})
 FORMAT_SELECTION_BUTTONS = ALL_BUTTONS.get("FORMAT_SELECTION_BUTTONS", {})
+TKM_BUTTONS = ALL_BUTTONS.get("TKM_BUTTONS", {})
 
 
 # --- MANUEL MAPPINGS (Özel durumlar için) ---
@@ -75,6 +77,11 @@ AUTO_MAPPINGS = {
     "video_downloader_main_button": extract_button_set(TOOLS_BUTTONS, 3, 0),
     "shazam_main_button": extract_button_set(TOOLS_BUTTONS, 3, 1),
 
+    # Games (Restored - No Gambling)
+    "xox_game": extract_button_set(GAMES_BUTTONS, 0, 0),
+    "tkm_main": extract_button_set(GAMES_BUTTONS, 0, 1),
+    "player_stats": extract_button_set(GAMES_BUTTONS, 1, 0),
+
 
 
     # Notes
@@ -84,6 +91,11 @@ AUTO_MAPPINGS = {
     "delete_note_button": extract_button_set(NOTES_BUTTONS, 1, 1),
     
     "select_delete_note_button": extract_button_set(DELETE_NOTES_BUTTONS, 0, 0),
+    
+    # TKM
+    "tkm_rock": extract_button_set(TKM_BUTTONS, 0, 0),
+    "tkm_paper": extract_button_set(TKM_BUTTONS, 1, 0),
+    "tkm_scissors": extract_button_set(TKM_BUTTONS, 2, 0),
     
 
     
