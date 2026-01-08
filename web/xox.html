@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>XOX - ViraBeta</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16213e;
+            --accent: #e94560;
+            --accent-secondary: #0f3460;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --x-color: #e94560;
+            --o-color: #00d4ff;
+            --win-line: #00d26a;
+            --success: #00d26a;
+        }
+
+        .light-theme {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1a1a2e;
+            --text-secondary: #666666;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, var(--x-color), var(--o-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .header .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-card);
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-item.player-x {
+            border: 2px solid var(--x-color);
+        }
+
+        .stat-item.player-o {
+            border: 2px solid var(--o-color);
+        }
+
+        .stat-item.draws {
+            border: 2px solid var(--text-secondary);
+        }
+
+        .stat-value {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .stat-value.x {
+            color: var(--x-color);
+        }
+
+        .stat-value.o {
+            color: var(--o-color);
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .difficulty-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .difficulty-btn.active {
+            background: linear-gradient(135deg, var(--accent), #ff6b8a);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .difficulty-btn:hover:not(.active) {
+            background: var(--accent-secondary);
+            color: var(--text-primary);
+        }
+
+        .game-container {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .turn-indicator {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            border-radius: 15px;
+            background: var(--bg-secondary);
+        }
+
+        .turn-indicator .player-x {
+            color: var(--x-color);
+            font-weight: bold;
+        }
+
+        .turn-indicator .player-o {
+            color: var(--o-color);
+            font-weight: bold;
+        }
+
+        .xox-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: min(85vw, 320px);
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            font-size: 4rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cell:hover:not(.taken) {
+            background: var(--accent-secondary);
+            transform: scale(1.02);
+        }
+
+        .cell.taken {
+            cursor: not-allowed;
+        }
+
+        .cell .x {
+            color: var(--x-color);
+            text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
+            animation: popIn 0.3s ease;
+        }
+
+        .cell .o {
+            color: var(--o-color);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            animation: popIn 0.3s ease;
+        }
+
+        .cell.win-cell {
+            animation: winPulse 0.5s ease infinite alternate;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes winPulse {
+            0% {
+                background: var(--bg-secondary);
+            }
+
+            100% {
+                background: rgba(0, 210, 106, 0.3);
+            }
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .control-btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--accent), #ff6b8a);
+            color: white;
+            box-shadow: 0 4px 20px rgba(233, 69, 96, 0.4);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(233, 69, 96, 0.5);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        .control-btn.secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .result-overlay.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .result-content {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.4s ease;
+            max-width: 90%;
+        }
+
+        .result-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .result-content h2.win {
+            background: linear-gradient(135deg, var(--success), #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .result-content h2.lose {
+            background: linear-gradient(135deg, var(--x-color), #ff6b8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .result-content h2.draw {
+            background: linear-gradient(135deg, var(--o-color), #00a8cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .result-content p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        /* Bot thinking animation */
+        .thinking {
+            position: relative;
+        }
+
+        .thinking::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            margin: -15px 0 0 -15px;
+            border: 3px solid var(--o-color);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>❌⭕ XOX</h1>
+        <p class="subtitle">Tic-Tac-Toe</p>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-item player-x">
+            <span>❌ Sen</span>
+            <span class="stat-value x" id="player-wins">0</span>
+        </div>
+        <div class="stat-item draws">
+            <span>🤝</span>
+            <span class="stat-value" id="draws">0</span>
+        </div>
+        <div class="stat-item player-o">
+            <span>⭕ Bot</span>
+            <span class="stat-value o" id="bot-wins">0</span>
+        </div>
+    </div>
+
+    <div class="difficulty-selector">
+        <button class="difficulty-btn active" data-difficulty="easy">🟢 Kolay</button>
+        <button class="difficulty-btn" data-difficulty="medium">🟡 Orta</button>
+        <button class="difficulty-btn" data-difficulty="hard">🔴 Zor</button>
+    </div>
+
+    <div class="game-container">
+        <div class="turn-indicator" id="turn-indicator">
+            Sıra: <span class="player-x">❌ Sende</span>
+        </div>
+        <div class="xox-grid" id="xox-grid">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" id="new-game">🔄 Yeni Oyun</button>
+    </div>
+
+    <div class="result-overlay" id="result-overlay">
+        <div class="result-content">
+            <h2 id="result-title">Tebrikler!</h2>
+            <p id="result-message">Oyunu kazandın!</p>
+            <button class="control-btn" onclick="closeResult()">🔄 Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        ViraBeta XOX • Powered by Telegram
+    </div>
+
+    <script>
+        // --- TELEGRAM WEB APP INIT ---
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+
+            if (tg.colorScheme === 'light') {
+                document.body.classList.add('light-theme');
+            }
+        }
+
+        // --- GAME STATE ---
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X'; // Player is X, Bot is O
+        let gameOver = false;
+        let difficulty = 'easy';
+        let isThinking = false;
+
+        // Stats
+        let playerWins = 0;
+        let botWins = 0;
+        let draws = 0;
+
+        const winPatterns = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
+            [0, 4, 8], [2, 4, 6]             // diagonals
+        ];
+
+        // --- RENDER ---
+        function renderBoard() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach((cell, index) => {
+                const value = board[index];
+                cell.innerHTML = value ? `<span class="${value.toLowerCase()}">${value === 'X' ? '❌' : '⭕'}</span>` : '';
+                cell.classList.toggle('taken', value !== '');
+            });
+        }
+
+        function updateTurnIndicator() {
+            const indicator = document.getElementById('turn-indicator');
+            if (gameOver) {
+                indicator.innerHTML = 'Oyun Bitti!';
+            } else if (isThinking) {
+                indicator.innerHTML = 'Bot düşünüyor... <span class="player-o">⭕</span>';
+            } else {
+                indicator.innerHTML = currentPlayer === 'X'
+                    ? 'Sıra: <span class="player-x">❌ Sende</span>'
+                    : 'Sıra: <span class="player-o">⭕ Bot</span>';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('player-wins').textContent = playerWins;
+            document.getElementById('bot-wins').textContent = botWins;
+            document.getElementById('draws').textContent = draws;
+        }
+
+        // --- GAME LOGIC ---
+        function checkWinner() {
+            for (const pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return { winner: board[a], pattern };
+                }
+            }
+            return board.includes('') ? null : { winner: 'draw', pattern: null };
+        }
+
+        function highlightWinCells(pattern) {
+            if (!pattern) return;
+            const cells = document.querySelectorAll('.cell');
+            pattern.forEach(index => {
+                cells[index].classList.add('win-cell');
+            });
+        }
+
+        function showResult(winner) {
+            const overlay = document.getElementById('result-overlay');
+            const title = document.getElementById('result-title');
+            const message = document.getElementById('result-message');
+
+            if (winner === 'X') {
+                title.className = 'win';
+                title.textContent = '🎉 Tebrikler!';
+                message.textContent = 'Oyunu kazandın!';
+                playerWins++;
+            } else if (winner === 'O') {
+                title.className = 'lose';
+                title.textContent = '🤖 Bot Kazandı!';
+                message.textContent = 'Bir dahaki sefere...';
+                botWins++;
+            } else {
+                title.className = 'draw';
+                title.textContent = '🤝 Berabere!';
+                message.textContent = 'Kimse kazanamadı';
+                draws++;
+            }
+
+            updateStats();
+
+            setTimeout(() => {
+                overlay.classList.add('show');
+                if (tg?.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred(winner === 'X' ? 'success' : winner === 'O' ? 'error' : 'warning');
+                }
+            }, 500);
+        }
+
+        function closeResult() {
+            document.getElementById('result-overlay').classList.remove('show');
+            resetGame();
+        }
+
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameOver = false;
+            isThinking = false;
+
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.classList.remove('win-cell');
+            });
+
+            renderBoard();
+            updateTurnIndicator();
+        }
+
+        // --- BOT AI ---
+        function minimax(board, depth, isMaximizing) {
+            const result = checkWinner();
+            if (result) {
+                if (result.winner === 'O') return 10 - depth;
+                if (result.winner === 'X') return depth - 10;
+                return 0;
+            }
+
+            if (isMaximizing) {
+                let best = -Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = 'O';
+                        best = Math.max(best, minimax(board, depth + 1, false));
+                        board[i] = '';
+                    }
+                }
+                return best;
+            } else {
+                let best = Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = 'X';
+                        best = Math.min(best, minimax(board, depth + 1, true));
+                        board[i] = '';
+                    }
+                }
+                return best;
+            }
+        }
+
+        function getBestMove() {
+            let bestScore = -Infinity;
+            let bestMove = null;
+
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'O';
+                    const score = minimax(board, 0, false);
+                    board[i] = '';
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = i;
+                    }
+                }
+            }
+            return bestMove;
+        }
+
+        function getRandomMove() {
+            const empty = [];
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') empty.push(i);
+            }
+            return empty[Math.floor(Math.random() * empty.length)];
+        }
+
+        function botMove() {
+            if (gameOver) return;
+
+            isThinking = true;
+            updateTurnIndicator();
+
+            // Add thinking delay for better UX
+            const delay = 400 + Math.random() * 400;
+
+            setTimeout(() => {
+                let move;
+
+                if (difficulty === 'easy') {
+                    // 30% optimal, 70% random
+                    move = Math.random() < 0.3 ? getBestMove() : getRandomMove();
+                } else if (difficulty === 'medium') {
+                    // 60% optimal, 40% random
+                    move = Math.random() < 0.6 ? getBestMove() : getRandomMove();
+                } else {
+                    // 100% optimal
+                    move = getBestMove();
+                }
+
+                if (move !== null) {
+                    board[move] = 'O';
+                    renderBoard();
+
+                    if (tg?.HapticFeedback) {
+                        tg.HapticFeedback.impactOccurred('light');
+                    }
+
+                    const result = checkWinner();
+                    if (result) {
+                        gameOver = true;
+                        highlightWinCells(result.pattern);
+                        showResult(result.winner);
+                    } else {
+                        currentPlayer = 'X';
+                    }
+                }
+
+                isThinking = false;
+                updateTurnIndicator();
+            }, delay);
+        }
+
+        // --- EVENT LISTENERS ---
+        document.querySelectorAll('.cell').forEach(cell => {
+            cell.addEventListener('click', () => {
+                if (gameOver || isThinking || currentPlayer !== 'X') return;
+
+                const index = parseInt(cell.dataset.index);
+                if (board[index] !== '') return;
+
+                // Player move
+                board[index] = 'X';
+                renderBoard();
+
+                if (tg?.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred('medium');
+                }
+
+                const result = checkWinner();
+                if (result) {
+                    gameOver = true;
+                    highlightWinCells(result.pattern);
+                    showResult(result.winner);
+                    return;
+                }
+
+                currentPlayer = 'O';
+                updateTurnIndicator();
+                botMove();
+            });
+        });
+
+        document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                difficulty = btn.dataset.difficulty;
+                resetGame();
+            });
+        });
+
+        document.getElementById('new-game').addEventListener('click', resetGame);
+
+        // --- START ---
+        renderBoard();
+        updateTurnIndicator();
+    </script>
+</body>
+
+</html>

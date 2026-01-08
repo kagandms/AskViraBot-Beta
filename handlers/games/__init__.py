@@ -22,6 +22,7 @@ from .tkm import (
 )
 
 from .sudoku import sudoku_start
+from .xox_web import xox_web_start
 
 # Slot and Blackjack imports removed
 
@@ -88,7 +89,7 @@ def setup(app):
     # 3. Buttons
     register_button("back_to_games", games_menu)
     register_button("games_main_button", games_menu)
-    register_button("xox_game", xox_start)
+    register_button("xox_game", xox_web_start)  # Web App version
     register_button("dice", dice_command)
     register_button("coinflip", coinflip_command)
     register_button("tkm_main", tkm_start)
