@@ -26,12 +26,17 @@ async def sudoku_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     sudoku_url = f"{base_url}/web/sudoku.html"
     
-    # Create Web App button
+    # Create Web App button with back button
     web_app = WebAppInfo(url=sudoku_url)
+    back_texts = {"tr": "🔙 Oyun Odası", "en": "🔙 Game Room", "ru": "🔙 Игровая Комната"}
     keyboard = InlineKeyboardMarkup([
         [InlineKeyboardButton(
             text="🧩 Sudoku Oyna" if lang == "tr" else "🧩 Play Sudoku" if lang == "en" else "🧩 Играть в Судоку",
             web_app=web_app
+        )],
+        [InlineKeyboardButton(
+            text=back_texts.get(lang, back_texts["en"]),
+            callback_data="back_to_games"
         )]
     ])
     

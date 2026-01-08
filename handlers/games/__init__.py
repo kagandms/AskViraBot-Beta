@@ -42,9 +42,24 @@ from .core import games_menu
 
 # handle_game_mode_selection removed (Vira - no betting modes)
 
+# Callback handler for inline back buttons
+async def back_to_games_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle back to games inline button callback"""
+    query = update.callback_query
+    await query.answer()
+    
+    # Delete the message with inline keyboard
+    try:
+        await query.message.delete()
+    except:
+        pass
+    
+    # Show games menu
+    await games_menu(update, context)
+
 # --- MODULAR SETUP ---
 def setup(app):
-    from telegram.ext import CommandHandler
+    from telegram.ext import CommandHandler, CallbackQueryHandler
     from core.router import router, register_button
     import state
     
@@ -72,5 +87,7 @@ def setup(app):
     register_button("player_stats", show_player_stats)
     register_button("sudoku_main", sudoku_start)
     
+    # 4. Callback Query Handlers (for inline keyboards)
+    app.add_handler(CallbackQueryHandler(back_to_games_callback, pattern=r"^back_to_games$"))
+    
     logger.info("✅ Games module loaded")
-

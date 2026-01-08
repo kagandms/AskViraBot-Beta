@@ -66,7 +66,7 @@ def extract_button_set(button_dict, row_idx, col_idx):
 AUTO_MAPPINGS = {
     # Ana menü
     "tools_main_button": extract_button_set(MAIN_BUTTONS, 0, 0),     # Row 0, Col 0: Tools
-    "tools_main_button": extract_button_set(MAIN_BUTTONS, 0, 0),     # Row 0, Col 0: Tools
+    "games_main_button": extract_button_set(MAIN_BUTTONS, 0, 1),     # Row 0, Col 1: Game Room
     
     "language": extract_button_set(MAIN_BUTTONS, 1, 0),              # Row 1, Col 0: Language
     "developer_main_button": extract_button_set(MAIN_BUTTONS, 1, 1), # Row 1, Col 1: Developer
