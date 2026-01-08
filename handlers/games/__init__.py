@@ -45,8 +45,12 @@ from .core import games_menu
 # Callback handler for inline back buttons
 async def back_to_games_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle back to games inline button callback"""
+    from utils import get_games_keyboard_markup
+    
     query = update.callback_query
     await query.answer()
+    user_id = query.from_user.id
+    lang = await db.get_user_lang(user_id)
     
     # Delete the message with inline keyboard
     try:
@@ -54,8 +58,12 @@ async def back_to_games_callback(update: Update, context: ContextTypes.DEFAULT_T
     except:
         pass
     
-    # Show games menu
-    await games_menu(update, context)
+    # Send games menu directly (can't use games_menu because update.message is None)
+    await context.bot.send_message(
+        chat_id=user_id,
+        text=TEXTS["games_menu_prompt"][lang],
+        reply_markup=get_games_keyboard_markup(lang)
+    )
 
 # --- MODULAR SETUP ---
 def setup(app):
