@@ -89,7 +89,8 @@ AUTO_MAPPINGS = {
     "dice": extract_button_set(GAMES_BUTTONS, 0, 1),
     "coinflip": extract_button_set(GAMES_BUTTONS, 1, 0),
     "tkm_main": extract_button_set(GAMES_BUTTONS, 1, 1),
-    "player_stats": extract_button_set(GAMES_BUTTONS, 2, 0),
+    "sudoku_main": extract_button_set(GAMES_BUTTONS, 2, 0),  # NEW: Sudoku
+    "player_stats": extract_button_set(GAMES_BUTTONS, 2, 1),
 
 
 

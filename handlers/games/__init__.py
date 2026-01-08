@@ -21,6 +21,8 @@ from .tkm import (
     tkm_play
 )
 
+from .sudoku import sudoku_start
+
 # Slot and Blackjack imports removed
 
 # Shared handler for mode selection (dispatch to specific games)
@@ -36,7 +38,7 @@ import database as db
 import state
 from texts import TEXTS
 from utils import is_back_button, cleanup_context
-from .core import games_menu, get_bet_keyboard_generic
+from .core import games_menu
 
 # handle_game_mode_selection removed (Vira - no betting modes)
 
@@ -53,6 +55,7 @@ def setup(app):
     app.add_handler(CommandHandler("dice", dice_command))
     app.add_handler(CommandHandler("coinflip", coinflip_command))
     app.add_handler(CommandHandler("stats", show_player_stats))
+    app.add_handler(CommandHandler("sudoku", sudoku_start))
     
     # 2. Router
     router.register(state.PLAYING_XOX, handle_xox_message)
@@ -67,5 +70,7 @@ def setup(app):
     register_button("coinflip", coinflip_command)
     register_button("tkm_main", tkm_start)
     register_button("player_stats", show_player_stats)
+    register_button("sudoku_main", sudoku_start)
     
     logger.info("✅ Games module loaded")
+
