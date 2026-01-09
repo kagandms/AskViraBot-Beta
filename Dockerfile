@@ -5,9 +5,11 @@ FROM python:3.11-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies (e.g., ffmpeg for music/video)
+# Install system dependencies (ffmpeg for media, build-essential for compiling python packages)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
+    build-essential \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
